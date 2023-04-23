@@ -57,6 +57,8 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - assets/images/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
@@ -69,6 +71,19 @@ flutter:
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
 
+  fonts:
+    - family: Spoqa Han Sans Neo
+      fonts:
+        - asset: assets/fonts/Spoqa Han Sans Neo Bold.otf
+          weight: 700
+        - asset: assets/fonts/Spoqa Han Sans Neo Regular.otf
+          weight: 600
+        - asset: assets/fonts/Spoqa Han Sans Neo Medium.otf
+          weight: 500
+        - asset: assets/fonts/Spoqa Han Sans Neo Light.otf
+          weight: 400
+        - asset: assets/fonts/Spoqa Han Sans Neo Thin.otf
+          weight: 300
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
