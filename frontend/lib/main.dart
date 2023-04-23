@@ -3,9 +3,10 @@ import 'const/navigation.dart';
 
 void main() {
   runApp(
-      const MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: Navigation(),
-      )
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(fontFamily: 'Spoqa Han Sans Neo'),
+      home: const Navigation(),
+    ),
   );
 }
