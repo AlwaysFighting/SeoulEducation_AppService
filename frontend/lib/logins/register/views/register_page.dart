@@ -13,7 +13,12 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
 
   bool allAgree = false;
-  late final TextEditingController _textEditingController = TextEditingController();
+
+  late final TextEditingController _emailEditingController = TextEditingController();
+  late final TextEditingController _verifyEditingController = TextEditingController();
+  late final TextEditingController _passwordEditingController = TextEditingController();
+  late final TextEditingController _rePasswordEditingController = TextEditingController();
+  late final TextEditingController _nameEditingController = TextEditingController();
 
   final mainTextStyle = const TextStyle(
     color: textColor1,
@@ -36,7 +41,11 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   void dispose() {
-    _textEditingController.dispose();
+    _emailEditingController.dispose();
+    _verifyEditingController.dispose();
+    _passwordEditingController.dispose();
+    _rePasswordEditingController.dispose();
+    _nameEditingController.dispose();
     super.dispose();
   }
 
@@ -77,7 +86,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     const SizedBox(height: 10.0),
                     Row(
                       children: [
-                        _login(),
+                        _email(),
                         const SizedBox(width: 10.0),
                         Expanded(
                           child: SizedBox(
@@ -85,8 +94,8 @@ class _RegisterPageState extends State<RegisterPage> {
                             height: 48,
                             child: ElevatedButton(
                               autofocus: false,
-                              onPressed: () {
-                                print("Login Button");
+                              onPressed: (){
+
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: mainColor,
@@ -109,7 +118,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     const SizedBox(height: 10.0),
                     Row(
                       children: [
-                        _certified(),
+                        _verified(),
                         const SizedBox(width: 10.0),
                         Expanded(
                           child: SizedBox(
@@ -144,7 +153,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     Text("비밀번호 확인",
                         style: mainTextStyle.copyWith(fontSize: 14.0)),
                     const SizedBox(height: 10.0),
-                    _password("비밀번호를 다시 입력해주세요."),
+                    _RePassword("비밀번호를 다시 입력해주세요."),
                     const SizedBox(height: 16.0),
                     Text("이름", style: mainTextStyle.copyWith(fontSize: 14.0)),
                     const SizedBox(height: 10.0),
@@ -166,6 +175,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         Text("약관동의", style: textStyle),
                         const SizedBox(height: 16.0),
                         Card(
+                          color: Colors.white,
                           shape: const RoundedRectangleBorder(
                               side: BorderSide(color: lineColor, width: 1.0),
                               borderRadius:
@@ -210,12 +220,11 @@ class _RegisterPageState extends State<RegisterPage> {
                   )
                 ],
               ),
-              const SizedBox(height: 80.0),
             ],
           ),
         ),
       ),
-      floatingActionButton: SizedBox(
+      bottomNavigationBar: SizedBox(
         height: 80.0,
         width: double.infinity,
         child: ElevatedButton(
@@ -243,6 +252,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 allAgree = value ?? false;
               });
             },
+            checkColor: Colors.white,
             shape: const CircleBorder(),
             activeColor: mainColor,
           ),
@@ -264,9 +274,9 @@ class _RegisterPageState extends State<RegisterPage> {
       width: 260,
       height: 48,
       child: TextField(
-        controller: _textEditingController,
+        controller: _nameEditingController,
         onChanged: (value) {
-          print(value);
+          print("닉네임: $value");
         },
         cursorColor: Colors.grey,
         decoration: InputDecoration(
@@ -293,14 +303,19 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  _login() {
+  _email() {
     return SizedBox(
       width: 260,
       height: 48,
       child: TextField(
-        controller: _textEditingController,
+        controller: _emailEditingController,
         onChanged: (value) {
-          print(value);
+          String? email = _emailEditingController.text;
+          if (true) {
+            // 이메일 형식이 맞는 경우
+          } else {
+            // 이메일 형식이 아닌 경우
+          }
         },
         cursorColor: Colors.grey,
         decoration: InputDecoration(
@@ -327,14 +342,14 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  _certified() {
+  _verified() {
     return SizedBox(
       width: 260,
       height: 48,
       child: TextField(
-        controller: _textEditingController,
+        controller: _verifyEditingController,
         onChanged: (value) {
-          print(value);
+          print("인증번호 : $value");
         },
         cursorColor: Colors.grey,
         decoration: InputDecoration(
@@ -365,9 +380,43 @@ class _RegisterPageState extends State<RegisterPage> {
     return SizedBox(
       height: 48,
       child: TextField(
-        controller: _textEditingController,
+        controller: _passwordEditingController,
         onChanged: (value) {
-          print(value);
+          print("비밀번호 : $value");
+        },
+        obscureText: true,
+        cursorColor: Colors.grey,
+        decoration: InputDecoration(
+          hintText: hintTexts,
+          hintStyle: textStyle.copyWith(
+              color: textColor2, fontWeight: FontWeight.w400),
+          contentPadding:
+          const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: backgroundBtnColor, width: 0.0),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          focusedBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(24)),
+            borderSide: BorderSide(width: 1, color: mainColor),
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          filled: true,
+          fillColor: backgroundBtnColor,
+        ),
+      ),
+    );
+  }
+
+  _RePassword(String hintTexts) {
+    return SizedBox(
+      height: 48,
+      child: TextField(
+        controller: _rePasswordEditingController,
+        onChanged: (value) {
+          print("비밀번호 확인: $value");
         },
         obscureText: true,
         cursorColor: Colors.grey,

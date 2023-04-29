@@ -15,7 +15,8 @@ class _LoginPageState extends State<LoginPage> {
   // 패스워드 보이기 유무
   bool hidePassword = true;
 
-  late final TextEditingController _textEditingController = TextEditingController();
+  late final TextEditingController _loginEditingController = TextEditingController();
+  late final TextEditingController _passwordEditingController = TextEditingController();
 
   final mainTextStyle = const TextStyle(
     color: textColor1,
@@ -178,9 +179,9 @@ class _LoginPageState extends State<LoginPage> {
     return SizedBox(
       height: 48,
       child: TextField(
-        controller: _textEditingController,
+        controller: _passwordEditingController,
         onChanged: (value) {
-          print(value);
+          print("password: $value");
         },
         obscureText: hidePassword,
         cursorColor: Colors.grey,
@@ -221,9 +222,9 @@ class _LoginPageState extends State<LoginPage> {
     return SizedBox(
       height: 48,
       child: TextField(
-        controller: _textEditingController,
+        controller: _loginEditingController,
         onChanged: (value) {
-          print(value);
+          print("login: $value");
         },
         cursorColor: Colors.grey,
         decoration: InputDecoration(
