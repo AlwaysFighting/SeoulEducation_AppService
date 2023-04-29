@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:redis/redis.dart';
 import 'package:seoul_education_service/const/colors.dart';
 import 'package:seoul_education_service/logins/register/views/register_page.dart';
 
+import '../../../home/homepage/controllers/homepage.dart';
 import '../models/divider.dart';
 
 class LoginPage extends StatefulWidget {
@@ -18,12 +20,61 @@ class _LoginPageState extends State<LoginPage> {
   late final TextEditingController _loginEditingController = TextEditingController();
   late final TextEditingController _passwordEditingController = TextEditingController();
 
+  bool _isLoginButtonEnabled = false;
+  bool _isLoginError = false;
+
+  // 서버 연결
+  final conn = RedisConnection();
+
   final mainTextStyle = const TextStyle(
     color: textColor1,
     fontSize: 14,
     fontWeight: FontWeight.w500,
     fontFamily: "Spoqa Han Sans Neo",
   );
+
+  void _updateLoginButtonState() {
+    setState(() {
+      _isLoginButtonEnabled = _loginEditingController.text.isNotEmpty &&
+          _passwordEditingController.text.isNotEmpty;
+    });
+  }
+
+  void _connectToRedis(String email, String password) {
+    conn.connect('localhost', 6379).then((Command command) {
+      command.send_object(["GET", email]).then((var response) {
+        if (response == password) {
+          print("로그인 성공!");
+          setState(() {
+            _isLoginError = false;
+          });
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (BuildContext context) {
+                return const HomePage();
+              }));
+          conn.close();
+        } else {
+          print("로그인 실패: 올바르지 않은 아이디 또는 비밀번호입니다.");
+          setState(() {
+            _isLoginError = true;
+          });
+          conn.close();
+        }
+      });
+    });
+  }
+
+  void _handleButtonPressed(String key, String value) {
+    // 버튼이 클릭될 때 실행될 작업을 여기에 구현합니다.
+    // 예를 들어, 아이디와 비밀번호를 검증하고 로그인하는 등의 작업을 수행합니다.
+    print("Key : $key, Value : $value");
+    _connectToRedis(key, value);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -80,12 +131,12 @@ class _LoginPageState extends State<LoginPage> {
                         height: 48,
                         child: ElevatedButton(
                           autofocus: false,
-                          onPressed: () {
-                            print("Clicked");
-                          },
+                          onPressed: _isLoginButtonEnabled
+                              ? () => _handleButtonPressed(_loginEditingController.text, _passwordEditingController.text)
+                              : null,
                           style: ElevatedButton.styleFrom(
                             // 메인 컬러
-                            backgroundColor: mainColor,
+                            backgroundColor: _isLoginButtonEnabled ? mainColor :textColor2,
                             // 버튼 안 텍스트 스타일
                             textStyle: mainTextStyle.copyWith(
                               fontSize: 16.0,
@@ -180,9 +231,7 @@ class _LoginPageState extends State<LoginPage> {
       height: 48,
       child: TextField(
         controller: _passwordEditingController,
-        onChanged: (value) {
-          print("password: $value");
-        },
+        onChanged: (_) => _updateLoginButtonState(),
         obscureText: hidePassword,
         cursorColor: Colors.grey,
         decoration: InputDecoration(
@@ -191,12 +240,12 @@ class _LoginPageState extends State<LoginPage> {
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: backgroundBtnColor, width: 0.0),
+            borderSide: BorderSide(color: _isLoginError ? errorColor : backgroundBtnColor, width: _isLoginError ? 1.0 : 0.0),
             borderRadius: BorderRadius.circular(24),
           ),
-          focusedBorder: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(24)),
-            borderSide: BorderSide(width: 1, color: mainColor),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: const BorderRadius.all(Radius.circular(24)),
+            borderSide: BorderSide(width: 1, color: _isLoginError ? errorColor : mainColor),
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(24),
@@ -210,6 +259,7 @@ class _LoginPageState extends State<LoginPage> {
                 hidePassword = !hidePassword;
               });
             },
+              color: _isLoginError ? errorColor : mainColor,
           ),
           filled: true,
           fillColor: backgroundBtnColor,
@@ -223,20 +273,18 @@ class _LoginPageState extends State<LoginPage> {
       height: 48,
       child: TextField(
         controller: _loginEditingController,
-        onChanged: (value) {
-          print("login: $value");
-        },
+        onChanged: (_) => _updateLoginButtonState(),
         cursorColor: Colors.grey,
         decoration: InputDecoration(
           hintText: "이메일을 입력해주세요.",
           hintStyle: mainTextStyle.copyWith(color: textColor2, fontWeight: FontWeight.w400),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: backgroundBtnColor, width: 0.0),
+            borderSide: BorderSide(color: _isLoginError ? errorColor : backgroundBtnColor, width: _isLoginError ? 1.0 : 0.0),
             borderRadius: BorderRadius.circular(24),
           ),
-          focusedBorder: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(24)),
-            borderSide: BorderSide(width: 1, color: mainColor),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: const BorderRadius.all(Radius.circular(24)),
+            borderSide: BorderSide(width: 1, color: _isLoginError ? errorColor : mainColor),
           ),
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),

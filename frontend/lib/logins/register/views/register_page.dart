@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:redis/redis.dart';
 import 'package:seoul_education_service/const/colors.dart';
 
 import '../models/dividers.dart';
@@ -34,9 +35,23 @@ class _RegisterPageState extends State<RegisterPage> {
     fontFamily: "Spoqa Han Sans Neo",
   );
 
+  final conn = RedisConnection();
+
   @override
   void initState() {
     super.initState();
+    _connectToRedis();
+  }
+
+  void _connectToRedis() {
+    conn.connectSecure('localhost', 6379).then((Command command) {
+      command
+          .send_object(["AUTH", "username", "password"]).then((var response) {
+        print(response);
+        command.send_object(["SET", "key", "0"]).then(
+                (var response) => print(response));
+      });
+    });
   }
 
   @override
