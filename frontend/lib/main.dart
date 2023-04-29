@@ -7,8 +7,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterConfig.loadEnvVariables();
 
-  print(FlutterConfig.get('KAKAOLOGIN_APP_KEY'));
-
   KakaoSdk.init(
     nativeAppKey: '${FlutterConfig.get('KAKAOLOGIN_APP_KEY')}',
   );

@@ -163,102 +163,90 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 10),
                     _password(),
                     const SizedBox(height: 40.0),
-                    Center(
-                      child: SizedBox(
-                        height: 48,
-                        child: ElevatedButton(
-                          autofocus: false,
-                          onPressed: _isLoginButtonEnabled
-                              ? () => _handleButtonPressed(_loginEditingController.text, _passwordEditingController.text)
-                              : null,
-                          style: ElevatedButton.styleFrom(
-                            // 메인 컬러
-                            backgroundColor: _isLoginButtonEnabled ? mainColor :textColor2,
-                            // 버튼 안 텍스트 스타일
-                            textStyle: mainTextStyle.copyWith(
-                              fontSize: 16.0,
-                              color: Colors.white,
-                              fontFamily: "Spoqa Han Sans Neo",
-                            ),
-                            minimumSize: const Size(double.infinity, 358),
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(24.0), // 모서리 둥글기 정도
-                            ),
-                          ),
-                          child: const Text('로그인'),
-                        ),
-                      ),
-                    ),
+                    _loginBtn(),
                     const SizedBox(height: 22.0),
                     const ORDivider(),
                     const SizedBox(height: 22.0),
-                    Center(
-                      child: SizedBox(
-                        height: 48,
-                        child: OutlinedButton(
-                          autofocus: false,
-                          onPressed: () {
-                            print("카카오톡 로그인");
-                            _kakaoLoginState();
-                          },
-                          style: OutlinedButton.styleFrom(
-                            minimumSize: const Size(double.infinity, 358),
-                            side: const BorderSide(color: mainColor),
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(24.0), // 모서리 둥글기 정도
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              const SizedBox(width: 20.0),
-                              Image.asset(
-                                "assets/images/kakaoLogin.png",
-                                // 이미지 꽉차게 적용하기
-                                fit: BoxFit.fill,
-                              ),
-                              const SizedBox(width: 65.0),
-                              const Text(
-                                '카카오로 로그인',
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.w500,
-                                  color: mainColor,
-                                  fontFamily: "Spoqa Han Sans Neo",
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                    _kakaoLoginBtn(),
                     const SizedBox(height: 100.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text("계정이 아직 없으신가요?"),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(builder: (_) => RegisterPage()),
-                            );
-                          },
-                          child: Text(
-                            "회원가입",
-                            style: mainTextStyle.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: mainColor,
-                            ),
-                          ),
-                        )
-                      ],
-                    )
+                    _register(mainTextStyle: mainTextStyle)
                   ],
                 ),
               )
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Center _kakaoLoginBtn() {
+    return Center(
+      child: SizedBox(
+        height: 48,
+        child: OutlinedButton(
+          autofocus: false,
+          onPressed: () {
+            print("카카오톡 로그인");
+            _kakaoLoginState();
+          },
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size(double.infinity, 358),
+            side: const BorderSide(color: mainColor),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24.0), // 모서리 둥글기 정도
+            ),
+          ),
+          child: Row(
+            children: [
+              const SizedBox(width: 20.0),
+              Image.asset(
+                "assets/images/kakaoLogin.png",
+                // 이미지 꽉차게 적용하기
+                fit: BoxFit.fill,
+              ),
+              const SizedBox(width: 65.0),
+              const Text(
+                '카카오로 로그인',
+                style: TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w500,
+                  color: mainColor,
+                  fontFamily: "Spoqa Han Sans Neo",
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Center _loginBtn() {
+    return Center(
+      child: SizedBox(
+        height: 48,
+        child: ElevatedButton(
+          autofocus: false,
+          onPressed: _isLoginButtonEnabled
+              ? () => _handleButtonPressed(
+                  _loginEditingController.text, _passwordEditingController.text)
+              : null,
+          style: ElevatedButton.styleFrom(
+            // 메인 컬러
+            backgroundColor: _isLoginButtonEnabled ? mainColor : textColor2,
+            // 버튼 안 텍스트 스타일
+            textStyle: mainTextStyle.copyWith(
+              fontSize: 16.0,
+              color: Colors.white,
+              fontFamily: "Spoqa Han Sans Neo",
+            ),
+            minimumSize: const Size(double.infinity, 358),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24.0), // 모서리 둥글기 정도
+            ),
+          ),
+          child: const Text('로그인'),
         ),
       ),
     );
@@ -333,6 +321,39 @@ class _LoginPageState extends State<LoginPage> {
           fillColor: backgroundBtnColor,
         ),
       ),
+    );
+  }
+}
+
+class _register extends StatelessWidget {
+  const _register({
+    super.key,
+    required this.mainTextStyle,
+  });
+
+  final TextStyle mainTextStyle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text("계정이 아직 없으신가요?"),
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => RegisterPage()),
+            );
+          },
+          child: Text(
+            "회원가입",
+            style: mainTextStyle.copyWith(
+              fontWeight: FontWeight.w700,
+              color: mainColor,
+            ),
+          ),
+        )
+      ],
     );
   }
 }
