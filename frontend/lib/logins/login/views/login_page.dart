@@ -4,8 +4,9 @@ import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:redis/redis.dart';
 import 'package:seoul_education_service/const/colors.dart';
 import 'package:seoul_education_service/logins/register/views/register_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../home/homepage/controllers/homepage.dart';
+import '../../../home/homepage/views/homepage.dart';
 import '../models/divider.dart';
 
 class LoginPage extends StatefulWidget {
@@ -77,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  void _connectToRedis(String email, String password) {
+  void _connectToRedis(String email, String password){
     conn.connect('localhost', 6379).then((Command command) {
       command.send_object(["GET", email]).then((var response) {
         if (response == password) {
@@ -85,10 +86,12 @@ class _LoginPageState extends State<LoginPage> {
           setState(() {
             _isLoginError = false;
           });
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (BuildContext context) {
-                return const HomePage();
-              }));
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const HomePage()),
+          );
+
           conn.close();
         } else {
           print("로그인 실패: 올바르지 않은 아이디 또는 비밀번호입니다.");
@@ -101,10 +104,12 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  void _handleButtonPressed(String key, String value) {
-    // 버튼이 클릭될 때 실행될 작업을 여기에 구현합니다.
-    // 예를 들어, 아이디와 비밀번호를 검증하고 로그인하는 등의 작업을 수행합니다.
-    print("Key : $key, Value : $value");
+  void _handleButtonPressed(String key, String value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString('email', key);
+    await prefs.setString('password', value);
+
     _connectToRedis(key, value);
   }
 
@@ -342,7 +347,7 @@ class _register extends StatelessWidget {
         TextButton(
           onPressed: () {
             Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => RegisterPage()),
+              MaterialPageRoute(builder: (_) => const RegisterPage()),
             );
           },
           child: Text(
