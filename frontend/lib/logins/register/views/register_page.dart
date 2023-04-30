@@ -40,18 +40,6 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   void initState() {
     super.initState();
-    _connectToRedis();
-  }
-
-  void _connectToRedis() {
-    conn.connectSecure('localhost', 6379).then((Command command) {
-      command
-          .send_object(["AUTH", "username", "password"]).then((var response) {
-        print(response);
-        command.send_object(["SET", "key", "0"]).then(
-                (var response) => print(response));
-      });
-    });
   }
 
   @override

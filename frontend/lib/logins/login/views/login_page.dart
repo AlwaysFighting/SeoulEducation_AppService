@@ -6,8 +6,11 @@ import 'package:seoul_education_service/const/colors.dart';
 import 'package:seoul_education_service/logins/register/views/register_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../const/api.dart';
 import '../../../home/homepage/views/homepage.dart';
 import '../models/divider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -24,7 +27,8 @@ class _LoginPageState extends State<LoginPage> {
   late final TextEditingController _passwordEditingController = TextEditingController();
 
   bool _isLoginButtonEnabled = false;
-  bool _isLoginError = false;
+  bool _isEmailError = false;
+  bool _isPasswordError = false;
 
   // 서버 연결
   final conn = RedisConnection();
@@ -78,39 +82,52 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  void _connectToRedis(String email, String password){
-    conn.connect('localhost', 6379).then((Command command) {
-      command.send_object(["GET", email]).then((var response) {
-        if (response == password) {
-          print("로그인 성공!");
-          setState(() {
-            _isLoginError = false;
-          });
+  _IsLogin(String key, String value) async {
+    final response = await http.post(
+      Uri.parse(EMAIL_LOGIN_API),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'email': key,
+        'password': value,
+      }),
+    );
 
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const HomePage()),
-          );
-
-          conn.close();
-        } else {
-          print("로그인 실패: 올바르지 않은 아이디 또는 비밀번호입니다.");
-          setState(() {
-            _isLoginError = true;
-          });
-          conn.close();
-        }
+    if (response.statusCode == 200) {
+      print("로그인 성공! : ${response.body}");
+      setState(() {
+        _isEmailError = false;
+        _isPasswordError = false;
       });
-    });
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      await prefs.setString('email', key);
+      await prefs.setString('password', value);
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+
+    } else if (response.statusCode == 401) {
+      print("로그인 실패: 해당 이메일이 존재하지 않습니다.");
+      setState(() {
+        _isEmailError = true;
+      });
+    } else if (response.statusCode == 403) {
+      print("로그인 실패: 비밀번호가 틀렸습니다.");
+      setState(() {
+        _isPasswordError = true;
+      });
+    } else {
+      print("운영팀에게 문의주세요.");
+    }
   }
 
-  void _handleButtonPressed(String key, String value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    await prefs.setString('email', key);
-    await prefs.setString('password', value);
-
-    _connectToRedis(key, value);
+  void _handleButtonPressed(String key, String value) {
+    _IsLogin(key, value);
   }
 
   @override
@@ -127,58 +144,62 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.only(top: 170),
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () {
-            FocusScope.of(context).requestFocus(FocusNode());
-          },
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Column(
-                children: const [
-                  Text("LOGO",
-                      style: TextStyle(
-                          fontSize: 24.0,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: "Spoqa Han Sans Neo",
-                          color: Color(0xFF737373))),
-                  // Image.asset(
-                  //   "assets/images/logo.png",
-                  //   // 이미지 꽉차게 적용하기
-                  //   fit: BoxFit.fill,
-                  //   height: 70,
-                  //   width: 100,
-                  // ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 120),
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                FocusScope.of(context).requestFocus(FocusNode());
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Column(
+                    children: const [
+                      Text("LOGO",
+                          style: TextStyle(
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: "Spoqa Han Sans Neo",
+                              color: Color(0xFF737373))),
+                      // Image.asset(
+                      //   "assets/images/logo.png",
+                      //   // 이미지 꽉차게 적용하기
+                      //   fit: BoxFit.fill,
+                      //   height: 70,
+                      //   width: 100,
+                      // ),
+                    ],
+                  ),
+                  const SizedBox(height: 105),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("아이디(이메일)", style: mainTextStyle),
+                        const SizedBox(height: 10),
+                        _login(),
+                        const SizedBox(height: 16),
+                        Text("비밀번호", style: mainTextStyle),
+                        const SizedBox(height: 10),
+                        _password(),
+                        const SizedBox(height: 40.0),
+                        _loginBtn(),
+                        const SizedBox(height: 22.0),
+                        const ORDivider(),
+                        const SizedBox(height: 22.0),
+                        _kakaoLoginBtn(),
+                        const SizedBox(height: 100.0),
+                        _register(mainTextStyle: mainTextStyle)
+                      ],
+                    ),
+                  )
                 ],
               ),
-              const SizedBox(height: 105),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("아이디(이메일)", style: mainTextStyle),
-                    const SizedBox(height: 10),
-                    _login(),
-                    const SizedBox(height: 16),
-                    Text("비밀번호", style: mainTextStyle),
-                    const SizedBox(height: 10),
-                    _password(),
-                    const SizedBox(height: 40.0),
-                    _loginBtn(),
-                    const SizedBox(height: 22.0),
-                    const ORDivider(),
-                    const SizedBox(height: 22.0),
-                    _kakaoLoginBtn(),
-                    const SizedBox(height: 100.0),
-                    _register(mainTextStyle: mainTextStyle)
-                  ],
-                ),
-              )
-            ],
+            ),
           ),
         ),
       ),
@@ -271,12 +292,12 @@ class _LoginPageState extends State<LoginPage> {
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: _isLoginError ? errorColor : backgroundBtnColor, width: _isLoginError ? 1.0 : 0.0),
+            borderSide: BorderSide(color: _isPasswordError ? errorColor : backgroundBtnColor, width: _isPasswordError ? 1.0 : 0.0),
             borderRadius: BorderRadius.circular(24),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: const BorderRadius.all(Radius.circular(24)),
-            borderSide: BorderSide(width: 1, color: _isLoginError ? errorColor : mainColor),
+            borderSide: BorderSide(width: 1, color: _isPasswordError ? errorColor : mainColor),
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(24),
@@ -290,7 +311,7 @@ class _LoginPageState extends State<LoginPage> {
                 hidePassword = !hidePassword;
               });
             },
-              color: _isLoginError ? errorColor : mainColor,
+              color: _isPasswordError ? errorColor : mainColor,
           ),
           filled: true,
           fillColor: backgroundBtnColor,
@@ -310,12 +331,12 @@ class _LoginPageState extends State<LoginPage> {
           hintText: "이메일을 입력해주세요.",
           hintStyle: mainTextStyle.copyWith(color: textColor2, fontWeight: FontWeight.w400),
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: _isLoginError ? errorColor : backgroundBtnColor, width: _isLoginError ? 1.0 : 0.0),
+            borderSide: BorderSide(color: _isEmailError ? errorColor : backgroundBtnColor, width: _isEmailError ? 1.0 : 0.0),
             borderRadius: BorderRadius.circular(24),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: const BorderRadius.all(Radius.circular(24)),
-            borderSide: BorderSide(width: 1, color: _isLoginError ? errorColor : mainColor),
+            borderSide: BorderSide(width: 1, color: _isEmailError ? errorColor : mainColor),
           ),
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
@@ -359,6 +380,20 @@ class _register extends StatelessWidget {
           ),
         )
       ],
+    );
+  }
+}
+
+class Album {
+  final int id;
+  final String password;
+
+  const Album({required this.id, required this.password});
+
+  factory Album.fromJson(Map<String, dynamic> json) {
+    return Album(
+      id: json['email'],
+      password: json['password'],
     );
   }
 }
