@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
-import 'package:redis/redis.dart';
 import 'package:seoul_education_service/const/colors.dart';
 import 'package:seoul_education_service/logins/register/views/register_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -29,9 +28,6 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoginButtonEnabled = false;
   bool _isEmailError = false;
   bool _isPasswordError = false;
-
-  // 서버 연결
-  final conn = RedisConnection();
 
   final mainTextStyle = const TextStyle(
     color: textColor1,
@@ -380,20 +376,6 @@ class _register extends StatelessWidget {
           ),
         )
       ],
-    );
-  }
-}
-
-class Album {
-  final int id;
-  final String password;
-
-  const Album({required this.id, required this.password});
-
-  factory Album.fromJson(Map<String, dynamic> json) {
-    return Album(
-      id: json['email'],
-      password: json['password'],
     );
   }
 }
