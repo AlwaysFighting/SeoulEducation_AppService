@@ -31,16 +31,21 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _isAuthButtonEnabled = false;
   bool _isAuthConfirmButtonEnabled = false;
 
-  bool isEmailVerify = false;
-  bool isCodeVerify = false;
-  bool isPasswordWrite = false;
-  bool isRePasswordWrite = false;
-  bool isNameWrite = false;
-  bool allAgree = false;
-
+  // 등록하기 버튼 활성화 유무
   bool _isRegisterButtonEnabled = false;
 
-  String? _codeErrorText;
+  // 이름
+  bool _isUserButtonEnabled = false;
+
+  bool isPasswordWrite = false;
+  bool isRePasswordWrite = false;
+  int isEqualedPassword = 0;
+
+  bool isEmailVerify = false;
+  int isCodeVerify = 0;
+
+  bool isNameWrite = false;
+  bool allAgree = false;
 
   Duration duration = const Duration(seconds: 300);
   int _remainingSeconds = 300;
@@ -60,19 +65,6 @@ class _RegisterPageState extends State<RegisterPage> {
     fontFamily: "Spoqa Han Sans Neo",
   );
 
-  // 이메일 형식
-  RegExp emailRegExp = RegExp(r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+');
-
-  String? _passwordValidator(String value) {
-    final password = _passwordEditingController.text;
-    if (password.isEmpty) {
-      return '비밀번호를 입력해주세요';
-    } else if (password.length < 8) {
-      return '비밀번호는 8자리 이상이어야 합니다';
-    }
-    return null;
-  }
-
   String get timerDisplayString {
     int minutes = (_remainingSeconds ~/ 60).toInt();
     int seconds = (_remainingSeconds % 60).toInt();
@@ -80,12 +72,29 @@ class _RegisterPageState extends State<RegisterPage> {
     return '$minutes:${seconds.toString().padLeft(2, '0')}';
   }
 
+  void updateRegisterButtonState() {
+    setState(
+      () {
+        _isRegisterButtonEnabled = isEmailVerify &&
+            isCodeVerify == 3 &&
+            isEqualedPassword == 2 &&
+            _isUserButtonEnabled &&
+            allAgree;
+        print(isEmailVerify);
+        print(isCodeVerify);
+        print(isEqualedPassword);
+        print(_isUserButtonEnabled);
+        print(allAgree);
+      },
+    );
+  }
+
   void _startTimer() {
     setState(() {
       isTimerRunning = true;
     });
 
-    Timer.periodic(Duration(seconds: 1), (timer) {
+    Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         if (_remainingSeconds > 0) {
           _remainingSeconds--;
@@ -97,15 +106,24 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
-  void _updateRegisterButtonState() {
+  void _updateUserButtonState() {
     setState(() {
-      _isRegisterButtonEnabled = isEmailVerify &&
-          isCodeVerify &&
-          isPasswordWrite &&
-          isRePasswordWrite &&
-          isNameWrite &&
-          allAgree;
+      _isUserButtonEnabled = _nameEditingController.text.isNotEmpty;
+      updateRegisterButtonState();
     });
+  }
+
+  void _equaledPassword() {
+    setState(
+      () {
+        if (_passwordEditingController.text == _rePasswordEditingController.text) {
+          isEqualedPassword = 2;
+        } else {
+          isEqualedPassword = 1;
+        }
+        updateRegisterButtonState();
+      },
+    );
   }
 
   void _updateAuthButtonState() {
@@ -117,30 +135,8 @@ class _RegisterPageState extends State<RegisterPage> {
   void _updateAuthConfirmButtonState() {
     setState(() {
       _isAuthConfirmButtonEnabled = _verifyEditingController.text.isNotEmpty;
+      updateRegisterButtonState();
     });
-  }
-
-  // 패스워드가 서로 같은지 판별
-  bool _isEqualedPassword() {
-    if (_passwordEditingController.text == _rePasswordEditingController.text) {
-      isRePasswordWrite = true;
-      return true;
-    } else {
-      isRePasswordWrite = false;
-      return false;
-    }
-  }
-
-  // 닉네임 검사
-  bool _isGoodNickname() {
-    if (_nameEditingController.text.length >= 3 &&
-        _nameEditingController.text.length <= 6) {
-      isNameWrite = true;
-      return true;
-    } else {
-      isNameWrite = false;
-      return false;
-    }
   }
 
   void _handleEmailButton(String emailText) async {
@@ -154,37 +150,29 @@ class _RegisterPageState extends State<RegisterPage> {
       }),
     );
 
-    bool isValidEmail = emailRegExp.hasMatch(emailText);
-
     final Map<String, dynamic> responseData = jsonDecode(response.body);
     final String message = responseData['message'];
 
     if (response.statusCode == 200) {
       print("이메일 요청 성공! : ${response.body}");
       setState(() {
-        isEmailVerify = false;
+        isEmailVerify = true;
+        isCodeVerify = 1;
+        _startTimer();
       });
-      _startTimer();
     } else if (message == "Email Already Exists") {
       setState(() {
-        isEmailVerify = true;
+        isEmailVerify = false;
       });
       print("해당 이메일로 이미 가입된 정보가 존재합니다.");
     } else if (message == "Invalid Email.") {
       setState(() {
-        isEmailVerify = true;
+        isEmailVerify = false;
       });
       print("이메일 값이 올바르지 않습니다.");
     } else {
       print("Server Error");
     }
-
-    // if (!isValidEmail) {
-    //   print("이메일 값이 올바르지 않습니다.");
-    //   return;
-    // } else {
-    //
-    // }
   }
 
   void _handleConfirmButton(String email, String confirmText) async {
@@ -202,20 +190,21 @@ class _RegisterPageState extends State<RegisterPage> {
     if (response.statusCode == 200) {
       print("확인 성공!");
       setState(() {
-        isCodeVerify = false;
+        isCodeVerify = 3;
       });
     } else if (response.statusCode == 400) {
       setState(() {
-        isCodeVerify = true;
+        isCodeVerify = 2;
       });
       print("요청하신 이메일이 아닙니다..");
     } else if (response.statusCode == 401) {
       setState(() {
-        isCodeVerify = true;
+        isCodeVerify = 2;
       });
       print("인증코드가 일치하지 않습니다.");
     } else {
       print("서버 오류.");
+      print(response.body);
     }
   }
 
@@ -271,25 +260,21 @@ class _RegisterPageState extends State<RegisterPage> {
                     const SizedBox(height: 10.0),
                     _email(),
                     const SizedBox(height: 16.0),
-                    Row(
-                      children: [
-                        Text("인증번호",
-                            style: mainTextStyle.copyWith(fontSize: 14.0)),
-                        const SizedBox(width: 5.0),
-                        isTimerRunning
-                            ? Text(
-                                '남은 시간: $timerDisplayString',
-                                style: TextStyle(
-                                  fontSize: 11.0,
-                                  color: _remainingSeconds <= 10 ? errorColor : mainColor
-                                ),
-                              )
-                            : Container(),
-                      ],
-                    ),
+                    Text("인증번호", style: mainTextStyle.copyWith(fontSize: 14.0)),
                     const SizedBox(height: 10.0),
                     _verify(),
-                    const SizedBox(height: 16.0),
+                    const SizedBox(height: 8.0),
+                    isCodeVerify == 2
+                        ? const Text(
+                            " 인증번호가 일치하지 않습니다.",
+                            style: TextStyle(
+                              fontSize: 12.0,
+                              fontWeight: FontWeight.w500,
+                              color: errorColor,
+                            ),
+                          )
+                        : Container(),
+                    const SizedBox(height: 8.0),
                     Text("비밀번호", style: mainTextStyle.copyWith(fontSize: 14.0)),
                     const SizedBox(height: 10.0),
                     _password("비밀번호를 입력해주세요."),
@@ -297,8 +282,19 @@ class _RegisterPageState extends State<RegisterPage> {
                     Text("비밀번호 확인",
                         style: mainTextStyle.copyWith(fontSize: 14.0)),
                     const SizedBox(height: 10.0),
-                    _RePassword("비밀번호를 다시 입력해주세요."),
-                    const SizedBox(height: 16.0),
+                    _rePassword("비밀번호를 다시 입력해주세요."),
+                    const SizedBox(height: 8.0),
+                    isEqualedPassword == 1 && _passwordEditingController.text.isNotEmpty
+                        ? const Text(
+                            " 비밀번호가 일치하지 않습니다.",
+                            style: TextStyle(
+                              fontSize: 12.0,
+                              fontWeight: FontWeight.w500,
+                              color: errorColor,
+                            ),
+                          )
+                        : Container(),
+                    const SizedBox(height: 8.0),
                     Text("이름", style: mainTextStyle.copyWith(fontSize: 14.0)),
                     const SizedBox(height: 10.0),
                     _userName(),
@@ -318,47 +314,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       children: [
                         Text("약관동의", style: textStyle),
                         const SizedBox(height: 16.0),
-                        Card(
-                          color: Colors.white,
-                          shape: const RoundedRectangleBorder(
-                              side: BorderSide(color: lineColor, width: 1.0),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0))),
-                          clipBehavior: Clip.antiAlias,
-                          child: SizedBox(
-                            width: 358.0,
-                            height: 210.0,
-                            child: Column(
-                              children: <Widget>[
-                                Container(
-                                  width: double.infinity,
-                                  height: 48.0,
-                                  color: Colors.white,
-                                  child: _terms("전체 동의합니다."),
-                                ),
-                                const Divider(
-                                  height: 10,
-                                  thickness: 1,
-                                  indent: 0,
-                                  endIndent: 0,
-                                  color: lineColor,
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8.0),
-                                      child: Column(
-                                        children: [
-                                          _terms("이용약관에 동의 합니다. (필수)"),
-                                          _terms("개인정보 수집 및 이용에 동의합니다. (필수)"),
-                                          _terms("만 14세 이상입니다. (필수)"),
-                                        ],
-                                      )),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
+                        _agreement(),
                       ],
                     ),
                   )
@@ -372,7 +328,11 @@ class _RegisterPageState extends State<RegisterPage> {
         height: 80.0,
         width: double.infinity,
         child: ElevatedButton(
-          onPressed: allAgree ? _doSomething : null,
+          onPressed: _isRegisterButtonEnabled
+              ? () {
+                  // 버튼이 활성화되는 경우 실행될 함수
+                }
+              : null,
           style: ElevatedButton.styleFrom(
             backgroundColor: mainColor,
             disabledBackgroundColor: const Color(0xFF5DBFF0),
@@ -386,6 +346,49 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
+  Card _agreement() {
+    return Card(
+      color: Colors.white,
+      shape: const RoundedRectangleBorder(
+          side: BorderSide(color: lineColor, width: 1.0),
+          borderRadius: BorderRadius.all(Radius.circular(10.0))),
+      clipBehavior: Clip.antiAlias,
+      child: SizedBox(
+        width: 358.0,
+        height: 210.0,
+        child: Column(
+          children: <Widget>[
+            Container(
+              width: double.infinity,
+              height: 48.0,
+              color: Colors.white,
+              child: _terms("전체 동의합니다."),
+            ),
+            const Divider(
+              height: 10,
+              thickness: 1,
+              indent: 0,
+              endIndent: 0,
+              color: lineColor,
+            ),
+            Expanded(
+              child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Column(
+                    children: [
+                      _terms("이용약관에 동의 합니다. (필수)"),
+                      _terms("개인정보 수집 및 이용에 동의합니다. (필수)"),
+                      _terms("만 14세 이상입니다. (필수)"),
+                    ],
+                  )),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  // 이메일
   Row _email() {
     return Row(
       children: [
@@ -449,39 +452,56 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
+  // 인증번호
   Row _verify() {
     return Row(
       children: [
         SizedBox(
           width: 260,
           height: 48,
-          child: TextFormField(
-            controller: _verifyEditingController,
-            onChanged: (_) => _updateAuthConfirmButtonState(),
-            cursorColor: Colors.grey,
-            decoration: InputDecoration(
-              hintText: "인증번호를 입력해주세요.",
-              hintStyle: textStyle.copyWith(
-                  color: textColor2, fontWeight: FontWeight.w400),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                    color: isCodeVerify ? errorColor : backgroundBtnColor,
-                    width: isCodeVerify ? 1.0 : 0.0),
-                borderRadius: BorderRadius.circular(24),
+          child: Stack(
+            children: [
+              TextFormField(
+                controller: _verifyEditingController,
+                onChanged: (_) => _updateAuthConfirmButtonState(),
+                cursorColor: Colors.grey,
+                decoration: InputDecoration(
+                  hintText: "인증번호를 입력해주세요.",
+                  hintStyle: textStyle.copyWith(
+                      color: textColor2, fontWeight: FontWeight.w400),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide:
+                      BorderSide(color: isCodeVerify == 3 || isCodeVerify == 0 ||  isCodeVerify == 1 ? backgroundBtnColor : errorColor, width: isCodeVerify == 3 || isCodeVerify == 0 ||  isCodeVerify == 1  ? 0.0 : 1.0),
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: const BorderRadius.all(Radius.circular(24)),
+                    borderSide: BorderSide(width: 1, color: isCodeVerify == 3 || isCodeVerify == 0 ||  isCodeVerify == 1  ? mainColor : errorColor),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 16.0),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  filled: true,
+                  fillColor: backgroundBtnColor,
+                ),
               ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: const BorderRadius.all(Radius.circular(24)),
-                borderSide: BorderSide(
-                    width: 1, color: isCodeVerify ? errorColor : mainColor),
-              ),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(24),
-              ),
-              filled: true,
-              fillColor: backgroundBtnColor,
-            ),
+              isTimerRunning && isCodeVerify == 1
+                  ? Positioned(
+                      right: 15,
+                      bottom: 16,
+                      child: Text(
+                        timerDisplayString,
+                        style: const TextStyle(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w400,
+                          color: mainColor,
+                        ),
+                      ),
+                    )
+                  : Container(),
+            ],
           ),
         ),
         const SizedBox(width: 10.0),
@@ -516,10 +536,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  void _doSomething() {
-    print("가입하기!");
-  }
-
+  // 비밀번호 입력
   _password(String hintTexts) {
     return SizedBox(
       height: 48,
@@ -556,14 +573,13 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  _RePassword(String hintTexts) {
+  // 비밀번호 재입력
+  _rePassword(String hintTexts) {
     return SizedBox(
       height: 48,
       child: TextFormField(
         controller: _rePasswordEditingController,
-        onChanged: (value) {
-          print("비밀번호 확인: $value");
-        },
+        onChanged: (_) => _equaledPassword(),
         obscureText: true,
         cursorColor: Colors.grey,
         decoration: InputDecoration(
@@ -571,14 +587,14 @@ class _RegisterPageState extends State<RegisterPage> {
           hintStyle: textStyle.copyWith(
               color: textColor2, fontWeight: FontWeight.w400),
           contentPadding:
-          const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+              const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: backgroundBtnColor, width: 0.0),
+            borderSide: BorderSide(color: isEqualedPassword == 2 || isEqualedPassword == 0 ? backgroundBtnColor: errorColor, width: isEqualedPassword == 2 ? 0.0 : 1.0),
             borderRadius: BorderRadius.circular(24),
           ),
-          focusedBorder: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(24)),
-            borderSide: BorderSide(width: 1, color: mainColor),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: const BorderRadius.all(Radius.circular(24)),
+            borderSide: BorderSide(width: 1, color: isEqualedPassword == 2 || isEqualedPassword == 0 ? mainColor : errorColor),
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(24),
@@ -590,15 +606,14 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
+  // 사용할 닉네임
   _userName() {
     return SizedBox(
       width: 260,
       height: 48,
       child: TextFormField(
         controller: _nameEditingController,
-        onChanged: (value) {
-          print("닉네임: $value");
-        },
+        onChanged: (_) => _updateUserButtonState(),
         cursorColor: Colors.grey,
         decoration: InputDecoration(
           hintText: "사용할 닉네임을 입력해주세요.",
@@ -624,6 +639,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
+  // 약관동의
   Row _terms(String termsText) {
     return Row(
       children: [
@@ -633,6 +649,7 @@ class _RegisterPageState extends State<RegisterPage> {
             onChanged: (value) {
               setState(() {
                 allAgree = value ?? false;
+                updateRegisterButtonState();
               });
             },
             checkColor: Colors.white,

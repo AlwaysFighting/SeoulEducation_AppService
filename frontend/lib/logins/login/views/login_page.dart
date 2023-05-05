@@ -19,6 +19,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+
   // 패스워드 보이기 유무
   bool hidePassword = true;
 
