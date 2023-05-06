@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
-import 'package:seoul_education_service/home/homepage/views/homepage.dart';
 import 'package:seoul_education_service/logins/login/views/login_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'const/navigation.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,7 +41,7 @@ class _APP extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'Spoqa Han Sans Neo'),
-      home: isLoggedIn ?  const HomePage() : const LoginPage(),
+      home: isLoggedIn ?  const Navigation() : const LoginPage(),
     );
   }
 }
