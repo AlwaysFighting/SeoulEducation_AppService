@@ -72,6 +72,10 @@ class _RegisterPageState extends State<RegisterPage> {
     return '$minutes:${seconds.toString().padLeft(2, '0')}';
   }
 
+  void popScreen(BuildContext context) {
+    Navigator.of(context).pop();
+  }
+
   void updateRegisterButtonState() {
     setState(
       () {
@@ -80,11 +84,6 @@ class _RegisterPageState extends State<RegisterPage> {
             isEqualedPassword == 2 &&
             _isUserButtonEnabled &&
             allAgree;
-        print(isEmailVerify);
-        print(isCodeVerify);
-        print(isEqualedPassword);
-        print(_isUserButtonEnabled);
-        print(allAgree);
       },
     );
   }
@@ -139,6 +138,46 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
+  // 등록하기 API
+  void _handleRegisterButton(
+      String emailText, String passwordText, String nicknameText) async {
+    final response = await http.post(
+      Uri.parse(REGISTER_API),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "email": emailText,
+        "password": passwordText,
+        "nickname": nicknameText,
+      }),
+    );
+
+    // Response Body - message
+    final Map<String, dynamic> responseData = jsonDecode(response.body);
+    final String message = responseData['message'];
+
+    if (response.statusCode == 200) {
+      print("회원가입 성공! : ${response.body}");
+      setState(() {
+        popScreen(context);
+      });
+    } else if (message == "Email Already Exists") {
+      setState(() {
+        isEmailVerify = false;
+      });
+      print("해당 이메일로 이미 가입된 정보가 존재합니다.");
+    } else if (message == "Invalid Password") {
+      print("비밀번호 값이 유효성 검사를 통과하지 못했습니다.");
+    } else if (message == "Invalid Nickname.") {
+      _isUserButtonEnabled = false;
+      print("닉네임 값이 유효성 검사를 통과하지 못했습니다.");
+    } else {
+      print("Server Error");
+    }
+  }
+
+  // 이메일 전송 API
   void _handleEmailButton(String emailText) async {
     final response = await http.post(
       Uri.parse(EMAIL_CODE_REQUEST_API),
@@ -175,6 +214,7 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
+  // 인증코드 API
   void _handleConfirmButton(String email, String confirmText) async {
     final response = await http.post(
       Uri.parse(EMAIL_CODE_CONFIRM_API),
@@ -324,25 +364,30 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
         ),
       ),
-      bottomNavigationBar: SizedBox(
-        height: 80.0,
-        width: double.infinity,
-        child: ElevatedButton(
-          onPressed: _isRegisterButtonEnabled
-              ? () {
-                  // 버튼이 활성화되는 경우 실행될 함수
-                }
-              : null,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: mainColor,
-            disabledBackgroundColor: const Color(0xFF5DBFF0),
-            alignment: Alignment.center,
-          ),
-          child: Text('가입하기',
-              style: textStyle.copyWith(fontSize: 16.0, color: Colors.white)),
-        ),
-      ),
+      bottomNavigationBar: _registerButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+    );
+  }
+
+  // 등록하기 버튼
+  SizedBox _registerButton() {
+    return SizedBox(
+      height: 80.0,
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: _isRegisterButtonEnabled
+            ? () {
+                _handleRegisterButton(_emailEditingController.text, _passwordEditingController.text, _nameEditingController.text);
+              }
+            : null,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: mainColor,
+          disabledBackgroundColor: const Color(0xFF5DBFF0),
+          alignment: Alignment.center,
+        ),
+        child: Text('가입하기',
+            style: textStyle.copyWith(fontSize: 16.0, color: Colors.white)),
+      ),
     );
   }
 
@@ -542,9 +587,7 @@ class _RegisterPageState extends State<RegisterPage> {
       height: 48,
       child: TextFormField(
         controller: _passwordEditingController,
-        onChanged: (value) {
-          print("비밀번호 : $value");
-        },
+        onChanged: (value) {},
         obscureText: true,
         cursorColor: Colors.grey,
         decoration: InputDecoration(
