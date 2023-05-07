@@ -66,6 +66,8 @@ flutter:
     - assets/images/BottomNavBarItem/
     - assets/images/Home/
     - assets/images/Const/
+    - assets/images/Alarm/
+    - assets/images/Courses/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
