@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-
 import '../../const/colors.dart';
 
 class NewestCategoryButton extends StatefulWidget {
   final bool isSelected;
   final VoidCallback onPressed;
+  final String title;
 
   const NewestCategoryButton({
     Key? key,
     required this.isSelected,
     required this.onPressed,
+    required this.title,
   }) : super(key: key);
 
   @override
@@ -35,86 +36,46 @@ class _NewestCategoryButtonState extends State<NewestCategoryButton> {
 
   @override
   Widget build(BuildContext context) {
-    final buttonStyle = _isSelected
-        ? ElevatedButton.styleFrom(
-            primary: mainColor,
-            onPrimary: Colors.white,
-            maximumSize: const Size(77, 37),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18.5),
-            ),
-            elevation: 0,
-          )
-        : ElevatedButton.styleFrom(
-            primary: const Color(0xFFF6F6F6),
-            onPrimary: textColor1,
-            maximumSize: const Size(77, 37),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18.5),
-              side: const BorderSide(color: Color(0xFFDBDBDB)),
-            ),
-            elevation: 0,
-          );
-
-    return ElevatedButton(
-      style: buttonStyle,
-      onPressed: () {
-        widget.onPressed();
-        setState(() {
-          _isSelected = !_isSelected;
-        });
-      },
-      child: _isSelected
-          ? Stack(
-              alignment: Alignment.center,
-              children: [
-                const Text(
-                  '최신순',
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _isSelected = !_isSelected;
-                    });
-                  },
-                  icon: Image.asset(
-                    "assets/images/Courses/CaretUp.png",
-                    width: 16,
-                    height: 16,
-                  ),
-                )
-              ],
-            )
-          : Stack(
-              alignment: Alignment.center,
-              children: [
-                const Text(
-                  '최신순',
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    fontWeight: FontWeight.w400,
-                    color: textColor1,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _isSelected = !_isSelected;
-                    });
-                  },
-                  icon: Image.asset(
-                    "assets/images/Courses/CaretDown.png",
-                    width: 16,
-                    height: 16,
-                  ),
-                ),
-              ],
-            ),
+    return SizedBox(
+      height: 38,
+      child: ElevatedButton.icon(
+        onPressed: () {
+          setState(() {
+            _isSelected = !_isSelected;
+          });
+          widget.onPressed();
+        },
+        icon: _isSelected
+            ? Image.asset(
+          "assets/images/Courses/CaretUp.png",
+          width: 16,
+          height: 16,
+        )
+            : Image.asset(
+          "assets/images/Courses/CaretDown.png",
+          width: 16,
+          height: 16,
+        ),
+        label: Text(
+          widget.title,
+          style: TextStyle(
+            fontSize: 14.0,
+            fontWeight: _isSelected ? FontWeight.w500 : FontWeight.w400,
+            color: _isSelected ? Colors.white : textColor1,
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          primary: _isSelected ? mainColor : const Color(0xFFF6F6F6),
+          onPrimary: _isSelected ? Colors.white : textColor1,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18.5),
+            side: _isSelected
+                ? const BorderSide(color: Colors.white)
+                : const BorderSide(color: Color(0xFFDBDBDB)),
+          ),
+          elevation: 0,
+        ),
+      ),
     );
   }
 }

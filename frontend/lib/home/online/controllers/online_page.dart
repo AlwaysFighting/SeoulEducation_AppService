@@ -42,16 +42,31 @@ class _OnlinePageState extends State<OnlinePage> {
           physics: const BouncingScrollPhysics(),
           child: Column(
             children: [
-              GestureDetector(
-                onTap: () {
-                  // 이미지 클릭시 실행될 코드
-                },
-                child: Image.asset(
-                  "assets/images/Courses/latest.png",
-                  width: 77,
-                  height: 37,
-                ),
+              Row(
+                children: [
+                  NewestCategoryButton(
+                    isSelected: false,
+                    onPressed: () {
+                      print("최신순");
+                    }, title: '최신순',
+                  ),
+                  const SizedBox(width: 16.0),
+                  NewestCategoryButton(
+                    isSelected: false,
+                    onPressed: () {
+                      print("모집예정");
+                    }, title: '모집예정',
+                  ),
+                  const SizedBox(width: 16.0),
+                  NewestCategoryButton(
+                    isSelected: false,
+                    onPressed: () {
+                      print("시험대비");
+                    }, title: '시험대비',
+                  ),
+                ],
               ),
+              const SizedBox(height: 20.0),
               _courseListView(
                 subTitleStyle: subTitleStyle,
               ),
