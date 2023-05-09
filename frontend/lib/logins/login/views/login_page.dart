@@ -79,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  _IsLogin(String key, String value) async {
+  _isLogin(String key, String value) async {
     final response = await http.post(
       Uri.parse(EMAIL_LOGIN_API),
       headers: <String, String>{
@@ -98,10 +98,14 @@ class _LoginPageState extends State<LoginPage> {
         _isPasswordError = false;
       });
 
-      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final responseJson = json.decode(response.body);
+      final String accessToken = responseJson['data']['accessToken'];
 
-      await prefs.setString('email', key);
-      await prefs.setString('password', value);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('accessToken', accessToken);
+
+      // await prefs.setString('email', key);
+      // await prefs.setString('password', value);
 
       Navigator.pushReplacement(
         context,
@@ -124,7 +128,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _handleButtonPressed(String key, String value) {
-    _IsLogin(key, value);
+    _isLogin(key, value);
   }
 
   @override

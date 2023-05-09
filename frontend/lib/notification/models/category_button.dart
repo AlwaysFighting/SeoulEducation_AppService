@@ -38,42 +38,45 @@ class _NewestCategoryButtonState extends State<NewestCategoryButton> {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 38,
-      child: ElevatedButton.icon(
-        onPressed: () {
-          setState(() {
-            _isSelected = !_isSelected;
-          });
-          widget.onPressed();
-        },
-        icon: _isSelected
-            ? Image.asset(
-          "assets/images/Courses/CaretUp.png",
-          width: 16,
-          height: 16,
-        )
-            : Image.asset(
-          "assets/images/Courses/CaretDown.png",
-          width: 16,
-          height: 16,
-        ),
-        label: Text(
-          widget.title,
-          style: TextStyle(
-            fontSize: 14.0,
-            fontWeight: _isSelected ? FontWeight.w500 : FontWeight.w400,
-            color: _isSelected ? Colors.white : textColor1,
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: ElevatedButton.icon(
+          onPressed: () {
+            setState(() {
+              _isSelected = !_isSelected;
+            });
+            widget.onPressed();
+          },
+          icon: _isSelected
+              ? Image.asset(
+            "assets/images/Courses/CaretUp.png",
+            width: 16,
+            height: 16,
+          )
+              : Image.asset(
+            "assets/images/Courses/CaretDown.png",
+            width: 16,
+            height: 16,
           ),
-        ),
-        style: ElevatedButton.styleFrom(
-          primary: _isSelected ? mainColor : const Color(0xFFF6F6F6),
-          onPrimary: _isSelected ? Colors.white : textColor1,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18.5),
-            side: _isSelected
-                ? const BorderSide(color: Colors.white)
-                : const BorderSide(color: Color(0xFFDBDBDB)),
+          label: Text(
+            widget.title,
+            style: TextStyle(
+              fontSize: 14.0,
+              fontWeight: _isSelected ? FontWeight.w500 : FontWeight.w400,
+              color: _isSelected ? Colors.white : textColor1,
+            ),
           ),
-          elevation: 0,
+          style: ElevatedButton.styleFrom(
+            primary: _isSelected ? mainColor : const Color(0xFFF6F6F6),
+            onPrimary: _isSelected ? Colors.white : textColor1,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18.5),
+              side: _isSelected
+                  ? const BorderSide(color: Colors.white)
+                  : const BorderSide(color: Color(0xFFDBDBDB)),
+            ),
+            elevation: 0,
+          ),
         ),
       ),
     );

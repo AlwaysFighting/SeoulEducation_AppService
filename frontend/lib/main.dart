@@ -14,12 +14,14 @@ void main() async {
     nativeAppKey: '${FlutterConfig.get('KAKAOLOGIN_APP_KEY')}',
   );
 
-  SharedPreferences prefs = await SharedPreferences.getInstance();
+  // SharedPreferences prefs = await SharedPreferences.getInstance();
+  //
+  // String? email = prefs.getString('email');
+  // String? password = prefs.getString('password');
+  //
+  // bool isLoggedIn = email != null && password != null;
 
-  String? email = prefs.getString('email');
-  String? password = prefs.getString('password');
-
-  bool isLoggedIn = email != null && password != null;
+  bool isLoggedIn = false;
 
   runApp(
     _APP(
