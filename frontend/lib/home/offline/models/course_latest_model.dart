@@ -27,9 +27,9 @@ class Datum {
   String type;
   int id;
   String title;
-  DateTime applyStartDate;
-  DateTime applyEndDate;
-  bool isFree;
+  String applyStartDate;
+  String applyEndDate;
+  bool? isFree;
   dynamic category;
 
   Datum({
@@ -38,7 +38,7 @@ class Datum {
     required this.title,
     required this.applyStartDate,
     required this.applyEndDate,
-    required this.isFree,
+    this.isFree,
     this.category,
   });
 
@@ -46,8 +46,8 @@ class Datum {
     type: json["type"],
     id: json["id"],
     title: json["title"],
-    applyStartDate: DateTime.parse(json["applyStartDate"]),
-    applyEndDate: DateTime.parse(json["applyEndDate"]),
+    applyStartDate: json["applyStartDate"],
+    applyEndDate: json["applyEndDate"],
     isFree: json["isFree"],
     category: json["category"],
   );
@@ -56,8 +56,8 @@ class Datum {
     "type": type,
     "id": id,
     "title": title,
-    "applyStartDate": "${applyStartDate.year.toString().padLeft(4, '0')}-${applyStartDate.month.toString().padLeft(2, '0')}-${applyStartDate.day.toString().padLeft(2, '0')}",
-    "applyEndDate": "${applyEndDate.year.toString().padLeft(4, '0')}-${applyEndDate.month.toString().padLeft(2, '0')}-${applyEndDate.day.toString().padLeft(2, '0')}",
+    "applyStartDate": applyStartDate,
+    "applyEndDate": applyEndDate,
     "isFree": isFree,
     "category": category,
   };

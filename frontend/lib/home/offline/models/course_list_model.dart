@@ -1,6 +1,12 @@
+// To parse this JSON data, do
+//
+//     final courseList = courseListFromJson(jsonString);
+
 import 'dart:convert';
 
-CourseList courseListFromJson(String str) => CourseList.fromJson(json.decode(str));
+CourseList courseListFromJson(String str) =>
+    CourseList.fromJson(json.decode(str));
+
 String courseListToJson(CourseList data) => json.encode(data.toJson());
 
 class CourseList {
@@ -28,46 +34,50 @@ class CourseList {
 }
 
 class Datum {
-  Type type;
+  Type? type;
   int id;
   String title;
-  String? applyStartDate;
-  String? applyEndDate;
-  bool isFree;
+  String applyStartDate;
+  String applyEndDate;
+  dynamic isFree;
   dynamic category;
+  int capacity;
 
   Datum({
-    required this.type,
+    this.type,
     required this.id,
     required this.title,
     required this.applyStartDate,
     required this.applyEndDate,
-    required this.isFree,
+    this.isFree,
     this.category,
+    required this.capacity,
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-    type: typeValues.map[json["type"]]!,
-    id: json["id"],
-    title: json["title"],
-    applyStartDate: json["applyStartDate"],
-    applyEndDate: json["applyEndDate"],
-    isFree: json["isFree"],
-    category: json["category"],
-  );
+        type: typeValues.map[json["type"]],
+        id: json["id"],
+        title: json["title"],
+        applyStartDate: json["applyStartDate"] ?? "",
+        applyEndDate: json["applyEndDate"] ?? "",
+        isFree: json["isFree"],
+        category: json["category"],
+        capacity: json["capacity"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "type": typeValues.reverse[type],
-    "id": id,
-    "title": title,
-    "applyStartDate": applyStartDate,
-    "applyEndDate": applyEndDate,
-    "isFree": isFree,
-    "category": category,
-  };
+        "type": typeValues.reverse[type],
+        "id": id,
+        "title": title,
+        "applyStartDate": applyStartDate,
+        "applyEndDate": applyEndDate,
+        "isFree": isFree,
+        "category": category,
+        "capacity": capacity,
+      };
 }
 
-enum Type { OFF, ON }
+enum Type { ON, OFF }
 
 final typeValues = EnumValues({
   "off": Type.OFF,
