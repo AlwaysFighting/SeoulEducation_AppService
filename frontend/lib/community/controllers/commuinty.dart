@@ -2,15 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/src/screen_util.dart';
 import 'writing.dart';
 import 'searching.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:seoul_education_service/community/models/postlist.dart';
+import 'package:seoul_education_service/const/colors.dart';
+import 'detailcontent.dart';
+import 'package:seoul_education_service/community/constant.dart';
 
 class CommunityPage extends StatefulWidget {
-  const CommunityPage({super.key});
+  //const CommunityPage({super.key});
+  const CommunityPage({Key? key}) : super(key:key);
 
   @override
   State<CommunityPage> createState() => _CommunityState();
 }
 
-  class _CommunityState extends State<CommunityPage>{
+class _CommunityState extends State<CommunityPage>{
+  List<Data>? _posts = [];
+  @override
+  void initState(){
+    super.initState();
+    _fetchPosts();
+  }
     @override
     Widget build(BuildContext context) {
       ScreenUtil.init(context, designSize: const Size(390,844));
@@ -18,10 +31,12 @@ class CommunityPage extends StatefulWidget {
         body: Stack(
         children: [
           Positioned(
-            top:ScreenUtil().setHeight(17),
-              child: appbar()),
+              top: ScreenUtil().setHeight(17),
+              child:appbar()),
+          Padding(padding: EdgeInsets.only(top:ScreenUtil().setHeight(76)),
+          child: content(),),
           Positioned(
-            bottom: ScreenUtil().setHeight(40),
+              bottom: ScreenUtil().setHeight(40),
               right: ScreenUtil().setWidth(16),
               child: button()),
         ],
@@ -33,7 +48,6 @@ class CommunityPage extends StatefulWidget {
       return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-
               Padding(
                 padding: EdgeInsets.only(left:ScreenUtil().setWidth(16)),
                 child: Text(
@@ -52,7 +66,7 @@ class CommunityPage extends StatefulWidget {
             height:ScreenUtil().setHeight(50),
             child: IconButton(onPressed: (){
               //검색화면으로
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => writingScreen()));
+              //Navigator.of(context).push(MaterialPageRoute(builder: (context) => ));
             },
                       icon: Image.asset("assets/images/MagnifyingGlass.png"),
                  iconSize:24,
@@ -73,8 +87,6 @@ class CommunityPage extends StatefulWidget {
                   iconSize:24,
                 ),
           ),
-
-
         ],
       );
   }
@@ -89,5 +101,103 @@ class CommunityPage extends StatefulWidget {
   //글쓰기 버튼 누를시 이동
   void towritingScreen(BuildContext context){
       Navigator.of(context).push(MaterialPageRoute(builder: (context) => writingScreen()));
+  }
+
+  Future<void> _fetchPosts() async{
+    var response = await http.get(Uri.parse('${localhost}/post'));
+    if(response.statusCode == 200){
+      var jsonResponse = jsonDecode(response.body);
+      var posts = postlist.fromJson(jsonResponse);
+        setState((){
+          _posts=posts.data;
+        });
+    }else{
+      print('${response.statusCode}');
+    }
+  }
+
+  Widget content(){
+      if(_posts == null || _posts!.isEmpty){
+        return Center(child: CircularProgressIndicator());
+      }
+      else{
+        return Container(
+          padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(16), ScreenUtil().setHeight(24), ScreenUtil().setWidth(16), ScreenUtil().setHeight(24)),
+          child: ListView.builder(
+                itemCount: _posts!.length,
+                itemBuilder: (BuildContext context, int index){
+                  var post=_posts![index];
+                  return GestureDetector(
+                    onTap:(){
+                      //이 코드 널체크 문제
+                      if(post.postId != null){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Detailcontent(postid:post.postId!)),
+                        );
+                      }
+                    },
+                    child: ListTile(
+                      //제목
+                      title:Padding(
+                        padding: EdgeInsets.only(bottom:10),
+                        //padding: const EdgeInsets.all(8.0),
+                        child: Text(post.title!,
+                        style: TextStyle(
+                          fontFamily: "Spoqa Han Sans Neo",
+                          fontWeight: FontWeight.bold,
+                          fontSize: ScreenUtil().setSp(16),
+                        ),),
+                      ),
+
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          //내용
+                          Text(post.content!,
+                          maxLines: 2,
+                          style: TextStyle(
+                            fontFamily: "Spoqa Han Sans Neo",
+                            fontSize: ScreenUtil().setSp(14),
+                          ),),
+                          SizedBox(height: 24,),
+                          Row(
+                            children: [
+                              Text(post.userNickname!,
+                                style: TextStyle(
+                                  color: textColor2,
+                                  fontFamily: "Spoqa Han Sans Neo",
+                                  fontSize: ScreenUtil().setSp(12),
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Text(post.publishDate!.substring(0,post.publishDate!.indexOf('T')),
+                                style: TextStyle(
+                                  color: textColor2,
+                                  fontFamily: "Spoqa Han Sans Neo",
+                                  fontSize: ScreenUtil().setSp(12),
+                                ),
+                              ),
+                              SizedBox(width: 150,),
+                              Image.asset("assets/images/ChatCircleDots.png", width: ScreenUtil().setWidth(14),height: ScreenUtil().setHeight(14),),
+                              Text(post.commentCount!.toString(),
+                                style: TextStyle(
+                                  color: textColor2,
+                                  fontFamily: "Spoqa Han Sans Neo",
+                                  fontSize: ScreenUtil().setSp(12),
+                                ),
+                              ),
+                              SizedBox(height: 24,),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                }),
+        );
+
+      }
   }
   }

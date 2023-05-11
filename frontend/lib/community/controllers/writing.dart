@@ -2,14 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/src/screen_util.dart';
 import 'package:seoul_education_service/const/colors.dart';
 import 'commuinty.dart';
+import 'package:seoul_education_service/const/navigation.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:seoul_education_service/community/constant.dart';
 
 class writingScreen extends StatefulWidget{
-  const writingScreen({super.key});
+  final postid;
+  const writingScreen({Key? key, this.postid}) : super(key:key);
 
   @override
   State<writingScreen> createState() => _writingState();
 }
 class _writingState extends State<writingScreen>{
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _contentController = TextEditingController();
+
   @override
   Widget build(BuildContext context)
   {
@@ -17,7 +25,7 @@ class _writingState extends State<writingScreen>{
     return Scaffold(
       body: Column(
         children: [
-          SizedBox(height: ScreenUtil().setHeight(35),),
+          SizedBox(height: ScreenUtil().setHeight(50),),
           //앱 상단에 해당하는 것
           Row(
             children: [
@@ -36,18 +44,27 @@ class _writingState extends State<writingScreen>{
                     fontSize: ScreenUtil().setSp(16)
                 ),),
               SizedBox(width: ScreenUtil().setWidth(127),),
-              Text('완료',
-                style: TextStyle(
-                    fontFamily: "Spoqa Han Sans Neo",
-                  //추가적으로 글쓰기 완료시 색깔 변하고 버튼 활성화 기능 구현
-                    fontSize: ScreenUtil().setSp(16)
-                ),),
+              GestureDetector(
+                onTap: (){
+                  _sendPostRequest();
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => Navigation()));
+                },
+                child: Text('완료',
+                  style: TextStyle(
+                      fontFamily: "Spoqa Han Sans Neo",
+                    //추가적으로 글쓰기 완료시 색깔 변하고 버튼 활성화 기능 구현
+                      fontSize: ScreenUtil().setSp(16)
+                  ),),
+              ),
             ],
           ),
           SizedBox(height: ScreenUtil().setHeight(29),),
+          //제목 입력칸
           Container(
             width: ScreenUtil().setWidth(358),
               child:TextFormField(
+                maxLength: 40,
+                controller: _titleController,
                 decoration: const InputDecoration(
                   enabledBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color:textColor2)
@@ -61,11 +78,13 @@ class _writingState extends State<writingScreen>{
                 ),
               )
           ),
+          //내용 입력칸
           Container(
               width: ScreenUtil().setWidth(358),
               child:SizedBox(
                 height: ScreenUtil().setHeight(608),
                 child: TextFormField(
+                  controller: _contentController,
                   maxLines: null,
                   decoration: const InputDecoration(
                     border: InputBorder.none,
@@ -125,12 +144,86 @@ class _writingState extends State<writingScreen>{
               ),
               TextButton(onPressed: (){
                 //게시판 화면으로
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => CommunityPage()));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => Navigation()));
               },
                   child: Text("예")),
             ]
         );
         });
   }
+  //글작성 api처리
+  Future<void> _sendPostRequest() async{
+    final url = Uri.parse('${localhost}/post');
+    //로그인 부분과 합치면 받아오기
+    final headers={'Authorization':'Bearer ${accessToken}', "Content-Type": "application/json"};
+    bool _submitForm(){
+      if(_titleController.text.isEmpty || _contentController.text.isEmpty){
+        if(_titleController.text.isEmpty)
+        {
+          print("Title is Empty.");
+        }
+        if(_contentController.text.isEmpty)
+        {
+          print("Content is Empty.");
+        }
+        return false;
+      }
+      return true;
+    }
+    if(!_submitForm()){
+      return;
+    }
+    //null value인지 체크하기 위해 호출
+    _submitForm();
+    final body = jsonEncode(
+        {"title": _titleController.text,
+          "content": _contentController.text});
+    final response = await http.post(url, headers: headers, body: body);
+    print('request body:${body}');
+    if(response.statusCode == 200){
+      print("Successfully Saved.");
+    }
+    else if(response.statusCode == 401){
+      print("Token Expired...");
+    }
+    else if(response.statusCode == 403){
+      print("Invalid User.");
+    }
+    else if(response.statusCode == 400){
+      if(_titleController.text.length>40)
+      {
+        print("Title is too long");
+      }
+      if(_titleController.text.isEmpty){
+        print("Title is empty");
+      }
+      if(_contentController.text.isEmpty){
+        print("Content is empty");
+      }
+      else{
+        print("${response.statusCode}Value required");
+      }
+    }
+    else{
+      print("Server Error");
+    }
+  }
+
+  //글편집 api처리
+  /*Future<void> _editPostRequest() async{
+    final url = Uri.parse('${localhost}/post/${widget.postid}');
+    final headers={'Authorization':'Bearer ${accessToken}', "Content-Type": "application/json"};
+    final body = jsonEncode(
+        {"title": _titleController.text,
+          "content": _contentController.text});
+    final response = await http.post(url, headers: headers, body: body);
+    print('request body:${body}');
+    if(response.statusCode == 200){
+      print("Successfully Updated.");
+    }
+    else{
+      print("${response.statusCode}");
+    }
+  }*/
 
 }
