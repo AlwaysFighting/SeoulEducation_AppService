@@ -210,7 +210,7 @@ class _OnlineDetailPageState extends State<OnlineDetailPage> {
                           imageURL: '$imageURL/Const/CalendarCheck.png',
                           textStyle: textStyle,
                           title: '등록날짜',
-                          duration: '${snapshot.data?.data.startDate}',
+                          duration: '${snapshot.data?.data.insertDate}',
                         ),
                       ],
                     ),
