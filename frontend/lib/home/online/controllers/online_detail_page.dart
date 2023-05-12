@@ -3,29 +3,29 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../const/api.dart';
 import '../../../const/colors.dart';
 import 'package:http/http.dart' as http;
 
-import '../models/course_detail_model.dart';
+import '../../offline/models/course_detail_model.dart';
 
-class OfflineDetailPage extends StatefulWidget {
+class OnlineDetailPage extends StatefulWidget {
   final int courseID;
   final String title;
 
-  const OfflineDetailPage({
+  const OnlineDetailPage({
     Key? key,
     required this.courseID,
     required this.title,
   }) : super(key: key);
 
   @override
-  State<OfflineDetailPage> createState() => _OfflineDetailPageState();
+  State<OnlineDetailPage> createState() => _OnlineDetailPageState();
 }
 
-class _OfflineDetailPageState extends State<OfflineDetailPage> {
-
+class _OnlineDetailPageState extends State<OnlineDetailPage> {
   final String imageURL = "assets/images";
 
   final titleStyle = const TextStyle(
@@ -43,6 +43,7 @@ class _OfflineDetailPageState extends State<OfflineDetailPage> {
   );
 
   late Future<CourseDetail> services;
+  String _data = '';
 
   Future<CourseDetail> fetchData() async {
     String endPointUrl = CoursesAPI().detailCourse(widget.courseID);
@@ -71,7 +72,6 @@ class _OfflineDetailPageState extends State<OfflineDetailPage> {
     super.initState();
     fetchData();
     services = fetchData();
-    print(widget.courseID);
   }
 
   @override
@@ -117,141 +117,185 @@ class _OfflineDetailPageState extends State<OfflineDetailPage> {
         ],
       ),
       body: FutureBuilder<CourseDetail>(
-          future: services,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              print("snapshot : $snapshot");
-              return Text("${snapshot.error}");
-            }
-            if (!snapshot.hasData) {
-              return const Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    mainColor,
-                  ),
+        future: services,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            print("snapshot : $snapshot");
+            return Text("${snapshot.error}");
+          }
+          if (!snapshot.hasData) {
+            return const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  mainColor,
                 ),
-              );
-            }
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 20.0),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.title,
-                        style: titleStyle.copyWith(fontSize: 18.0),
-                      ),
-                      const SizedBox(height: 16.0),
-                      Row(
-                        children: [
-                          HashTag(
-                            titleStyle: titleStyle,
-                            title: DateTime.parse(snapshot.data?.data
-                                            .applyStartDate as String)
-                                        .isBefore(today) &&
-                                    DateTime.parse(snapshot
-                                            .data?.data.applyEndDate as String)
-                                        .isAfter(today)
-                                ? "신청가능"
-                                : "신청불가능",
-                          ),
-                          const SizedBox(width: 10.0),
-                          HashTag(
-                            titleStyle: titleStyle,
-                            title: '시험대비',
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 30.0),
-                const Divider(),
-                const SizedBox(height: 30.0),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "날짜정보",
-                        style: titleStyle.copyWith(fontSize: 16.0),
-                      ),
-                      const SizedBox(height: 16.0),
-                      CalendarInfo(
-                        imageURL: '$imageURL/Const/Calendar.png',
-                        textStyle: textStyle,
-                        title: '신청기간',
-                        duration:
-                            '${snapshot.data?.data.applyStartDate}~${snapshot.data?.data.applyEndDate}',
-                      ),
-                      const SizedBox(height: 19.0),
-                      CalendarInfo(
-                        imageURL: '$imageURL/Const/PlayCircle.png',
-                        textStyle: textStyle,
-                        title: '강의기간',
-                        duration:
-                            '${snapshot.data?.data.startDate}~${snapshot.data?.data.endDate}',
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 30.0),
-                const Divider(),
-                const SizedBox(height: 30.0),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "정원정보",
-                        style: titleStyle.copyWith(fontSize: 16.0),
-                      ),
-                      const SizedBox(height: 16.0),
-                      CapacityInfo(
-                        imageURL: imageURL,
-                        titleStyle: titleStyle,
-                        text: "${snapshot.data?.data.capacity}",
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 30.0),
-                snapshot.data?.data.deptName != ""
-                    ? const Divider()
-                    : Container(),
-                const SizedBox(height: 30.0),
-                snapshot.data?.data.deptName != ""
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+            );
+          }
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                children: [
+                  const SizedBox(height: 20.0),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.title,
+                          style: titleStyle.copyWith(fontSize: 18.0),
+                        ),
+                        const SizedBox(height: 16.0),
+                        Row(
                           children: [
-                            Text(
-                              "위치정보",
-                              style: titleStyle.copyWith(fontSize: 16.0),
+                            HashTag(
+                              titleStyle: titleStyle,
+                              title: DateTime.parse(snapshot
+                                  .data?.data.applyStartDate as String)
+                                  .isBefore(today) &&
+                                  DateTime.parse(snapshot
+                                      .data?.data.applyEndDate as String)
+                                      .isAfter(today)
+                                  ? "신청가능"
+                                  : "신청불가능",
                             ),
-                            const SizedBox(height: 16.0),
-                            LocationInfo(
-                              imageURL: imageURL,
-                              textStyle: textStyle,
-                              text: "${snapshot.data?.data.deptName}",
-                              alertLocation: '${snapshot.data?.data.deptAddr}',
-                              alertCall: '${snapshot.data?.data.deptTel}',
+                            const SizedBox(width: 10.0),
+                            HashTag(
+                              titleStyle: titleStyle,
+                              title: '시험대비',
+                            ),
+                            const SizedBox(width: 10.0),
+                            HashTag(
+                              titleStyle: titleStyle,
+                              title:
+                              snapshot.data?.data.isFree == true ? '무료' : '유료',
                             ),
                           ],
                         ),
-                      )
-                    : Container(),
-              ],
-            );
-          }),
-      bottomNavigationBar: const RegisterButton(),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 30.0),
+                  const Divider(),
+                  const SizedBox(height: 30.0),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "날짜정보",
+                          style: titleStyle.copyWith(fontSize: 16.0),
+                        ),
+                        const SizedBox(height: 16.0),
+                        CalendarInfo(
+                          imageURL: '$imageURL/Const/Calendar.png',
+                          textStyle: textStyle,
+                          title: '신청기간',
+                          duration:
+                          '${snapshot.data?.data.applyStartDate}~${snapshot.data?.data.applyEndDate}',
+                        ),
+                        const SizedBox(height: 19.0),
+                        CalendarInfo(
+                          imageURL: '$imageURL/Const/PlayCircle.png',
+                          textStyle: textStyle,
+                          title: '강의시작일',
+                          duration: '${snapshot.data?.data.startDate}',
+                        ),
+                        const SizedBox(height: 19.0),
+                        CalendarInfo(
+                          imageURL: '$imageURL/Const/CalendarCheck.png',
+                          textStyle: textStyle,
+                          title: '등록날짜',
+                          duration: '${snapshot.data?.data.startDate}',
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 30.0),
+                  snapshot.data?.data.deptName != ""
+                      ? const Divider()
+                      : Container(),
+                  const SizedBox(height: 30.0),
+                  snapshot.data?.data.deptName != ""
+                      ? Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "위치정보",
+                          style: titleStyle.copyWith(fontSize: 16.0),
+                        ),
+                        const SizedBox(height: 19.0),
+                        LocationInfo(
+                          imageURL: imageURL,
+                          textStyle: textStyle,
+                          text: "${snapshot.data?.data.deptName}",
+                          alertLocation: '${snapshot.data?.data.deptAddr}',
+                          alertCall: '${snapshot.data?.data.deptTel}',
+                        ),
+                      ],
+                    ),
+                  )
+                      : Container(),
+                  const SizedBox(height: 50.0),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 40.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    SizedBox(
+                      height: 56,
+                      width: 358,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          launchURLChannel("${snapshot.data?.data.url}");
+                        },
+                        style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(28.0),
+                            ),
+                            backgroundColor: mainColor),
+                        child: const Text(
+                          '강좌미리보기',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16.0,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+      // bottomNavigationBar: RegisterButton(url: ''),
+    );
+  }
+}
+
+launchURLChannel(String url) async {
+  if (await canLaunch(url)) {
+    await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+  } else {
+    const SnackBar(
+      content: Text(
+        '네트워크를 확인해주세요!',
+        style: TextStyle(color: textColor1),
+      ),
+      duration: Duration(seconds: 1),
+      backgroundColor: lightBackgroundColor,
+      elevation: 1,
     );
   }
 }
@@ -261,10 +305,29 @@ void copyToClipboard(String text) {
 }
 
 class RegisterButton extends StatelessWidget {
+  final String url;
 
   const RegisterButton({
     super.key,
+    required this.url,
   });
+
+  launchURLChannel() async {
+    print("url : $url");
+    if (await canLaunch(url)) {
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    } else {
+      const SnackBar(
+        content: Text(
+          '네트워크를 확인해주세요!',
+          style: TextStyle(color: textColor1),
+        ),
+        duration: Duration(seconds: 1),
+        backgroundColor: lightBackgroundColor,
+        elevation: 1,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -291,7 +354,7 @@ class RegisterButton extends StatelessWidget {
             width: 358,
             child: ElevatedButton(
               onPressed: () {
-                print("Register");
+                launchURLChannel();
               },
               style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
@@ -299,7 +362,7 @@ class RegisterButton extends StatelessWidget {
                   ),
                   backgroundColor: mainColor),
               child: const Text(
-                '강좌신청하기',
+                '강좌미리보기',
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 16.0,
@@ -332,7 +395,10 @@ class LocationInfo extends StatelessWidget {
   final String alertCall;
 
   final snackBar = const SnackBar(
-    content: Text('복사되었습니다!', style: TextStyle(color: textColor1),),
+    content: Text(
+      '복사되었습니다!',
+      style: TextStyle(color: textColor1),
+    ),
     duration: Duration(seconds: 1),
     backgroundColor: lightBackgroundColor,
     elevation: 1,
@@ -401,7 +467,8 @@ class LocationInfo extends StatelessWidget {
                             GestureDetector(
                               onTap: () {
                                 copyToClipboard(alertLocation);
-                                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
                               },
                               child: Image.asset(
                                 "assets/images/Const/CopySimple.png",

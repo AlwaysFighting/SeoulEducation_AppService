@@ -201,7 +201,6 @@ class _body extends StatelessWidget {
                                   title: "${snapshot.data?.data[index].title}",
                                 ),
                               ),
-
                             );
                             print(index);
                           },

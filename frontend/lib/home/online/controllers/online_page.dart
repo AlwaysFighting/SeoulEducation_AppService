@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 import 'package:seoul_education_service/const/colors.dart';
+import 'package:seoul_education_service/home/online/controllers/online_detail_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../const/api.dart';
@@ -173,64 +174,78 @@ class _body extends StatelessWidget {
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: snapshot.data?.data.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: lightBackgroundColor,
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 16.0, bottom: 16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          DateTime.parse(snapshot.data?.data[index].applyStartDate as String).isBefore(today) && DateTime.parse(snapshot.data?.data[index].applyEndDate as String).isAfter(today) ? "#신청가능" : "#신청불가능",
-                                          style: subTitleStyle,
-                                        ),
-                                        const SizedBox(width: 10),
-                                        Text( snapshot.data?.data[index].isFree == true ? "#무료" : "#유료" , style: subTitleStyle),
-                                        const SizedBox(width: 10),
-                                        Text("#직업상담사", style: subTitleStyle),
-                                      ],
-                                    ),
-                                    IconButton(
-                                      onPressed: () {
-                                      },
-                                      icon: Image.asset(
-                                        'assets/images/Const/star_stroke.png',
-                                        width: 20,
-                                        height: 20,
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => OnlineDetailPage(
+                                courseID:
+                                snapshot.data?.data[index].id as int,
+                                title: "${snapshot.data?.data[index].title}",
+                              ),
+                            ),
+                          );
+                          print(index);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: lightBackgroundColor,
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 16.0, bottom: 16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text(
+                                            DateTime.parse(snapshot.data?.data[index].applyStartDate as String).isBefore(today) && DateTime.parse(snapshot.data?.data[index].applyEndDate as String).isAfter(today) ? "#신청가능" : "#신청불가능",
+                                            style: subTitleStyle,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Text( snapshot.data?.data[index].isFree == true ? "#무료" : "#유료" , style: subTitleStyle),
+                                          const SizedBox(width: 10),
+                                          Text("#직업상담사", style: subTitleStyle),
+                                        ],
                                       ),
-                                    )
-                                  ],
-                                ),
-                                SizedBox(
-                                  width: 302,
-                                  child: Text(
-                                    '${snapshot.data?.data[index].title}',
+                                      IconButton(
+                                        onPressed: () {
+                                        },
+                                        icon: Image.asset(
+                                          'assets/images/Const/star_stroke.png',
+                                          width: 20,
+                                          height: 20,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    width: 302,
+                                    child: Text(
+                                      '${snapshot.data?.data[index].title}',
+                                      style: subTitleStyle.copyWith(
+                                          color: textColor1, fontSize: 16.0),
+                                      softWrap: true,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 14.0),
+                                  Text(
+                                    "신청기간: ${snapshot.data?.data[index].applyStartDate}~${snapshot.data?.data[index].applyEndDate}",
                                     style: subTitleStyle.copyWith(
-                                        color: textColor1, fontSize: 16.0),
-                                    softWrap: true,
+                                      color: textColor2,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 14.0),
-                                Text(
-                                  "신청기간: ${snapshot.data?.data[index].applyStartDate}~${snapshot.data?.data[index].applyEndDate}",
-                                  style: subTitleStyle.copyWith(
-                                    color: textColor2,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),

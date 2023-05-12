@@ -26,15 +26,14 @@ class CourseDetail {
 
 class Data {
   int courseId;
-  String courseCode;
   String type;
   String title;
   String? category;
   String? url;
-  String applyStartDate;
-  String applyEndDate;
-  String startDate;
-  String endDate;
+  String? applyStartDate;
+  String? applyEndDate;
+  String? startDate;
+  String? endDate;
   int? deptId;
   String? deptName;
   String? deptGu;
@@ -45,18 +44,19 @@ class Data {
   bool? isAvailable;
   bool? isFree;
   int? capacity;
+  String? deptTel;
+  String? deptAddr;
 
   Data({
     required this.courseId,
-    required this.courseCode,
     required this.type,
     required this.title,
     this.category,
     this.url,
-    required this.applyStartDate,
-    required this.applyEndDate,
-    required this.startDate,
-    required this.endDate,
+    this.applyStartDate,
+    this.applyEndDate,
+    this.startDate,
+    this.endDate,
     this.deptId,
     this.deptName,
     this.deptGu,
@@ -67,51 +67,55 @@ class Data {
     this.isAvailable,
     this.isFree,
     this.capacity,
+    this.deptTel,
+    this.deptAddr,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-    courseId: json["courseId"],
-    courseCode: json["courseCode"],
-    type: json["type"],
-    title: json["title"],
-    category: json["category"],
-    url: json["url"],
-    applyStartDate: json["applyStartDate"],
-    applyEndDate: json["applyEndDate"],
-    startDate: json["startDate"],
-    endDate: json["endDate"],
-    deptId: json["deptId"] ?? 0,
-    deptName: json["deptName"] ?? "",
-    deptGu: json["deptGu"] ?? "",
-    deptLat: json["deptLat"]?.toDouble(),
-    deptLng: json["deptLng"]?.toDouble(),
-    insertDate: json["insertDate"],
-    likeCount: json["likeCount"] ?? 0,
-    isAvailable: json["isAvailable"] ?? false,
-    isFree: json["isFree"] ?? false,
-    capacity: json["capacity"] ?? 0,
-  );
+        courseId: json["courseId"],
+        type: json["type"],
+        title: json["title"],
+        category: json["category"],
+        url: json["url"],
+        applyStartDate: json["applyStartDate"] ?? "",
+        applyEndDate: json["applyEndDate"] ?? "",
+        startDate: json["startDate"] ?? "",
+        endDate: json["endDate"] ?? "",
+        deptId: json["deptId"] ?? 0,
+        deptName: json["deptName"] ?? "",
+        deptGu: json["deptGu"] ?? "",
+        deptLat: json["deptLat"]?.toDouble(),
+        deptLng: json["deptLng"]?.toDouble(),
+        insertDate: json["insertDate"],
+        likeCount: json["likeCount"] ?? 0,
+        isAvailable: json["isAvailable"] ?? false,
+        isFree: json["isFree"] ?? false,
+        capacity: json["capacity"] ?? 0,
+        deptTel: json["deptTel"] ?? "",
+        deptAddr: json["deptAddr"] ?? "",
+      );
 
   Map<String, dynamic> toJson() => {
-    "courseId": courseId,
-    "courseCode": courseCode,
-    "type": type,
-    "title": title,
-    "category": category,
-    "url": url,
-    "applyStartDate": applyStartDate,
-    "applyEndDate": applyEndDate,
-    "startDate": startDate,
-    "endDate": endDate,
-    "deptId": deptId,
-    "deptName": deptName,
-    "deptGu": deptGu,
-    "deptLat": deptLat,
-    "deptLng": deptLng,
-    "insertDate": insertDate,
-    "likeCount": likeCount,
-    "isAvailable": isAvailable,
-    "isFree": isFree,
-    "capacity": capacity,
-  };
+        "courseId": courseId,
+        "type": type,
+        "title": title,
+        "category": category,
+        "url": url,
+        "applyStartDate": applyStartDate,
+        "applyEndDate": applyEndDate,
+        "startDate": startDate,
+        "endDate": endDate,
+        "deptId": deptId,
+        "deptName": deptName,
+        "deptGu": deptGu,
+        "deptLat": deptLat,
+        "deptLng": deptLng,
+        "insertDate": insertDate,
+        "likeCount": likeCount,
+        "isAvailable": isAvailable,
+        "isFree": isFree,
+        "capacity": capacity,
+        "deptTel": deptTel,
+        "deptAddr": deptAddr,
+      };
 }
