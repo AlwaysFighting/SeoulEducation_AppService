@@ -204,8 +204,6 @@ class _body extends StatelessWidget {
                                     ),
                                     IconButton(
                                       onPressed: () {
-                                        print(
-                                            "${snapshot.data?.data.length}");
                                       },
                                       icon: Image.asset(
                                         'assets/images/Const/star_stroke.png',

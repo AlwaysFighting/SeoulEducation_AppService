@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final courseDetail = courseDetailFromJson(jsonString);
-
 import 'dart:convert';
 
 CourseDetail courseDetailFromJson(String str) => CourseDetail.fromJson(json.decode(str));
@@ -33,22 +29,22 @@ class Data {
   String courseCode;
   String type;
   String title;
-  dynamic category;
-  String url;
-  DateTime applyStartDate;
-  DateTime applyEndDate;
+  String? category;
+  String? url;
+  String applyStartDate;
+  String applyEndDate;
   String startDate;
-  dynamic endDate;
-  int deptId;
-  String deptName;
-  String deptGu;
-  double deptLat;
-  double deptLng;
-  DateTime insertDate;
-  int likeCount;
-  bool isAvailable;
-  bool isFree;
-  int capacity;
+  String endDate;
+  int? deptId;
+  String? deptName;
+  String? deptGu;
+  double? deptLat;
+  double? deptLng;
+  String? insertDate;
+  int? likeCount;
+  bool? isAvailable;
+  bool? isFree;
+  int? capacity;
 
   Data({
     required this.courseId,
@@ -56,21 +52,21 @@ class Data {
     required this.type,
     required this.title,
     this.category,
-    required this.url,
+    this.url,
     required this.applyStartDate,
     required this.applyEndDate,
     required this.startDate,
-    this.endDate,
-    required this.deptId,
-    required this.deptName,
-    required this.deptGu,
-    required this.deptLat,
-    required this.deptLng,
-    required this.insertDate,
-    required this.likeCount,
-    required this.isAvailable,
-    required this.isFree,
-    required this.capacity,
+    required this.endDate,
+    this.deptId,
+    this.deptName,
+    this.deptGu,
+    this.deptLat,
+    this.deptLng,
+    this.insertDate,
+    this.likeCount,
+    this.isAvailable,
+    this.isFree,
+    this.capacity,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
@@ -80,20 +76,20 @@ class Data {
     title: json["title"],
     category: json["category"],
     url: json["url"],
-    applyStartDate: DateTime.parse(json["applyStartDate"]),
-    applyEndDate: DateTime.parse(json["applyEndDate"]),
+    applyStartDate: json["applyStartDate"],
+    applyEndDate: json["applyEndDate"],
     startDate: json["startDate"],
     endDate: json["endDate"],
-    deptId: json["deptId"],
-    deptName: json["deptName"],
-    deptGu: json["deptGu"],
+    deptId: json["deptId"] ?? 0,
+    deptName: json["deptName"] ?? "",
+    deptGu: json["deptGu"] ?? "",
     deptLat: json["deptLat"]?.toDouble(),
     deptLng: json["deptLng"]?.toDouble(),
-    insertDate: DateTime.parse(json["insertDate"]),
-    likeCount: json["likeCount"],
-    isAvailable: json["isAvailable"],
-    isFree: json["isFree"],
-    capacity: json["capacity"],
+    insertDate: json["insertDate"],
+    likeCount: json["likeCount"] ?? 0,
+    isAvailable: json["isAvailable"] ?? false,
+    isFree: json["isFree"] ?? false,
+    capacity: json["capacity"] ?? 0,
   );
 
   Map<String, dynamic> toJson() => {
@@ -103,8 +99,8 @@ class Data {
     "title": title,
     "category": category,
     "url": url,
-    "applyStartDate": "${applyStartDate.year.toString().padLeft(4, '0')}-${applyStartDate.month.toString().padLeft(2, '0')}-${applyStartDate.day.toString().padLeft(2, '0')}",
-    "applyEndDate": "${applyEndDate.year.toString().padLeft(4, '0')}-${applyEndDate.month.toString().padLeft(2, '0')}-${applyEndDate.day.toString().padLeft(2, '0')}",
+    "applyStartDate": applyStartDate,
+    "applyEndDate": applyEndDate,
     "startDate": startDate,
     "endDate": endDate,
     "deptId": deptId,
@@ -112,7 +108,7 @@ class Data {
     "deptGu": deptGu,
     "deptLat": deptLat,
     "deptLng": deptLng,
-    "insertDate": insertDate.toIso8601String(),
+    "insertDate": insertDate,
     "likeCount": likeCount,
     "isAvailable": isAvailable,
     "isFree": isFree,

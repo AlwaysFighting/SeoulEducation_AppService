@@ -92,7 +92,6 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     if (response.statusCode == 200) {
-      print("로그인 성공! : ${response.body}");
       setState(() {
         _isEmailError = false;
         _isPasswordError = false;

@@ -10,6 +10,7 @@ import '../../../notification/models/category_button.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/course_list_model.dart';
+import 'offline_detail_page.dart';
 
 class OfflinePage extends StatefulWidget {
   const OfflinePage({Key? key}) : super(key: key);
@@ -19,6 +20,9 @@ class OfflinePage extends StatefulWidget {
 }
 
 class _OfflinePageState extends State<OfflinePage> {
+
+  final String imageURL = "assets/images/";
+
   final titleStyle = const TextStyle(
     color: textColor1,
     fontSize: 20,
@@ -50,7 +54,6 @@ class _OfflinePageState extends State<OfflinePage> {
     );
 
     if (response.statusCode == 200) {
-      print(response.body);
       return CourseList.fromJson(json.decode(response.body));
     } else {
       print(response.body);
@@ -67,6 +70,7 @@ class _OfflinePageState extends State<OfflinePage> {
 
   @override
   Widget build(BuildContext context) {
+
     DateTime today = DateTime.now();
 
     return Scaffold(
@@ -75,6 +79,16 @@ class _OfflinePageState extends State<OfflinePage> {
         backgroundColor: Colors.white,
         foregroundColor: textColor1,
         elevation: 0,
+        leading: IconButton(
+          icon: Image.asset(
+            '$imageURL/Const/ArrowLeft.png',
+            width: 24,
+            height: 24,
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
         title: Text(
           "오프라인강좌",
           style: subTitleStyle.copyWith(
@@ -85,15 +99,15 @@ class _OfflinePageState extends State<OfflinePage> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
-            child: GestureDetector(
-              onTap: () {
-                print("Search");
-              },
-              child: Image.asset(
-                'assets/images/Const/MagnifyingGlass.png',
+            child: IconButton(
+              icon: Image.asset(
+                '$imageURL/Const/MagnifyingGlass.png',
                 width: 24,
                 height: 24,
               ),
+              onPressed: () {
+                print("Search");
+              },
             ),
           ),
         ],
@@ -177,71 +191,100 @@ class _body extends StatelessWidget {
                     itemBuilder: (BuildContext context, int index) {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: lightBackgroundColor,
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 16.0, bottom: 16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          DateTime.parse(snapshot.data?.data[index].applyStartDate as String).isBefore(today) && DateTime.parse(snapshot.data?.data[index].applyEndDate as String).isAfter(today) ? "#신청가능" : "#신청불가능",
-                                          style: subTitleStyle,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => OfflineDetailPage(
+                                  courseID:
+                                      snapshot.data?.data[index].id as int,
+                                  title: "${snapshot.data?.data[index].title}",
+                                ),
+                              ),
+
+                            );
+                            print(index);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: lightBackgroundColor,
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 16.0, bottom: 16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text(
+                                            DateTime.parse(snapshot
+                                                                .data
+                                                                ?.data[index]
+                                                                .applyStartDate
+                                                            as String)
+                                                        .isBefore(today) &&
+                                                    DateTime.parse(snapshot
+                                                                .data
+                                                                ?.data[index]
+                                                                .applyEndDate
+                                                            as String)
+                                                        .isAfter(today)
+                                                ? "#신청가능"
+                                                : "#신청불가능",
+                                            style: subTitleStyle,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Text("#시험대비", style: subTitleStyle),
+                                        ],
+                                      ),
+                                      IconButton(
+                                        onPressed: () {},
+                                        icon: Image.asset(
+                                          'assets/images/Const/star_stroke.png',
+                                          width: 20,
+                                          height: 20,
                                         ),
-                                        const SizedBox(width: 10),
-                                        Text("#시험대비", style: subTitleStyle),
-                                      ],
-                                    ),
-                                    IconButton(
-                                      onPressed: () {
-                                        print(
-                                            "${snapshot.data?.data.length}");
-                                      },
-                                      icon: Image.asset(
-                                        'assets/images/Const/star_stroke.png',
-                                        width: 20,
-                                        height: 20,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                SizedBox(
-                                  width: 302,
-                                  child: Text(
-                                    '${snapshot.data?.data[index].title}',
-                                    style: subTitleStyle.copyWith(
-                                        color: textColor1, fontSize: 16.0),
-                                    softWrap: true,
+                                      )
+                                    ],
                                   ),
-                                ),
-                                const SizedBox(height: 14.0),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "신청기간: ${snapshot.data?.data[index].applyStartDate}~${snapshot.data?.data[index].applyEndDate}",
+                                  SizedBox(
+                                    width: 302,
+                                    child: Text(
+                                      '${snapshot.data?.data[index].title}',
                                       style: subTitleStyle.copyWith(
-                                        color: textColor2,
-                                        fontWeight: FontWeight.w500,
+                                          color: textColor1, fontSize: 16.0),
+                                      softWrap: true,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 14.0),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "신청기간: ${snapshot.data?.data[index].applyStartDate}~${snapshot.data?.data[index].applyEndDate}",
+                                        style: subTitleStyle.copyWith(
+                                          color: textColor2,
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(right: 16.0),
-                                      child: Text("정원 3/${snapshot.data?.data[index].capacity}", style: subTitleStyle),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 16.0),
+                                        child: Text(
+                                            "정원 3/${snapshot.data?.data[index].capacity}",
+                                            style: subTitleStyle),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
