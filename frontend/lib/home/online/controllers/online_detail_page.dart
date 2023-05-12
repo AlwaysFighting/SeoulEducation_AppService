@@ -196,7 +196,8 @@ class _OnlineDetailPageState extends State<OnlineDetailPage> {
                           textStyle: textStyle,
                           title: '신청기간',
                           duration:
-                          '${snapshot.data?.data.applyStartDate}~${snapshot.data?.data.applyEndDate}',
+                              '${snapshot.data?.data.applyStartDate}~${snapshot.data?.data.applyEndDate}',
+                          changeWidth: false,
                         ),
                         const SizedBox(height: 19.0),
                         CalendarInfo(
@@ -204,6 +205,7 @@ class _OnlineDetailPageState extends State<OnlineDetailPage> {
                           textStyle: textStyle,
                           title: '강의시작일',
                           duration: '${snapshot.data?.data.startDate}',
+                          changeWidth: true,
                         ),
                         const SizedBox(height: 19.0),
                         CalendarInfo(
@@ -211,6 +213,7 @@ class _OnlineDetailPageState extends State<OnlineDetailPage> {
                           textStyle: textStyle,
                           title: '등록날짜',
                           duration: '${snapshot.data?.data.insertDate}',
+                          changeWidth: false,
                         ),
                       ],
                     ),
@@ -581,12 +584,14 @@ class CalendarInfo extends StatelessWidget {
     required this.textStyle,
     required this.title,
     required this.duration,
+    required this.changeWidth,
   });
 
   final String imageURL;
   final TextStyle textStyle;
   final String title;
   final String duration;
+  final bool changeWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -602,7 +607,9 @@ class CalendarInfo extends StatelessWidget {
           title,
           style: textStyle.copyWith(color: textColor2),
         ),
-        const SizedBox(width: 16.0),
+        changeWidth == true
+            ? const SizedBox(width: 16.0)
+            : const SizedBox(width: 29.0),
         Text(
           duration,
           style: textStyle,

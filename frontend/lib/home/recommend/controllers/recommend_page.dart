@@ -13,6 +13,16 @@ class RecommendPage extends StatelessWidget {
         backgroundColor: Colors.white,
         foregroundColor: textColor2,
         elevation: 0,
+        leading: IconButton(
+          icon: Image.asset(
+            'assets/images/Const/ArrowLeft.png',
+            width: 24,
+            height: 24,
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
       ),
       body: const Center(
         child: Text("RecommendPage"),

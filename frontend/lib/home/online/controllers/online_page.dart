@@ -19,6 +19,8 @@ class OnlinePage extends StatefulWidget {
 
 class _OnlinePageState extends State<OnlinePage> {
 
+  final String imageURL = "assets/images/";
+
   final titleStyle = const TextStyle(
     color: textColor1,
     fontSize: 20,
@@ -80,6 +82,16 @@ class _OnlinePageState extends State<OnlinePage> {
             fontSize: 16.0,
             color: textColor1,
           ),
+        ),
+        leading: IconButton(
+          icon: Image.asset(
+            '$imageURL/Const/ArrowLeft.png',
+            width: 24,
+            height: 24,
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
         actions: [
           Padding(
