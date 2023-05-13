@@ -1,14 +1,3 @@
-// To parse this JSON data, do
-//
-//     final courseList = courseListFromJson(jsonString);
-
-import 'dart:convert';
-
-CourseList courseListFromJson(String str) =>
-    CourseList.fromJson(json.decode(str));
-
-String courseListToJson(CourseList data) => json.encode(data.toJson());
-
 class CourseList {
   int status;
   String message;

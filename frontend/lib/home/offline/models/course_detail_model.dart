@@ -1,9 +1,3 @@
-import 'dart:convert';
-
-CourseDetail courseDetailFromJson(String str) => CourseDetail.fromJson(json.decode(str));
-
-String courseDetailToJson(CourseDetail data) => json.encode(data.toJson());
-
 class CourseDetail {
   int status;
   Data data;

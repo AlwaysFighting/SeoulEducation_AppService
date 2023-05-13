@@ -1,8 +1,3 @@
-import 'dart:convert';
-
-CourseLatest courseLatestFromJson(String str) => CourseLatest.fromJson(json.decode(str));
-String courseLatestToJson(CourseLatest data) => json.encode(data.toJson());
-
 class CourseLatest {
   int status;
   List<Datum> data;

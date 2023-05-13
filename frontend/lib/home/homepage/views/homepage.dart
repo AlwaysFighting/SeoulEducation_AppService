@@ -148,7 +148,6 @@ class _HomePageState extends State<HomePage> {
               _onlineBody(services: onlineServices, today: today, subTitleStyle: subTitleStyle),
               Text("오프라인 새로운 강좌", style: titleStyle.copyWith(fontSize: 18.0)),
               const SizedBox(height: 20),
-
             ],
           ),
         ),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:seoul_education_service/const/back_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../const/api.dart';
@@ -79,16 +80,7 @@ class _OfflinePageState extends State<OfflinePage> {
         backgroundColor: Colors.white,
         foregroundColor: textColor1,
         elevation: 0,
-        leading: IconButton(
-          icon: Image.asset(
-            '$imageURL/Const/ArrowLeft.png',
-            width: 24,
-            height: 24,
-          ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
+        leading: const CustomBackButton(),
         title: Text(
           "오프라인강좌",
           style: subTitleStyle.copyWith(
