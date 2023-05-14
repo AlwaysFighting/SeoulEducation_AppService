@@ -13,7 +13,10 @@ import '../../offline/models/course_search_model.dart';
 import 'online_detail_page.dart';
 
 class OnlineSearchPage extends StatefulWidget {
-  const OnlineSearchPage({Key? key}) : super(key: key);
+
+  final String searchKeyword;
+
+  const OnlineSearchPage({Key? key, required this.searchKeyword}) : super(key: key);
 
   @override
   State<OnlineSearchPage> createState() => _OnlineSearchPageState();
@@ -23,6 +26,8 @@ class _OnlineSearchPageState extends State<OnlineSearchPage> {
 
   final TextEditingController _searchController = TextEditingController();
   final String imageURL = "assets/images/";
+
+  String _searchKeyword = '';
 
   final titleStyle = const TextStyle(
     color: textColor1,
@@ -41,6 +46,7 @@ class _OnlineSearchPageState extends State<OnlineSearchPage> {
   late Future<SearchCourse?> services;
 
   Future<SearchCourse?> fetchData(String text) async {
+
     String endPointUrl = CoursesAPI().searchCourses("on", text);
     final Uri url = Uri.parse(endPointUrl);
 
@@ -54,30 +60,31 @@ class _OnlineSearchPageState extends State<OnlineSearchPage> {
       },
     );
 
-    if (response.statusCode == 200) {
-      return SearchCourse?.fromJson(json.decode(response.body));
-    } else {
-      print(response.body);
-      throw Exception("Failed to load Services..");
+    try {
+      if (response.statusCode == 200) {
+        final searchCourse = SearchCourse.fromJson(json.decode(response.body));
+        return searchCourse;
+      } else if (response.statusCode == 400) {
+        return null;
+      } else {
+        throw Exception("Failed to load Services..");
+      }
+    } catch (e) {
+      print(e.toString());
+      return null;
     }
   }
 
   bool _isLoading = false;
 
-  void _handleSearch() async {
+  Future<void> _handleSearch() async {
     setState(() {
       _isLoading = true;
+      _searchKeyword = _searchController.text;
     });
 
-    // API 호출 및 검색 결과 업데이트
-    await fetchData(_searchController.text);
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const OnlineSearchPage()),
-    );
-
     setState(() {
+      _resetState();
       _isLoading = false;
     });
   }
@@ -85,8 +92,13 @@ class _OnlineSearchPageState extends State<OnlineSearchPage> {
   @override
   void initState() {
     super.initState();
-    fetchData("라호");
-    services = fetchData("라호");
+    _resetState();
+    _searchKeyword = widget.searchKeyword;
+  }
+
+  void _resetState() {
+    fetchData(_searchKeyword);
+    services = fetchData(_searchKeyword);
   }
 
   @override
@@ -102,8 +114,8 @@ class _OnlineSearchPageState extends State<OnlineSearchPage> {
         elevation: 0,
         title: TextField(
           controller: _searchController,
-          decoration: const InputDecoration(
-            hintText: '찾고자 하는 키워드를 검색해주세요',
+          decoration: InputDecoration(
+            hintText: _searchKeyword.isEmpty ? '찾고자 하는 키워드를 검색해주세요' : _searchKeyword,
             border: InputBorder.none,
           ),
         ),
@@ -150,13 +162,15 @@ class Body extends StatelessWidget {
         if (snapshot.hasError) {
           return Container();
         }
-        if (!snapshot.hasData || snapshot.data == null ||
-            snapshot.data!.data == null) {
+        if (!snapshot.hasData || snapshot.data == null) {
+          return Container();
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
             child: CircularProgressIndicator(),
           );
         }
-        if (snapshot.data!.data!.isEmpty) {
+        if (snapshot.data!.data == null || snapshot.data!.data!.isEmpty) {
           return const Center(
             child: Text('No data'),
           );
@@ -187,7 +201,6 @@ class Body extends StatelessWidget {
                                   ),
                             ),
                           );
-                          print(index);
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(bottom: 16.0),

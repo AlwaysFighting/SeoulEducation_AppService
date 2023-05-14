@@ -1,27 +1,33 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
-import 'package:seoul_education_service/const/back_button.dart';
-import 'package:seoul_education_service/const/colors.dart';
-import 'package:seoul_education_service/home/online/controllers/online_detail_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../const/api.dart';
-import '../../../notification/models/category_button.dart';
-import '../../offline/models/course_list_model.dart';
-import 'online_search_page.dart';
+import '../../../const/back_button.dart';
+import '../../../const/colors.dart';
 
-class OnlinePage extends StatefulWidget {
-  const OnlinePage({Key? key}) : super(key: key);
+import 'package:http/http.dart' as http;
+
+import '../../offline/models/course_search_model.dart';
+import 'offline_detail_page.dart';
+
+class OfflineSearchPage extends StatefulWidget {
+
+  final String searchKeyword;
+
+  const OfflineSearchPage({Key? key, required this.searchKeyword}) : super(key: key);
 
   @override
-  State<OnlinePage> createState() => _OnlinePageState();
+  State<OfflineSearchPage> createState() => _OfflineSearchPageState();
 }
 
-class _OnlinePageState extends State<OnlinePage> {
+class _OfflineSearchPageState extends State<OfflineSearchPage> {
 
+  final TextEditingController _searchController = TextEditingController();
   final String imageURL = "assets/images/";
+
+  String _searchKeyword = '';
 
   final titleStyle = const TextStyle(
     color: textColor1,
@@ -37,10 +43,11 @@ class _OnlinePageState extends State<OnlinePage> {
     fontFamily: "Spoqa Han Sans Neo",
   );
 
-  late Future<CourseList> services;
+  late Future<SearchCourse?> services;
 
-  Future<CourseList> fetchData() async {
-    String endPointUrl = CoursesAPI().coursesList("on", "new");
+  Future<SearchCourse?> fetchData(String text) async {
+
+    String endPointUrl = CoursesAPI().searchCourses("on", text);
     final Uri url = Uri.parse(endPointUrl);
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -53,23 +60,50 @@ class _OnlinePageState extends State<OnlinePage> {
       },
     );
 
-    if (response.statusCode == 200) {
-      return CourseList.fromJson(json.decode(response.body));
-    } else {
-      print(response.body);
-      throw Exception("Failed to load Services..");
+    try {
+      if (response.statusCode == 200) {
+        final searchCourse = SearchCourse.fromJson(json.decode(response.body));
+        return searchCourse;
+      } else if (response.statusCode == 400) {
+        return null;
+      } else {
+        throw Exception("Failed to load Services..");
+      }
+    } catch (e) {
+      print(e.toString());
+      return null;
     }
+  }
+
+  bool _isLoading = false;
+
+  Future<void> _handleSearch() async {
+    setState(() {
+      _isLoading = true;
+      _searchKeyword = _searchController.text;
+    });
+
+    setState(() {
+      _resetState();
+      _isLoading = false;
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    fetchData();
-    services = fetchData();
+    _resetState();
+    _searchKeyword = widget.searchKeyword;
+  }
+
+  void _resetState() {
+    fetchData(_searchKeyword);
+    services = fetchData(_searchKeyword);
   }
 
   @override
   Widget build(BuildContext context) {
+
     DateTime today = DateTime.now();
 
     return Scaffold(
@@ -78,11 +112,11 @@ class _OnlinePageState extends State<OnlinePage> {
         backgroundColor: Colors.white,
         foregroundColor: textColor1,
         elevation: 0,
-        title: Text(
-          "온라인강좌",
-          style: subTitleStyle.copyWith(
-            fontSize: 16.0,
-            color: textColor1,
+        title: TextField(
+          controller: _searchController,
+          decoration: InputDecoration(
+            hintText: _searchKeyword.isEmpty ? '찾고자 하는 키워드를 검색해주세요' : _searchKeyword,
+            border: InputBorder.none,
           ),
         ),
         leading: const CustomBackButton(),
@@ -91,10 +125,7 @@ class _OnlinePageState extends State<OnlinePage> {
             padding: const EdgeInsets.only(right: 16.0),
             child: GestureDetector(
               onTap: () {
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (BuildContext context) {
-                      return const OnlineSearchPage(searchKeyword: '',);
-                    }));
+                _handleSearch();
               },
               child: Image.asset(
                 'assets/images/Const/MagnifyingGlass.png',
@@ -105,42 +136,45 @@ class _OnlinePageState extends State<OnlinePage> {
           ),
         ],
       ),
-      body: _body(services: services, today: today, subTitleStyle: subTitleStyle),
+      body: _isLoading ? const Center(child: CircularProgressIndicator()) :
+      Body(services: services, today: today, subTitleStyle: subTitleStyle),
     );
   }
 }
 
-class _body extends StatelessWidget {
-  const _body({
+class Body extends StatelessWidget {
+  const Body({
     super.key,
     required this.services,
     required this.today,
     required this.subTitleStyle,
   });
 
-  final Future<CourseList> services;
+  final Future<SearchCourse?> services;
   final DateTime today;
   final TextStyle subTitleStyle;
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<CourseList>(
+    return FutureBuilder<SearchCourse?>(
       future: services,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          print("snapshot : $snapshot");
-          return Text("${snapshot.error}");
+          return Container();
         }
-        if (!snapshot.hasData) {
+        if (!snapshot.hasData || snapshot.data == null) {
+          return Container();
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(
-                mainColor,
-              ),
-            ),
+            child: CircularProgressIndicator(),
           );
         }
-        // 데이터가 있을 때 출력할 위젯
+        if (snapshot.data!.data == null || snapshot.data!.data!.isEmpty) {
+          return const Center(
+            child: Text('No data'),
+          );
+        }
         return Padding(
           padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 20.0),
           child: Scrollbar(
@@ -148,52 +182,25 @@ class _body extends StatelessWidget {
               physics: const BouncingScrollPhysics(),
               child: Column(
                 children: [
-                  Row(
-                    children: [
-                      NewestCategoryButton(
-                        isSelected: false,
-                        onPressed: () {
-                          print("최신순");
-                        },
-                        title: '최신순',
-                      ),
-                      const SizedBox(width: 16.0),
-                      NewestCategoryButton(
-                        isSelected: false,
-                        onPressed: () {
-                          print("모집예정");
-                        },
-                        title: '모집예정',
-                      ),
-                      const SizedBox(width: 16.0),
-                      NewestCategoryButton(
-                        isSelected: false,
-                        onPressed: () {
-                          print("시험대비");
-                        },
-                        title: '시험대비',
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20.0),
                   ListView.builder(
                     shrinkWrap: true,
                     cacheExtent: 10,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: snapshot.data?.data.length,
+                    itemCount: snapshot.data?.data?.length,
                     itemBuilder: (BuildContext context, int index) {
                       return GestureDetector(
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (_) => OnlineDetailPage(
-                                courseID:
-                                snapshot.data?.data[index].id as int,
-                                title: "${snapshot.data?.data[index].title}",
-                              ),
+                              builder: (_) =>
+                                  OfflineDetailPage(
+                                    courseID:
+                                    snapshot.data?.data?[index].id as int,
+                                    title: "${snapshot.data?.data?[index]
+                                        .title}",
+                                  ),
                             ),
                           );
-                          print(index);
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(bottom: 16.0),
@@ -215,18 +222,28 @@ class _body extends StatelessWidget {
                                       Row(
                                         children: [
                                           Text(
-                                            DateTime.parse(snapshot.data?.data[index].applyStartDate as String).isBefore(today) && DateTime.parse(snapshot.data?.data[index].applyEndDate as String).isAfter(today) ? "#신청가능" : "#신청불가능",
+                                            DateTime.parse(
+                                                snapshot.data?.data?[index]
+                                                    .applyStartDate as String)
+                                                .isBefore(today) &&
+                                                DateTime.parse(
+                                                    snapshot.data?.data?[index]
+                                                        .applyEndDate as String)
+                                                    .isAfter(today)
+                                                ? "#신청가능"
+                                                : "#신청불가능",
                                             style: subTitleStyle,
                                           ),
                                           const SizedBox(width: 10),
-                                          Text( snapshot.data?.data[index].isFree == true ? "#무료" : "#유료" , style: subTitleStyle),
+                                          Text(snapshot.data?.data?[index]
+                                              .isFree == true ? "#무료" : "#유료",
+                                              style: subTitleStyle),
                                           const SizedBox(width: 10),
                                           Text("#직업상담사", style: subTitleStyle),
                                         ],
                                       ),
                                       IconButton(
-                                        onPressed: () {
-                                        },
+                                        onPressed: () {},
                                         icon: Image.asset(
                                           'assets/images/Const/star_stroke.png',
                                           width: 20,
@@ -238,7 +255,7 @@ class _body extends StatelessWidget {
                                   SizedBox(
                                     width: 302,
                                     child: Text(
-                                      '${snapshot.data?.data[index].title}',
+                                      '${snapshot.data?.data?[index].title}',
                                       style: subTitleStyle.copyWith(
                                           color: textColor1, fontSize: 16.0),
                                       softWrap: true,
@@ -246,7 +263,9 @@ class _body extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 14.0),
                                   Text(
-                                    "신청기간: ${snapshot.data?.data[index].applyStartDate}~${snapshot.data?.data[index].applyEndDate}",
+                                    "신청기간: ${snapshot.data?.data?[index]
+                                        .applyStartDate}~${snapshot.data
+                                        ?.data?[index].applyEndDate}",
                                     style: subTitleStyle.copyWith(
                                       color: textColor2,
                                       fontWeight: FontWeight.w500,
@@ -265,7 +284,7 @@ class _body extends StatelessWidget {
             ),
           ),
         );
-      },
+      }
     );
   }
 }

@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 
 import '../models/course_list_model.dart';
 import 'offline_detail_page.dart';
+import 'offline_search_page.dart';
 
 class OfflinePage extends StatefulWidget {
   const OfflinePage({Key? key}) : super(key: key);
@@ -98,7 +99,10 @@ class _OfflinePageState extends State<OfflinePage> {
                 height: 24,
               ),
               onPressed: () {
-                print("Search");
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (BuildContext context) {
+                      return const OfflineSearchPage(searchKeyword: '',);
+                    }));
               },
             ),
           ),
