@@ -273,7 +273,7 @@ class _body extends StatelessWidget {
                                         padding:
                                             const EdgeInsets.only(right: 16.0),
                                         child: Text(
-                                            "정원 3/${snapshot.data?.data[index].capacity}",
+                                            "정원 ${snapshot.data?.data[index].capacity}명",
                                             style: subTitleStyle),
                                       ),
                                     ],

@@ -498,7 +498,7 @@ class CapacityInfo extends StatelessWidget {
         ),
         const SizedBox(width: 8.0),
         Text(
-          "5명 / $text명",
+          "$text명",
           style: titleStyle.copyWith(fontSize: 14.0),
         ),
       ],
