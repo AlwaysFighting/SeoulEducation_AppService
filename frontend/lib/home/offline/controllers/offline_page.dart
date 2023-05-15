@@ -6,10 +6,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../const/api.dart';
 import '../../../const/colors.dart';
-import '../../../notification/models/category_button.dart';
+import '../../online/models/category_button.dart';
 
 import 'package:http/http.dart' as http;
 
+import '../../online/models/dropdown_button.dart';
 import '../models/course_list_model.dart';
 import 'offline_detail_page.dart';
 import 'offline_search_page.dart';
@@ -24,6 +25,7 @@ class OfflinePage extends StatefulWidget {
 class _OfflinePageState extends State<OfflinePage> {
 
   final String imageURL = "assets/images/";
+  double customAppBarSize = 112;
 
   final titleStyle = const TextStyle(
     color: textColor1,
@@ -77,43 +79,56 @@ class _OfflinePageState extends State<OfflinePage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: textColor1,
-        elevation: 0,
-        leading: const CustomBackButton(),
-        title: Text(
-          "오프라인강좌",
-          style: subTitleStyle.copyWith(
-            fontSize: 16.0,
-            color: textColor1,
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: IconButton(
-              icon: Image.asset(
-                '$imageURL/Const/MagnifyingGlass.png',
-                width: 24,
-                height: 24,
-              ),
-              onPressed: () {
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (BuildContext context) {
-                      return const OfflineSearchPage(searchKeyword: '',);
-                    }));
-              },
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(customAppBarSize),
+        child: AppBar(
+          backgroundColor: Colors.white,
+          foregroundColor: textColor1,
+          elevation: 0,
+          leading: const CustomBackButton(),
+          title: Text(
+            "오프라인강좌",
+            style: subTitleStyle.copyWith(
+              fontSize: 16.0,
+              color: textColor1,
             ),
           ),
-        ],
+          flexibleSpace: const SizedBox(
+            width: 100,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16, top: 125, right: 16.0),
+              child: CategorySelection(isSelected: false,),
+            ),
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: IconButton(
+                icon: Image.asset(
+                  '$imageURL/Const/MagnifyingGlass.png',
+                  width: 24,
+                  height: 24,
+                ),
+                onPressed: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (BuildContext context) {
+                    return const OfflineSearchPage(
+                      searchKeyword: '',
+                    );
+                  }));
+                },
+              ),
+            ),
+          ],
+        ),
       ),
-      body: _body(services: services, today: today, subTitleStyle: subTitleStyle),
+      body:
+          _body(services: services, today: today, subTitleStyle: subTitleStyle),
     );
   }
 }
 
-class _body extends StatelessWidget {
+class _body extends StatefulWidget {
   const _body({
     super.key,
     required this.services,
@@ -126,9 +141,14 @@ class _body extends StatelessWidget {
   final TextStyle subTitleStyle;
 
   @override
+  State<_body> createState() => _bodyState();
+}
+
+class _bodyState extends State<_body> {
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder<CourseList>(
-      future: services,
+      future: widget.services,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           print("snapshot : $snapshot");
@@ -152,30 +172,12 @@ class _body extends StatelessWidget {
               child: Column(
                 children: [
                   Row(
-                    children: [
-                      NewestCategoryButton(
-                        isSelected: false,
-                        onPressed: () {
-                          print("최신순");
-                        },
-                        title: '최신순',
-                      ),
-                      const SizedBox(width: 16.0),
-                      NewestCategoryButton(
-                        isSelected: false,
-                        onPressed: () {
-                          print("모집예정");
-                        },
-                        title: '모집예정',
-                      ),
-                      const SizedBox(width: 16.0),
-                      NewestCategoryButton(
-                        isSelected: false,
-                        onPressed: () {
-                          print("시험대비");
-                        },
-                        title: '시험대비',
-                      ),
+                    children: const [
+                      CategorySelection(isSelected: false,),
+                      SizedBox(width: 16.0),
+                      CategorySelection(isSelected: false,),
+                      SizedBox(width: 16.0),
+                      CategorySelection(isSelected: false,),
                     ],
                   ),
                   const SizedBox(height: 20.0),
@@ -193,7 +195,7 @@ class _body extends StatelessWidget {
                               MaterialPageRoute(
                                 builder: (_) => OfflineDetailPage(
                                   courseID:
-                                      snapshot.data?.data[index].id as int,
+                                  snapshot.data?.data[index].id as int,
                                   title: "${snapshot.data?.data[index].title}",
                                 ),
                               ),
@@ -213,7 +215,7 @@ class _body extends StatelessWidget {
                                 children: [
                                   Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                     children: [
                                       Row(
                                         children: [
@@ -223,19 +225,21 @@ class _body extends StatelessWidget {
                                                                 ?.data[index]
                                                                 .applyStartDate
                                                             as String)
-                                                        .isBefore(today) &&
+                                                        .isBefore(
+                                                            widget.today) &&
                                                     DateTime.parse(snapshot
                                                                 .data
                                                                 ?.data[index]
                                                                 .applyEndDate
                                                             as String)
-                                                        .isAfter(today)
+                                                        .isAfter(widget.today)
                                                 ? "#신청가능"
                                                 : "#신청불가능",
-                                            style: subTitleStyle,
+                                            style: widget.subTitleStyle,
                                           ),
                                           const SizedBox(width: 10),
-                                          Text("#시험대비", style: subTitleStyle),
+                                          Text("#시험대비",
+                                              style: widget.subTitleStyle),
                                         ],
                                       ),
                                       IconButton(
@@ -252,7 +256,7 @@ class _body extends StatelessWidget {
                                     width: 302,
                                     child: Text(
                                       '${snapshot.data?.data[index].title}',
-                                      style: subTitleStyle.copyWith(
+                                      style: widget.subTitleStyle.copyWith(
                                           color: textColor1, fontSize: 16.0),
                                       softWrap: true,
                                     ),
@@ -260,11 +264,11 @@ class _body extends StatelessWidget {
                                   const SizedBox(height: 14.0),
                                   Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         "신청기간: ${snapshot.data?.data[index].applyStartDate}~${snapshot.data?.data[index].applyEndDate}",
-                                        style: subTitleStyle.copyWith(
+                                        style: widget.subTitleStyle.copyWith(
                                           color: textColor2,
                                           fontWeight: FontWeight.w500,
                                         ),
@@ -274,7 +278,7 @@ class _body extends StatelessWidget {
                                             const EdgeInsets.only(right: 16.0),
                                         child: Text(
                                             "정원 ${snapshot.data?.data[index].capacity}명",
-                                            style: subTitleStyle),
+                                            style: widget.subTitleStyle),
                                       ),
                                     ],
                                   ),
@@ -292,6 +296,43 @@ class _body extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _tagged extends StatelessWidget {
+  const _tagged({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        NewestCategoryButton(
+          isSelected: false,
+          onPressed: () {
+            print("최신순");
+          },
+          title: '최신순',
+        ),
+        const SizedBox(width: 16.0),
+        NewestCategoryButton(
+          isSelected: false,
+          onPressed: () {
+            print("모집예정");
+          },
+          title: '모집예정',
+        ),
+        const SizedBox(width: 16.0),
+        NewestCategoryButton(
+          isSelected: false,
+          onPressed: () {
+            print("시험대비");
+          },
+          title: '시험대비',
+        ),
+      ],
     );
   }
 }

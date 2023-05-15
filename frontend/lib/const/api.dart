@@ -1,6 +1,7 @@
 const API_AUTH_URL = "http://localhost:8080/auth";
 const API_COURSES_URL = "http://localhost:8080/course";
 const API_COURSES_SEARCH_URL = "http://localhost:8080/search/course";
+const API_COURSES_MYPAGE_URL = "http://localhost:8080/mypage/like";
 
 // API_AUTH_URL - 회원가입
 const EMAIL_LOGIN_API = "$API_AUTH_URL/login";
@@ -41,6 +42,16 @@ class CoursesAPI {
   // 4. 강좌 검색 (온/오프)
   String searchCourses(String type, String query) {
     return "$API_COURSES_SEARCH_URL/$type?query=$query";
+  }
+
+  // 5. 강좌 찜 POST
+  String starCourses(int id) {
+    return "$API_COURSES_URL/$id";
+  }
+
+  // 5. 강좌 찜 GET
+  String isStarCourses(String type) {
+    return "$API_COURSES_MYPAGE_URL/$type";
   }
 }
 

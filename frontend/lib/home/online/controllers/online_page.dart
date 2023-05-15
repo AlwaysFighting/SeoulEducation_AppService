@@ -8,7 +8,7 @@ import 'package:seoul_education_service/home/online/controllers/online_detail_pa
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../const/api.dart';
-import '../../../notification/models/category_button.dart';
+import '../models/category_button.dart';
 import '../../offline/models/course_list_model.dart';
 import 'online_search_page.dart';
 
@@ -22,6 +22,7 @@ class OnlinePage extends StatefulWidget {
 class _OnlinePageState extends State<OnlinePage> {
 
   final String imageURL = "assets/images/";
+  double customAppBarSize = 112;
 
   final titleStyle = const TextStyle(
     color: textColor1,
@@ -74,38 +75,48 @@ class _OnlinePageState extends State<OnlinePage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: textColor1,
-        elevation: 0,
-        title: Text(
-          "온라인강좌",
-          style: subTitleStyle.copyWith(
-            fontSize: 16.0,
-            color: textColor1,
-          ),
-        ),
-        leading: const CustomBackButton(),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (BuildContext context) {
-                      return const OnlineSearchPage(searchKeyword: '',);
-                    }));
-              },
-              child: Image.asset(
-                'assets/images/Const/MagnifyingGlass.png',
-                width: 24,
-                height: 24,
-              ),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(customAppBarSize),
+        child: AppBar(
+          backgroundColor: Colors.white,
+          foregroundColor: textColor1,
+          elevation: 0,
+          title: Text(
+            "온라인강좌",
+            style: subTitleStyle.copyWith(
+              fontSize: 16.0,
+              color: textColor1,
             ),
           ),
-        ],
+          leading: const CustomBackButton(),
+          flexibleSpace: const Padding(
+            padding: EdgeInsets.only(left: 16, top: 125),
+            child: Tagged(),
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (BuildContext context) {
+                    return const OnlineSearchPage(
+                      searchKeyword: '',
+                    );
+                  }));
+                },
+                child: Image.asset(
+                  'assets/images/Const/MagnifyingGlass.png',
+                  width: 24,
+                  height: 24,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
-      body: _body(services: services, today: today, subTitleStyle: subTitleStyle),
+      body:
+          _body(services: services, today: today, subTitleStyle: subTitleStyle),
     );
   }
 }
@@ -148,34 +159,6 @@ class _body extends StatelessWidget {
               physics: const BouncingScrollPhysics(),
               child: Column(
                 children: [
-                  Row(
-                    children: [
-                      NewestCategoryButton(
-                        isSelected: false,
-                        onPressed: () {
-                          print("최신순");
-                        },
-                        title: '최신순',
-                      ),
-                      const SizedBox(width: 16.0),
-                      NewestCategoryButton(
-                        isSelected: false,
-                        onPressed: () {
-                          print("모집예정");
-                        },
-                        title: '모집예정',
-                      ),
-                      const SizedBox(width: 16.0),
-                      NewestCategoryButton(
-                        isSelected: false,
-                        onPressed: () {
-                          print("시험대비");
-                        },
-                        title: '시험대비',
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20.0),
                   ListView.builder(
                     shrinkWrap: true,
                     cacheExtent: 10,
@@ -266,6 +249,45 @@ class _body extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class Tagged extends StatelessWidget {
+  const Tagged({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      child: Row(
+        children: [
+          NewestCategoryButton(
+            isSelected: false,
+            onPressed: () {
+              print("최신순");
+            },
+            title: '최신순',
+          ),
+          const SizedBox(width: 16.0),
+          NewestCategoryButton(
+            isSelected: false,
+            onPressed: () {
+              print("모집예정");
+            },
+            title: '모집예정',
+          ),
+          const SizedBox(width: 16.0),
+          NewestCategoryButton(
+            isSelected: false,
+            onPressed: () {
+              print("시험대비");
+            },
+            title: '시험대비',
+          ),
+        ],
+      ),
     );
   }
 }

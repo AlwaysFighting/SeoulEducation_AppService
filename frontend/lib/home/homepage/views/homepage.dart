@@ -1,30 +1,19 @@
 import 'dart:convert';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:seoul_education_service/home/homepage/models/search_bar.dart';
 import 'package:seoul_education_service/home/offline/controllers/offline_page.dart';
 import 'package:seoul_education_service/home/online/controllers/online_page.dart';
 import 'package:seoul_education_service/home/recommend/controllers/recommend_page.dart';
 import 'package:seoul_education_service/notification/controllers/alarm_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../const/api.dart';
 import '../../../const/colors.dart';
-import '../../offline/models/course_list_model.dart';
-import 'package:http/http.dart' as http;
 
-class HomePage extends StatefulWidget {
-
+class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-
-  late Future<CourseList> onlineServices;
-  late Future<CourseList> offlineServices;
+  final String imageURL = "assets/images/";
 
   final titleStyle = const TextStyle(
     color: textColor1,
@@ -40,74 +29,20 @@ class _HomePageState extends State<HomePage> {
     fontFamily: "Spoqa Han Sans Neo",
   );
 
-  Future<CourseList> fetchOnlineData() async {
-    String endPointUrl = CoursesAPI().coursesList("on", "new");
-    final Uri url = Uri.parse(endPointUrl);
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? accessToken = prefs.getString('accessToken');
-
-    final response = await http.get(
-      url,
-      headers: <String, String>{
-        'Authorization': 'Bearer $accessToken',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      return CourseList.fromJson(json.decode(response.body));
-    } else {
-      print(response.body);
-      throw Exception("Failed to load Services..");
-    }
-  }
-
-  Future<CourseList> fetchOfflineData() async {
-    String endPointUrl = CoursesAPI().coursesList("off", "new");
-    final Uri url = Uri.parse(endPointUrl);
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? accessToken = prefs.getString('accessToken');
-
-    final response = await http.get(
-      url,
-      headers: <String, String>{
-        'Authorization': 'Bearer $accessToken',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      return CourseList.fromJson(json.decode(response.body));
-    } else {
-      print(response.body);
-      throw Exception("Failed to load Services..");
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    fetchOnlineData();
-    onlineServices = fetchOnlineData();
-    fetchOfflineData();
-    offlineServices = fetchOfflineData();
-  }
-
   @override
   Widget build(BuildContext context) {
-
-    DateTime today = DateTime.now();
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
-        child: _appBar(),
+        child: AppHeader(),
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Padding(
-          padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 30.0),
+          padding: const EdgeInsets.only(
+              left: 16.0, right: 16.0, top: 30.0, bottom: 30.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -119,233 +54,207 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 20),
               const SearchTextFieldExample(),
               const SizedBox(height: 40),
+              _body(),
+              const SizedBox(height: 40),
+              Text("여기, 주목!", style: titleStyle.copyWith(fontSize: 18.0)),
+              const SizedBox(height: 14),
+              const Banner(),
+              const SizedBox(height: 30),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  courses_widget(
+                  Text("공지사항", style: titleStyle.copyWith(fontSize: 18.0)),
+                  TextButton(
+                    onPressed: () {
+                      print("전체보기");
+                    },
+                    child: Text("전체보기",
+                        style: subTitleStyle.copyWith(color: textColor1)),
+                  )
+                ],
+              ),
+              const SizedBox(height: 16.0),
+              Column(
+                children: [
+                  NoticeInfo(
                     titleStyle: titleStyle,
-                    index: 0,
-                    image: 'assets/images/Home/onlineIcon.png',
-                    title: '온라인강좌',
+                    subTitleStyle: subTitleStyle,
+                    text: '[서울특별시남부여성발전센터] 클라우드 기반 AI 융합 iOS 개발자 과정 교육생 모집',
+                    date: '2023.05.15',
                   ),
-                  courses_widget(
+                  const SizedBox(height: 16.0),
+                  NoticeInfo(
                     titleStyle: titleStyle,
-                    index: 1,
-                    image: 'assets/images/Home/offlineIcon.png',
-                    title: '오프라인강좌',
+                    subTitleStyle: subTitleStyle,
+                    text: '여성가족부지원 직업교육훈련 [멀티사무원 양성과정] 교육생 모집',
+                    date: '2023.05.09',
                   ),
-                  courses_widget(
+                  const SizedBox(height: 16.0),
+                  NoticeInfo(
                     titleStyle: titleStyle,
-                    index: 2,
-                    image: 'assets/images/Home/recommendIcon.png',
-                    title: '추천강좌',
+                    subTitleStyle: subTitleStyle,
+                    text: '[서울시 시민참여예산] 서울시가 2024년 시행하기 원하는 사업을 제안해 주세요.',
+                    date: '2023.04.26',
                   ),
                 ],
               ),
-              const SizedBox(height: 60),
-              Text("온라인 새로운 강좌", style: titleStyle.copyWith(fontSize: 18.0)),
-              const SizedBox(height: 20),
-              _onlineBody(services: onlineServices, today: today, subTitleStyle: subTitleStyle),
-              Text("오프라인 새로운 강좌", style: titleStyle.copyWith(fontSize: 18.0)),
-              const SizedBox(height: 20),
             ],
           ),
         ),
       ),
     );
   }
+
+  Row _body() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        CoursesWidget(
+          titleStyle: titleStyle,
+          index: 0,
+          image: 'assets/images/Home/onlineIcon.png',
+          title: '온라인강좌',
+        ),
+        CoursesWidget(
+          titleStyle: titleStyle,
+          index: 1,
+          image: 'assets/images/Home/offlineIcon.png',
+          title: '오프라인강좌',
+        ),
+        CoursesWidget(
+          titleStyle: titleStyle,
+          index: 2,
+          image: 'assets/images/Home/recommendIcon.png',
+          title: '추천강좌',
+        ),
+      ],
+    );
+  }
 }
 
-// 온라인 강좌 정보
-class _onlineBody extends StatelessWidget {
-  const _onlineBody({
-    super.key,
-    required this.services,
-    required this.today,
-    required this.subTitleStyle,
-  });
+class Banner extends StatelessWidget {
 
-  final Future<CourseList> services;
-  final DateTime today;
-  final TextStyle subTitleStyle;
+  const Banner({super.key});
+
+  final String imageURL = "assets/images/";
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<CourseList>(
-      future: services,
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          print("snapshot : $snapshot");
-          return Text("${snapshot.error}");
-        }
-        if (!snapshot.hasData) {
-          return const Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(
-                mainColor,
-              ),
-            ),
-          );
-        }
-        // 데이터가 있을 때 출력할 위젯
-        return Scrollbar(
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: ListView.builder(
-              shrinkWrap: true,
-              cacheExtent: 10,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: 5,
-              itemBuilder: (BuildContext context, int index) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 16.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: lightBackgroundColor,
-                      borderRadius: BorderRadius.circular(10.0),
+    List<String> list = [
+      '$imageURL/Home/banner.png',
+      '$imageURL/Home/banner.png',
+      '$imageURL/Home/banner.png'
+    ];
+
+    return CarouselSlider(
+      options: CarouselOptions(
+        autoPlay: true,
+        autoPlayInterval: const Duration(seconds: 3),
+        autoPlayAnimationDuration: const Duration(milliseconds: 800),
+        height: 126,
+        viewportFraction: 1.0,
+        scrollDirection: Axis.horizontal,
+        aspectRatio: 0.9,
+        initialPage: 1,
+        autoPlayCurve: Curves.fastOutSlowIn,
+      ),
+      items: list.asMap().entries.map((entry) {
+        int index = entry.key + 1;
+        String item = entry.value;
+        return SizedBox(
+          height: 126,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ClipRect(
+                child: Stack(
+                  children: [
+                    Image.asset(
+                      item,
+                      width: 358,
+                      height: 126,
+                      fit: BoxFit.cover,
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 16.0, bottom: 16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment:
-                            MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    DateTime.parse(snapshot.data?.data[index].applyStartDate as String).isBefore(today) && DateTime.parse(snapshot.data?.data[index].applyEndDate as String).isAfter(today) ? "#신청가능" : "#신청불가능",
-                                    style: subTitleStyle,
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Text( snapshot.data?.data[index].isFree == true ? "#무료" : "#유료" , style: subTitleStyle),
-                                  const SizedBox(width: 10),
-                                  Text("#직업상담사", style: subTitleStyle),
-                                ],
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  print(
-                                      "${snapshot.data?.data.length}");
-                                },
-                                icon: Image.asset(
-                                  'assets/images/Const/star_stroke.png',
-                                  width: 20,
-                                  height: 20,
-                                ),
-                              )
+                    Positioned(
+                      bottom: 0.0,
+                      right: 0.0,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Color.fromARGB(50, 0, 0, 0),
+                              Color.fromARGB(0, 0, 0, 0)
                             ],
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
                           ),
-                          SizedBox(
-                            width: 302,
-                            child: Text(
-                              '${snapshot.data?.data[index].title}',
-                              style: subTitleStyle.copyWith(
-                                  color: textColor1, fontSize: 16.0),
-                              softWrap: true,
-                            ),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 20.0),
+                        child: Text(
+                          '$index/${list.length}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10.0,
+                            fontWeight: FontWeight.w500,
                           ),
-                          const SizedBox(height: 14.0),
-                          Text(
-                            "신청기간: ${snapshot.data?.data[index].applyStartDate}~${snapshot.data?.data[index].applyEndDate}",
-                            style: subTitleStyle.copyWith(
-                              color: textColor2,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
+                  ],
+                ),
+              ),
+            ],
           ),
         );
-      },
+      }).toList(),
     );
   }
 }
 
-class _courseListView extends StatelessWidget {
-  const _courseListView({
+class NoticeInfo extends StatelessWidget {
+  const NoticeInfo({
     super.key,
+    required this.titleStyle,
     required this.subTitleStyle,
+    required this.text,
+    required this.date,
   });
 
+  final TextStyle titleStyle;
   final TextStyle subTitleStyle;
+  final String text;
+  final String date;
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: 10,
-      itemBuilder: (BuildContext context, int index) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 16.0),
-          child: Container(
-            decoration: BoxDecoration(
-              color: lightBackgroundColor,
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.only(left: 16.0, bottom: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Text("#신청가능", style: subTitleStyle),
-                          const SizedBox(width: 10),
-                          Text("#직업상담사", style: subTitleStyle),
-                        ],
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          print("찜 완료!");
-                        },
-                        icon: Image.asset(
-                          'assets/images/Const/star_stroke.png',
-                          width: 20,
-                          height: 20,
-                        ),
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    width: 302,
-                    child: Text(
-                      '2023 직업상담사(아이엠에듀) - 필기 - 직업심리학 ',
-                      style: subTitleStyle.copyWith(
-                          color: textColor1, fontSize: 16.0),
-                      softWrap: true,
-                    ),
-                  ),
-                  const SizedBox(height: 14.0),
-                  Text(
-                    "신청기간: 2023.03.04~2023.12.31",
-                    style: subTitleStyle.copyWith(
-                        color: textColor2, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        SizedBox(
+          width: 260,
+          child: Text(
+            text,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+            style: titleStyle.copyWith(
+              fontWeight: FontWeight.w400,
+              fontSize: 16.0,
             ),
           ),
-        );
-      },
+        ),
+        Text(
+          date,
+          style: subTitleStyle.copyWith(
+              fontWeight: FontWeight.w400, color: textColor2),
+        ),
+      ],
     );
   }
 }
 
-class courses_widget extends StatelessWidget {
-  courses_widget({
+class CoursesWidget extends StatelessWidget {
+  CoursesWidget({
     super.key,
     required this.titleStyle,
     required this.index,
@@ -394,8 +303,8 @@ class courses_widget extends StatelessWidget {
   }
 }
 
-class _appBar extends StatelessWidget {
-  const _appBar({
+class AppHeader extends StatelessWidget {
+  const AppHeader({
     super.key,
   });
 

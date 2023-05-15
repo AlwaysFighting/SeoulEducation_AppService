@@ -420,9 +420,14 @@ class LocationInfo extends StatelessWidget {
                               height: 24,
                             ),
                             const SizedBox(width: 8.0),
-                            Text(
-                              alertCall,
-                              style: textStyle,
+                            GestureDetector(
+                              onTap: () {
+                                print(alertCall);
+                              },
+                              child: Text(
+                                alertCall,
+                                style: textStyle,
+                              ),
                             ),
                           ],
                         )

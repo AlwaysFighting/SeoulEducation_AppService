@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:seoul_education_service/const/back_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -43,7 +44,6 @@ class _OnlineDetailPageState extends State<OnlineDetailPage> {
   );
 
   late Future<CourseDetail> services;
-  String _data = '';
 
   Future<CourseDetail> fetchData() async {
     String endPointUrl = CoursesAPI().detailCourse(widget.courseID);
@@ -90,16 +90,7 @@ class _OnlineDetailPageState extends State<OnlineDetailPage> {
           widget.title,
           style: titleStyle,
         ),
-        leading: IconButton(
-          icon: Image.asset(
-            '$imageURL/Const/ArrowLeft.png',
-            width: 24,
-            height: 24,
-          ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
+        leading: const CustomBackButton(),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
@@ -116,173 +107,204 @@ class _OnlineDetailPageState extends State<OnlineDetailPage> {
           ),
         ],
       ),
-      body: FutureBuilder<CourseDetail>(
-        future: services,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            print("snapshot : $snapshot");
-            return Text("${snapshot.error}");
-          }
-          if (!snapshot.hasData) {
-            return const Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  mainColor,
-                ),
+      body: CoursesList(
+        services: services,
+        widget: widget,
+        titleStyle: titleStyle,
+        today: today,
+        imageURL: imageURL,
+        textStyle: textStyle,
+      ),
+    );
+  }
+}
+
+class CoursesList extends StatelessWidget {
+  const CoursesList({
+    super.key,
+    required this.services,
+    required this.widget,
+    required this.titleStyle,
+    required this.today,
+    required this.imageURL,
+    required this.textStyle,
+  });
+
+  final Future<CourseDetail> services;
+  final OnlineDetailPage widget;
+  final TextStyle titleStyle;
+  final DateTime today;
+  final String imageURL;
+  final TextStyle textStyle;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<CourseDetail>(
+      future: services,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          print("snapshot : $snapshot");
+          return Text("${snapshot.error}");
+        }
+        if (!snapshot.hasData) {
+          return const Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(
+                mainColor,
               ),
-            );
-          }
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                children: [
-                  const SizedBox(height: 20.0),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.title,
-                          style: titleStyle.copyWith(fontSize: 18.0),
-                        ),
-                        const SizedBox(height: 16.0),
-                        Row(
+            ),
+          );
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              children: [
+                const SizedBox(height: 20.0),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.title,
+                        style: titleStyle.copyWith(fontSize: 18.0),
+                      ),
+                      const SizedBox(height: 16.0),
+                      Row(
+                        children: [
+                          HashTag(
+                            titleStyle: titleStyle,
+                            title: DateTime.parse(snapshot.data?.data
+                                            .applyStartDate as String)
+                                        .isBefore(today) &&
+                                    DateTime.parse(snapshot
+                                            .data?.data.applyEndDate as String)
+                                        .isAfter(today)
+                                ? "신청가능"
+                                : "신청불가능",
+                          ),
+                          const SizedBox(width: 10.0),
+                          HashTag(
+                            titleStyle: titleStyle,
+                            title: '시험대비',
+                          ),
+                          const SizedBox(width: 10.0),
+                          HashTag(
+                            titleStyle: titleStyle,
+                            title: snapshot.data?.data.isFree == true
+                                ? '무료'
+                                : '유료',
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 30.0),
+                const Divider(),
+                const SizedBox(height: 30.0),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "날짜정보",
+                        style: titleStyle.copyWith(fontSize: 16.0),
+                      ),
+                      const SizedBox(height: 16.0),
+                      CalendarInfo(
+                        imageURL: '$imageURL/Const/Calendar.png',
+                        textStyle: textStyle,
+                        title: '신청기간',
+                        duration:
+                            '${snapshot.data?.data.applyStartDate}~${snapshot.data?.data.applyEndDate}',
+                        changeWidth: false,
+                      ),
+                      const SizedBox(height: 19.0),
+                      CalendarInfo(
+                        imageURL: '$imageURL/Const/PlayCircle.png',
+                        textStyle: textStyle,
+                        title: '강의시작일',
+                        duration: '${snapshot.data?.data.startDate}',
+                        changeWidth: true,
+                      ),
+                      const SizedBox(height: 19.0),
+                      CalendarInfo(
+                        imageURL: '$imageURL/Const/CalendarCheck.png',
+                        textStyle: textStyle,
+                        title: '등록날짜',
+                        duration: '${snapshot.data?.data.insertDate}',
+                        changeWidth: false,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 30.0),
+                snapshot.data?.data.deptName != ""
+                    ? const Divider()
+                    : Container(),
+                const SizedBox(height: 30.0),
+                snapshot.data?.data.deptName != ""
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            HashTag(
-                              titleStyle: titleStyle,
-                              title: DateTime.parse(snapshot
-                                  .data?.data.applyStartDate as String)
-                                  .isBefore(today) &&
-                                  DateTime.parse(snapshot
-                                      .data?.data.applyEndDate as String)
-                                      .isAfter(today)
-                                  ? "신청가능"
-                                  : "신청불가능",
+                            Text(
+                              "위치정보",
+                              style: titleStyle.copyWith(fontSize: 16.0),
                             ),
-                            const SizedBox(width: 10.0),
-                            HashTag(
-                              titleStyle: titleStyle,
-                              title: '시험대비',
-                            ),
-                            const SizedBox(width: 10.0),
-                            HashTag(
-                              titleStyle: titleStyle,
-                              title:
-                              snapshot.data?.data.isFree == true ? '무료' : '유료',
+                            const SizedBox(height: 19.0),
+                            LocationInfo(
+                              imageURL: imageURL,
+                              textStyle: textStyle,
+                              text: "${snapshot.data?.data.deptName}",
+                              alertLocation: '${snapshot.data?.data.deptAddr}',
+                              alertCall: '${snapshot.data?.data.deptTel}',
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 30.0),
-                  const Divider(),
-                  const SizedBox(height: 30.0),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "날짜정보",
-                          style: titleStyle.copyWith(fontSize: 16.0),
-                        ),
-                        const SizedBox(height: 16.0),
-                        CalendarInfo(
-                          imageURL: '$imageURL/Const/Calendar.png',
-                          textStyle: textStyle,
-                          title: '신청기간',
-                          duration:
-                              '${snapshot.data?.data.applyStartDate}~${snapshot.data?.data.applyEndDate}',
-                          changeWidth: false,
-                        ),
-                        const SizedBox(height: 19.0),
-                        CalendarInfo(
-                          imageURL: '$imageURL/Const/PlayCircle.png',
-                          textStyle: textStyle,
-                          title: '강의시작일',
-                          duration: '${snapshot.data?.data.startDate}',
-                          changeWidth: true,
-                        ),
-                        const SizedBox(height: 19.0),
-                        CalendarInfo(
-                          imageURL: '$imageURL/Const/CalendarCheck.png',
-                          textStyle: textStyle,
-                          title: '등록날짜',
-                          duration: '${snapshot.data?.data.insertDate}',
-                          changeWidth: false,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 30.0),
-                  snapshot.data?.data.deptName != ""
-                      ? const Divider()
-                      : Container(),
-                  const SizedBox(height: 30.0),
-                  snapshot.data?.data.deptName != ""
-                      ? Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "위치정보",
-                          style: titleStyle.copyWith(fontSize: 16.0),
-                        ),
-                        const SizedBox(height: 19.0),
-                        LocationInfo(
-                          imageURL: imageURL,
-                          textStyle: textStyle,
-                          text: "${snapshot.data?.data.deptName}",
-                          alertLocation: '${snapshot.data?.data.deptAddr}',
-                          alertCall: '${snapshot.data?.data.deptTel}',
-                        ),
-                      ],
-                    ),
-                  )
-                      : Container(),
-                  const SizedBox(height: 50.0),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 40.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    SizedBox(
-                      height: 56,
-                      width: 358,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          launchURLChannel("${snapshot.data?.data.url}");
-                        },
-                        style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(28.0),
-                            ),
-                            backgroundColor: mainColor),
-                        child: const Text(
-                          '강좌미리보기',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16.0,
-                            color: Colors.white,
+                      )
+                    : Container(),
+                const SizedBox(height: 50.0),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 40.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  SizedBox(
+                    height: 56,
+                    width: 358,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        launchURLChannel("${snapshot.data?.data.url}");
+                      },
+                      style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(28.0),
                           ),
+                          backgroundColor: mainColor),
+                      child: const Text(
+                        '강좌미리보기',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16.0,
+                          color: Colors.white,
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          );
-        },
-      ),
-      // bottomNavigationBar: RegisterButton(url: ''),
+            ),
+          ],
+        );
+      },
     );
   }
 }

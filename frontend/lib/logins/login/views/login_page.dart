@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:seoul_education_service/const/colors.dart';
+import 'package:seoul_education_service/const/navigation.dart';
 import 'package:seoul_education_service/logins/register/views/register_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -108,7 +109,7 @@ class _LoginPageState extends State<LoginPage> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
+        MaterialPageRoute(builder: (context) => const Navigation()),
       );
 
     } else if (response.statusCode == 401) {

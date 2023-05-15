@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../const/colors.dart';
+import '../../../const/colors.dart';
 
 class NewestCategoryButton extends StatefulWidget {
   final bool isSelected;
