@@ -26,7 +26,8 @@
     <application
         android:label="seoul_education_service"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true">
 
 <!--       &lt;!&ndash; 카카오 로그인 커스텀 URL 스킴 설정 &ndash;&gt;-->
 <!--       <activity-->

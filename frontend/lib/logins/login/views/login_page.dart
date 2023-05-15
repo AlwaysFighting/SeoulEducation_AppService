@@ -7,7 +7,6 @@ import 'package:seoul_education_service/logins/register/views/register_page.dart
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../const/api.dart';
-import '../../../home/homepage/views/homepage.dart';
 import '../models/divider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';

@@ -9,6 +9,7 @@ import 'package:seoul_education_service/home/recommend/controllers/recommend_pag
 import 'package:seoul_education_service/notification/controllers/alarm_page.dart';
 
 import '../../../const/colors.dart';
+import '../../offline/models/kakao_map.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -66,7 +67,10 @@ class HomePage extends StatelessWidget {
                   Text("공지사항", style: titleStyle.copyWith(fontSize: 18.0)),
                   TextButton(
                     onPressed: () {
-                      print("전체보기");
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (BuildContext context) {
+                            return KakaoMapView();
+                          }));
                     },
                     child: Text("전체보기",
                         style: subTitleStyle.copyWith(color: textColor1)),
