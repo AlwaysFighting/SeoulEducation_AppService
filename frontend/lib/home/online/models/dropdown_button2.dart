@@ -1,78 +1,88 @@
 import 'package:flutter/material.dart';
-
-import '../../../const/colors.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:seoul_education_service/const/colors.dart';
 
 class CategorySelection2 extends StatefulWidget {
-
-  final bool isSelected;
-
-  const CategorySelection2({super.key, required this.isSelected});
+  const CategorySelection2({super.key});
 
   @override
-  _CategorySelection2State createState() => _CategorySelection2State();
+  State<CategorySelection2> createState() => _CategorySelection2State();
 }
 
 class _CategorySelection2State extends State<CategorySelection2> {
-  late bool _isSelected;
-  String _selectedCategory = '모집예정';
+  final List<String> list2items = ['신청예정', '신청가능', '신청완료'];
 
-  @override
-  void initState() {
-    _isSelected = widget.isSelected;
-    super.initState();
-  }
-
-  @override
-  void didUpdateWidget(covariant CategorySelection2 oldWidget) {
-    if (widget.isSelected != oldWidget.isSelected) {
-      _isSelected = widget.isSelected;
-    }
-    super.didUpdateWidget(oldWidget);
-  }
+  String? selectedValue;
+  Color lineColors = lineColor;
 
   @override
   Widget build(BuildContext context) {
-
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: Container(
-        height: 38,
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18.5),
-          border: Border.all(color: lineColor),
-        ),
-        child: DropdownButtonHideUnderline(
-          child: DropdownButton<String>(
-            value: _selectedCategory,
-            onChanged: (String? newValue) {
-              setState(() {
-                _selectedCategory = newValue!;
-                _isSelected = !_isSelected;
-              });
-            },
-            icon: Padding(
-              padding: const EdgeInsets.only(left: 5),
-              child: Image.asset(
-                "assets/images/Courses/CaretDown.png",
-                width: 16,
-                height: 16,
-              ),
+    return Container(
+      height: 38,
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(18.5),
+        border: Border.all(color: lineColors),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton2(
+          iconStyleData: IconStyleData(
+            icon: Image.asset(
+              "assets/images/Courses/CaretDown.png",
+              width: 16,
+              height: 16,
             ),
-            items: <String>[
-              '모집예정',
-              '신청가능',
-              "신청완료"
-            ].map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
+          ),
+          hint: const Text(
+            '모집예정',
+            style: TextStyle(
+              fontSize: 14,
+              color: textColor1,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          items: list2items
+              .map((item) => DropdownMenuItem<String>(
+                    value: item,
+                    child: Text(
+                      item,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: textColor1,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ))
+              .toList(),
+          value: selectedValue,
+          onChanged: (value) {
+            setState(() {
+              selectedValue = value as String;
+            });
+          },
+          buttonStyleData: const ButtonStyleData(
+            height: 40,
+            width: 73,
+          ),
+          menuItemStyleData: const MenuItemStyleData(
+            height: 40,
+          ),
+          dropdownStyleData: DropdownStyleData(
+            maxHeight: 200,
+            width: MediaQuery.of(context).size.width,
+            padding: null,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+            ),
+            elevation: 1,
+            scrollbarTheme: ScrollbarThemeData(
+              radius: const Radius.circular(40),
+              thickness: MaterialStateProperty.all(6),
+              thumbVisibility: MaterialStateProperty.all(true),
+            ),
           ),
         ),
       ),
     );
   }
 }
-

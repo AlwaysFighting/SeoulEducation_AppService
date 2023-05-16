@@ -11,6 +11,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../api/course_api.dart';
 import '../models/category_button.dart';
 import '../../offline/models/course_list_model.dart';
+import '../models/dropdown_button1.dart';
+import '../models/dropdown_button2.dart';
+import '../models/dropdown_button3.dart';
 import 'online_search_page.dart';
 
 class OnlinePage extends StatefulWidget {
@@ -41,8 +44,11 @@ class _OnlinePageState extends State<OnlinePage> {
 
   late Future<CourseList> services;
 
+  String whatOrder = "new";
+  String whatFilter = "upcoming";
+
   Future<CourseList> fetchData() async {
-    String endPointUrl = CoursesAPI().coursesList("on", "new");
+    String endPointUrl = CoursesAPI().coursesList("on", whatOrder);
     final Uri url = Uri.parse(endPointUrl);
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -190,6 +196,19 @@ class _bodyState extends State<_body> {
               physics: const BouncingScrollPhysics(),
               child: Column(
                 children: [
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: const [
+                        CategorySelection1(),
+                        SizedBox(width: 10.0),
+                        CategorySelection2(),
+                        SizedBox(width: 10.0),
+                        CategorySelection3(),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20.0),
                   ListView.builder(
                     shrinkWrap: true,
                     cacheExtent: 10,

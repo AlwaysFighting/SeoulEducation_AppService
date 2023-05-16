@@ -1,38 +1,23 @@
 import 'package:flutter/material.dart';
-
-import '../../../const/colors.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:seoul_education_service/const/colors.dart';
 
 class CategorySelection1 extends StatefulWidget {
-
-  final bool isSelected;
-
-  const CategorySelection1({super.key, required this.isSelected});
+  const CategorySelection1({super.key});
 
   @override
-  _CategorySelection1State createState() => _CategorySelection1State();
+  State<CategorySelection1> createState() => _CategorySelection1State();
 }
 
 class _CategorySelection1State extends State<CategorySelection1> {
-  late bool _isSelected;
-  String _selectedCategory = '최신순';
 
-  @override
-  void initState() {
-    _isSelected = widget.isSelected;
-    super.initState();
-  }
+  final List<String> list1items = ['최신순', '관심설정순', "마감설정순"];
 
-  @override
-  void didUpdateWidget(covariant CategorySelection1 oldWidget) {
-    if (widget.isSelected != oldWidget.isSelected) {
-      _isSelected = widget.isSelected;
-    }
-    super.didUpdateWidget(oldWidget);
-  }
+  String? selectedValue;
+  Color lineColors = lineColor;
 
   @override
   Widget build(BuildContext context) {
-
     return Directionality(
       textDirection: TextDirection.ltr,
       child: Container(
@@ -40,35 +25,65 @@ class _CategorySelection1State extends State<CategorySelection1> {
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(18.5),
-          border: Border.all(color: lineColor),
+          border: Border.all(color: lineColors),
         ),
         child: DropdownButtonHideUnderline(
-          child: DropdownButton<String>(
-            focusColor: mainColor,
-            value: _selectedCategory,
-            onChanged: (String? newValue) {
-              setState(() {
-                _selectedCategory = newValue!;
-                _isSelected = !_isSelected;
-              });
-            },
-            icon: Padding(
-              padding: const EdgeInsets.only(left: 5),
-              child: Image.asset(
+          child: DropdownButton2(
+            iconStyleData: IconStyleData(
+              icon: Image.asset(
                 "assets/images/Courses/CaretDown.png",
                 width: 16,
                 height: 16,
               ),
             ),
-            items: <String>[
+            hint: const Text(
               '최신순',
-              '찜순',
-            ].map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
+              style: TextStyle(
+                fontSize: 14,
+                color: textColor1,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            items: list1items
+                .map((item) => DropdownMenuItem<String>(
+                      value: item,
+                      child: Text(
+                        item,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: textColor1,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ))
+                .toList(),
+            value: selectedValue,
+            onChanged: (value) {
+              setState(() {
+                selectedValue = value as String;
+              });
+            },
+            buttonStyleData: const ButtonStyleData(
+              height: 40,
+              width: 81,
+            ),
+            menuItemStyleData: const MenuItemStyleData(
+              height: 40,
+            ),
+            dropdownStyleData: DropdownStyleData(
+              maxHeight: 200,
+              width: MediaQuery.of(context).size.width,
+              padding: null,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+              ),
+              elevation: 1,
+              scrollbarTheme: ScrollbarThemeData(
+                radius: const Radius.circular(40),
+                thickness: MaterialStateProperty.all(6),
+                thumbVisibility: MaterialStateProperty.all(true),
+              ),
+            ),
           ),
         ),
       ),

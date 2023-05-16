@@ -188,14 +188,17 @@ class _bodyState extends State<_body> {
               physics: const BouncingScrollPhysics(),
               child: Column(
                 children: [
-                  Row(
-                    children: const [
-                      CategorySelection1(isSelected: false,),
-                      SizedBox(width: 10.0),
-                      CategorySelection2(isSelected: false,),
-                      SizedBox(width: 10.0),
-                      CategorySelection3(isSelected: false,),
-                    ],
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: const [
+                        CategorySelection1(),
+                        SizedBox(width: 10.0),
+                        CategorySelection2(),
+                        SizedBox(width: 10.0),
+                        CategorySelection3(),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 20.0),
                   ListView.builder(
