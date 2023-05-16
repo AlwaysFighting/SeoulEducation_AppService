@@ -41,6 +41,7 @@ class Data {
   String? deptTel;
   String? deptAddr;
   bool? isLiked;
+  String? imagePath;
 
   Data({
     required this.courseId,
@@ -65,6 +66,7 @@ class Data {
     this.deptTel,
     this.deptAddr,
     this.isLiked,
+    this.imagePath,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
@@ -90,6 +92,7 @@ class Data {
         deptTel: json["deptTel"] ?? "",
         deptAddr: json["deptAddr"] ?? "",
         isLiked: json["isLiked"] ?? false,
+        imagePath: json["imagePath"] ?? "",
       );
 
   Map<String, dynamic> toJson() => {
@@ -115,5 +118,6 @@ class Data {
         "deptTel": deptTel,
         "deptAddr": deptAddr,
         "isLiked": isLiked,
+        "imagePath": imagePath,
       };
 }

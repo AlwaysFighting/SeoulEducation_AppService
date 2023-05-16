@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:seoul_education_service/home/homepage/models/search_bar.dart';
@@ -7,9 +5,9 @@ import 'package:seoul_education_service/home/offline/controllers/offline_page.da
 import 'package:seoul_education_service/home/online/controllers/online_page.dart';
 import 'package:seoul_education_service/home/recommend/controllers/recommend_page.dart';
 import 'package:seoul_education_service/notification/controllers/alarm_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../const/colors.dart';
-import '../../offline/models/kakao_map.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -141,11 +139,20 @@ class Banner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     List<String> list = [
       '$imageURL/Home/banner.png',
       '$imageURL/Home/banner.png',
       '$imageURL/Home/banner.png'
     ];
+
+    Future<void> _launchUrl(String url) async {
+      if (await canLaunch(url)) {
+        await launch(url);
+      } else {
+        throw 'Could not launch $url';
+      }
+    }
 
     return CarouselSlider(
       options: CarouselOptions(
@@ -162,50 +169,55 @@ class Banner extends StatelessWidget {
       items: list.asMap().entries.map((entry) {
         int index = entry.key + 1;
         String item = entry.value;
-        return SizedBox(
-          height: 126,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ClipRect(
-                child: Stack(
-                  children: [
-                    Image.asset(
-                      item,
-                      width: 358,
-                      height: 126,
-                      fit: BoxFit.cover,
-                    ),
-                    Positioned(
-                      bottom: 0.0,
-                      right: 0.0,
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Color.fromARGB(50, 0, 0, 0),
-                              Color.fromARGB(0, 0, 0, 0)
-                            ],
-                            begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter,
+        return GestureDetector(
+          onTap: () {
+            _launchUrl("https://data.seoul.go.kr/#");
+          },
+          child: SizedBox(
+            height: 126,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ClipRect(
+                  child: Stack(
+                    children: [
+                      Image.asset(
+                        item,
+                        width: 358,
+                        height: 126,
+                        fit: BoxFit.cover,
+                      ),
+                      Positioned(
+                        bottom: 0.0,
+                        right: 0.0,
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Color.fromARGB(50, 0, 0, 0),
+                                Color.fromARGB(0, 0, 0, 0)
+                              ],
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                            ),
                           ),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 20.0),
-                        child: Text(
-                          '$index/${list.length}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 10.0,
-                            fontWeight: FontWeight.w500,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 20.0),
+                          child: Text(
+                            '$index/${list.length}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10.0,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       }).toList(),

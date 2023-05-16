@@ -221,6 +221,15 @@ class CoursesList extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            if (snapshot.data?.data.imagePath != null)
+              SizedBox(
+                height: 250,
+                width: MediaQuery.of(context).size.width,
+                child: Image.network(
+                  "${snapshot.data?.data.imagePath}", // 이미지 URL
+                  fit: BoxFit.cover,
+                ),
+              ),
             Column(
               children: [
                 const SizedBox(height: 20.0),

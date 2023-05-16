@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:seoul_education_service/community/controllers/commuinty.dart';
-import '../home/homepage/views/homepage.dart';
+import '../home/homepage/controllers/homepage.dart';
 import '../mypage/mypage.dart';
 import 'colors.dart';
 
