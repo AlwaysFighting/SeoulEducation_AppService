@@ -48,10 +48,5 @@ class CoursesAPI {
   String starCourses(int id) {
     return "$API_COURSES_URL/$id";
   }
-
-  // 5. 강좌 찜 GET
-  String isStarCourses(String type) {
-    return "$API_COURSES_MYPAGE_URL/$type";
-  }
 }
 

@@ -31,6 +31,7 @@ class Datum {
   dynamic isFree;
   dynamic category;
   int capacity;
+  bool? isLiked;
 
   Datum({
     this.type,
@@ -41,6 +42,7 @@ class Datum {
     this.isFree,
     this.category,
     required this.capacity,
+    this.isLiked,
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
@@ -52,6 +54,7 @@ class Datum {
         isFree: json["isFree"],
         category: json["category"],
         capacity: json["capacity"],
+        isLiked: json["isLiked"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -63,6 +66,7 @@ class Datum {
         "isFree": isFree,
         "category": category,
         "capacity": capacity,
+        "isLiked": isLiked,
       };
 }
 

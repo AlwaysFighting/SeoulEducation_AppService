@@ -142,7 +142,7 @@ class _OfflineSearchPageState extends State<OfflineSearchPage> {
   }
 }
 
-class Body extends StatelessWidget {
+class Body extends StatefulWidget {
   const Body({
     super.key,
     required this.services,
@@ -155,9 +155,38 @@ class Body extends StatelessWidget {
   final TextStyle subTitleStyle;
 
   @override
+  State<Body> createState() => _BodyState();
+}
+
+class _BodyState extends State<Body> {
+  Future<void> postStarCourses(int courseID, bool result) async {
+
+    String endPointUrl = CoursesAPI().starCourses(courseID);
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('accessToken');
+
+    final response = await http.post(
+      Uri.parse(endPointUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: jsonEncode(<String, bool>{
+        'result': result,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+    } else {
+      print(response.body);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder<SearchCourse?>(
-      future: services,
+      future: widget.services,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Container();
@@ -225,29 +254,43 @@ class Body extends StatelessWidget {
                                             DateTime.parse(
                                                 snapshot.data?.data?[index]
                                                     .applyStartDate as String)
-                                                .isBefore(today) &&
+                                                .isBefore(widget.today) &&
                                                 DateTime.parse(
                                                     snapshot.data?.data?[index]
                                                         .applyEndDate as String)
-                                                    .isAfter(today)
+                                                    .isAfter(widget.today)
                                                 ? "#신청가능"
                                                 : "#신청불가능",
-                                            style: subTitleStyle,
+                                            style: widget.subTitleStyle,
                                           ),
                                           const SizedBox(width: 10),
                                           Text(snapshot.data?.data?[index]
                                               .isFree == true ? "#무료" : "#유료",
-                                              style: subTitleStyle),
+                                              style: widget.subTitleStyle),
                                           const SizedBox(width: 10),
-                                          Text("#직업상담사", style: subTitleStyle),
+                                          Text("#직업상담사", style: widget.subTitleStyle),
                                         ],
                                       ),
                                       IconButton(
-                                        onPressed: () {},
-                                        icon: Image.asset(
+                                        onPressed: () {
+                                          bool? isLiked = snapshot.data?.data?[index].isLiked;
+                                          postStarCourses(snapshot.data?.data?[index].id ?? 0, !isLiked!);
+                                          setState(() {
+                                            if (snapshot.data != null) {
+                                              snapshot.data!.data?[index].isLiked = !(snapshot.data!.data?[index].isLiked ?? false);
+                                            }
+                                          });
+                                        },
+                                        icon: snapshot.data?.data?[index].isLiked == false
+                                            ? Image.asset(
                                           'assets/images/Const/star_stroke.png',
-                                          width: 20,
-                                          height: 20,
+                                          width: 22,
+                                          height: 22,
+                                        )
+                                            : Image.asset(
+                                          'assets/images/Const/star_fill.png',
+                                          width: 22,
+                                          height: 22,
                                         ),
                                       )
                                     ],
@@ -256,7 +299,7 @@ class Body extends StatelessWidget {
                                     width: 302,
                                     child: Text(
                                       '${snapshot.data?.data?[index].title}',
-                                      style: subTitleStyle.copyWith(
+                                      style: widget.subTitleStyle.copyWith(
                                           color: textColor1, fontSize: 16.0),
                                       softWrap: true,
                                     ),
@@ -266,7 +309,7 @@ class Body extends StatelessWidget {
                                     "신청기간: ${snapshot.data?.data?[index]
                                         .applyStartDate}~${snapshot.data
                                         ?.data?[index].applyEndDate}",
-                                    style: subTitleStyle.copyWith(
+                                    style: widget.subTitleStyle.copyWith(
                                       color: textColor2,
                                       fontWeight: FontWeight.w500,
                                     ),

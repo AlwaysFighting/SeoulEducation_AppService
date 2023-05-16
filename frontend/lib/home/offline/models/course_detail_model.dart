@@ -40,6 +40,7 @@ class Data {
   int? capacity;
   String? deptTel;
   String? deptAddr;
+  bool? isLiked;
 
   Data({
     required this.courseId,
@@ -63,6 +64,7 @@ class Data {
     this.capacity,
     this.deptTel,
     this.deptAddr,
+    this.isLiked,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
@@ -78,8 +80,8 @@ class Data {
         deptId: json["deptId"] ?? 0,
         deptName: json["deptName"] ?? "",
         deptGu: json["deptGu"] ?? "",
-        deptLat: json["deptLat"]?.toDouble(),
-        deptLng: json["deptLng"]?.toDouble(),
+        deptLat: json["deptLat"]?.toDouble() ?? 0.0,
+        deptLng: json["deptLng"]?.toDouble() ?? 0.0,
         insertDate: json["insertDate"],
         likeCount: json["likeCount"] ?? 0,
         isAvailable: json["isAvailable"] ?? false,
@@ -87,6 +89,7 @@ class Data {
         capacity: json["capacity"] ?? 0,
         deptTel: json["deptTel"] ?? "",
         deptAddr: json["deptAddr"] ?? "",
+        isLiked: json["isLiked"] ?? false,
       );
 
   Map<String, dynamic> toJson() => {
@@ -111,5 +114,6 @@ class Data {
         "capacity": capacity,
         "deptTel": deptTel,
         "deptAddr": deptAddr,
+        "isLiked": isLiked,
       };
 }

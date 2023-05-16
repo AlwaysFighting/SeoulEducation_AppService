@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../const/api.dart';
 import '../../../const/colors.dart';
-import '../../online/models/category_button.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -25,7 +24,6 @@ class OfflinePage extends StatefulWidget {
 class _OfflinePageState extends State<OfflinePage> {
 
   final String imageURL = "assets/images/";
-  double customAppBarSize = 112;
 
   final titleStyle = const TextStyle(
     color: textColor1,
@@ -79,48 +77,38 @@ class _OfflinePageState extends State<OfflinePage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(customAppBarSize),
-        child: AppBar(
-          backgroundColor: Colors.white,
-          foregroundColor: textColor1,
-          elevation: 0,
-          leading: const CustomBackButton(),
-          title: Text(
-            "오프라인강좌",
-            style: subTitleStyle.copyWith(
-              fontSize: 16.0,
-              color: textColor1,
-            ),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        foregroundColor: textColor1,
+        elevation: 0,
+        leading: const CustomBackButton(),
+        title: Text(
+          "오프라인강좌",
+          style: subTitleStyle.copyWith(
+            fontSize: 16.0,
+            color: textColor1,
           ),
-          flexibleSpace: const SizedBox(
-            width: 100,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 16, top: 125, right: 16.0),
-              child: CategorySelection(isSelected: false,),
-            ),
-          ),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: IconButton(
-                icon: Image.asset(
-                  '$imageURL/Const/MagnifyingGlass.png',
-                  width: 24,
-                  height: 24,
-                ),
-                onPressed: () {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (BuildContext context) {
-                    return const OfflineSearchPage(
-                      searchKeyword: '',
-                    );
-                  }));
-                },
-              ),
-            ),
-          ],
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: IconButton(
+              icon: Image.asset(
+                '$imageURL/Const/MagnifyingGlass.png',
+                width: 24,
+                height: 24,
+              ),
+              onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (BuildContext context) {
+                  return const OfflineSearchPage(
+                    searchKeyword: '',
+                  );
+                }));
+              },
+            ),
+          ),
+        ],
       ),
       body:
           _body(services: services, today: today, subTitleStyle: subTitleStyle),
@@ -145,6 +133,33 @@ class _body extends StatefulWidget {
 }
 
 class _bodyState extends State<_body> {
+
+  final String imageURL = "assets/images";
+
+  Future<void> postStarCourses(int courseID, bool result) async {
+
+    String endPointUrl = CoursesAPI().starCourses(courseID);
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('accessToken');
+
+    final response = await http.post(
+      Uri.parse(endPointUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: jsonEncode(<String, bool>{
+        'result': result,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+    } else {
+      print(response.body);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<CourseList>(
@@ -200,7 +215,6 @@ class _bodyState extends State<_body> {
                                 ),
                               ),
                             );
-                            print(index);
                           },
                           child: Container(
                             decoration: BoxDecoration(
@@ -243,11 +257,25 @@ class _bodyState extends State<_body> {
                                         ],
                                       ),
                                       IconButton(
-                                        onPressed: () {},
-                                        icon: Image.asset(
-                                          'assets/images/Const/star_stroke.png',
-                                          width: 20,
-                                          height: 20,
+                                        onPressed: () {
+                                          bool? isLiked = snapshot.data?.data[index].isLiked;
+                                          postStarCourses(index, !isLiked!);
+                                          setState(() {
+                                            if (snapshot.data != null) {
+                                              snapshot.data!.data[index].isLiked = !(snapshot.data!.data[index].isLiked ?? false);
+                                            }
+                                          });
+                                        },
+                                        icon: snapshot.data?.data[index].isLiked == false
+                                            ? Image.asset(
+                                          '$imageURL/Const/star_stroke.png',
+                                          width: 22,
+                                          height: 22,
+                                        )
+                                            : Image.asset(
+                                          '$imageURL/Const/star_fill.png',
+                                          width: 22,
+                                          height: 22,
                                         ),
                                       )
                                     ],
@@ -296,43 +324,6 @@ class _bodyState extends State<_body> {
           ),
         );
       },
-    );
-  }
-}
-
-class _tagged extends StatelessWidget {
-  const _tagged({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        NewestCategoryButton(
-          isSelected: false,
-          onPressed: () {
-            print("최신순");
-          },
-          title: '최신순',
-        ),
-        const SizedBox(width: 16.0),
-        NewestCategoryButton(
-          isSelected: false,
-          onPressed: () {
-            print("모집예정");
-          },
-          title: '모집예정',
-        ),
-        const SizedBox(width: 16.0),
-        NewestCategoryButton(
-          isSelected: false,
-          onPressed: () {
-            print("시험대비");
-          },
-          title: '시험대비',
-        ),
-      ],
     );
   }
 }

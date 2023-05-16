@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
@@ -75,45 +76,42 @@ class _OnlinePageState extends State<OnlinePage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(customAppBarSize),
-        child: AppBar(
-          backgroundColor: Colors.white,
-          foregroundColor: textColor1,
-          elevation: 0,
-          title: Text(
-            "온라인강좌",
-            style: subTitleStyle.copyWith(
-              fontSize: 16.0,
-              color: textColor1,
-            ),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        foregroundColor: textColor1,
+        elevation: 0,
+        title: Text(
+          "온라인강좌",
+          style: subTitleStyle.copyWith(
+            fontSize: 16.0,
+            color: textColor1,
           ),
-          leading: const CustomBackButton(),
-          flexibleSpace: const Padding(
-            padding: EdgeInsets.only(left: 16, top: 125),
-            child: Tagged(),
-          ),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (BuildContext context) {
-                    return const OnlineSearchPage(
-                      searchKeyword: '',
-                    );
-                  }));
-                },
-                child: Image.asset(
-                  'assets/images/Const/MagnifyingGlass.png',
-                  width: 24,
-                  height: 24,
-                ),
+        ),
+        leading: const CustomBackButton(),
+        flexibleSpace: const Padding(
+          padding: EdgeInsets.only(left: 16, top: 125),
+          child: Tagged(),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (BuildContext context) {
+                  return const OnlineSearchPage(
+                    searchKeyword: '',
+                  );
+                }));
+              },
+              child: Image.asset(
+                'assets/images/Const/MagnifyingGlass.png',
+                width: 24,
+                height: 24,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       body:
           _body(services: services, today: today, subTitleStyle: subTitleStyle),
@@ -121,7 +119,7 @@ class _OnlinePageState extends State<OnlinePage> {
   }
 }
 
-class _body extends StatelessWidget {
+class _body extends StatefulWidget {
   const _body({
     super.key,
     required this.services,
@@ -134,9 +132,42 @@ class _body extends StatelessWidget {
   final TextStyle subTitleStyle;
 
   @override
+  State<_body> createState() => _bodyState();
+}
+
+class _bodyState extends State<_body> {
+
+  Future<void> postStarCourses(int courseID, bool result) async {
+
+    String endPointUrl = CoursesAPI().starCourses(courseID);
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('accessToken');
+
+    final response = await http.post(
+      Uri.parse(endPointUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: jsonEncode(<String, bool>{
+        'result': result,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+    } else {
+      print(response.body);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+
+    const String imageURL = "assets/images";
+
     return FutureBuilder<CourseList>(
-      future: services,
+      future: widget.services,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           print("snapshot : $snapshot");
@@ -176,7 +207,6 @@ class _body extends StatelessWidget {
                               ),
                             ),
                           );
-                          print(index);
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(bottom: 16.0),
@@ -198,22 +228,35 @@ class _body extends StatelessWidget {
                                       Row(
                                         children: [
                                           Text(
-                                            DateTime.parse(snapshot.data?.data[index].applyStartDate as String).isBefore(today) && DateTime.parse(snapshot.data?.data[index].applyEndDate as String).isAfter(today) ? "#신청가능" : "#신청불가능",
-                                            style: subTitleStyle,
+                                            DateTime.parse(snapshot.data?.data[index].applyStartDate as String).isBefore(widget.today) && DateTime.parse(snapshot.data?.data[index].applyEndDate as String).isAfter(widget.today) ? "#신청가능" : "#신청불가능",
+                                            style: widget.subTitleStyle,
                                           ),
                                           const SizedBox(width: 10),
-                                          Text( snapshot.data?.data[index].isFree == true ? "#무료" : "#유료" , style: subTitleStyle),
+                                          Text( snapshot.data?.data[index].isFree == true ? "#무료" : "#유료" , style: widget.subTitleStyle),
                                           const SizedBox(width: 10),
-                                          Text("#직업상담사", style: subTitleStyle),
+                                          Text("#직업상담사", style: widget.subTitleStyle),
                                         ],
                                       ),
                                       IconButton(
                                         onPressed: () {
+                                          bool? isLiked = snapshot.data?.data[index].isLiked;
+                                          postStarCourses(snapshot.data?.data[index].id ?? 0, !isLiked!);
+                                          setState(() {
+                                            if (snapshot.data != null) {
+                                              snapshot.data!.data[index].isLiked = !(snapshot.data!.data[index].isLiked ?? false);
+                                            }
+                                          });
                                         },
-                                        icon: Image.asset(
-                                          'assets/images/Const/star_stroke.png',
-                                          width: 20,
-                                          height: 20,
+                                        icon: snapshot.data?.data[index].isLiked == false
+                                            ? Image.asset(
+                                          '$imageURL/Const/star_stroke.png',
+                                          width: 22,
+                                          height: 22,
+                                        )
+                                            : Image.asset(
+                                          '$imageURL/Const/star_fill.png',
+                                          width: 22,
+                                          height: 22,
                                         ),
                                       )
                                     ],
@@ -222,7 +265,7 @@ class _body extends StatelessWidget {
                                     width: 302,
                                     child: Text(
                                       '${snapshot.data?.data[index].title}',
-                                      style: subTitleStyle.copyWith(
+                                      style: widget.subTitleStyle.copyWith(
                                           color: textColor1, fontSize: 16.0),
                                       softWrap: true,
                                     ),
@@ -230,7 +273,7 @@ class _body extends StatelessWidget {
                                   const SizedBox(height: 14.0),
                                   Text(
                                     "신청기간: ${snapshot.data?.data[index].applyStartDate}~${snapshot.data?.data[index].applyEndDate}",
-                                    style: subTitleStyle.copyWith(
+                                    style: widget.subTitleStyle.copyWith(
                                       color: textColor2,
                                       fontWeight: FontWeight.w500,
                                     ),

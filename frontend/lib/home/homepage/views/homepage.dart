@@ -67,10 +67,7 @@ class HomePage extends StatelessWidget {
                   Text("공지사항", style: titleStyle.copyWith(fontSize: 18.0)),
                   TextButton(
                     onPressed: () {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (BuildContext context) {
-                            return KakaoMapView();
-                          }));
+                      print("공지사항");
                     },
                     child: Text("전체보기",
                         style: subTitleStyle.copyWith(color: textColor1)),
