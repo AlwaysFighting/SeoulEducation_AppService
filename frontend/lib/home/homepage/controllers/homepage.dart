@@ -1,6 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:seoul_education_service/home/homepage/models/search_bar.dart';
 import 'package:seoul_education_service/home/offline/controllers/offline_page.dart';
 import 'package:seoul_education_service/home/online/controllers/online_page.dart';
 import 'package:seoul_education_service/home/recommend/controllers/recommend_page.dart';
@@ -8,10 +8,16 @@ import 'package:seoul_education_service/notification/controllers/alarm_page.dart
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../const/colors.dart';
+import 'homepage_search_page.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final String imageURL = "assets/images/";
 
   final titleStyle = const TextStyle(
@@ -28,20 +34,53 @@ class HomePage extends StatelessWidget {
     fontFamily: "Spoqa Han Sans Neo",
   );
 
+  late final FocusNode _focusNode = FocusNode();
+
+  final TextEditingController _textEditingController = TextEditingController();
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    _textEditingController.dispose();
+    super.dispose();
+  }
+
+  String searchText = "";
+
+  void _onSearch() {
+    String keyword = _textEditingController.text;
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (BuildContext context) {
+      return EntireSearchPage(searchKeyword: keyword);
+    }));
+  }
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
         child: AppHeader(),
       ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Padding(
-          padding: const EdgeInsets.only(
-              left: 16.0, right: 16.0, top: 30.0, bottom: 30.0),
+      body: _body(context),
+    );
+  }
+
+  SingleChildScrollView _body(BuildContext context) {
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Padding(
+        padding: const EdgeInsets.only(
+            left: 16.0, right: 16.0, top: 30.0, bottom: 30.0),
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            setState(() {
+              _focusNode.unfocus();
+            });
+            FocusScope.of(context).requestFocus(FocusNode());
+          },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -51,9 +90,9 @@ class HomePage extends StatelessWidget {
                 style: titleStyle.copyWith(height: 1.7),
               ),
               const SizedBox(height: 20),
-              const SearchTextFieldExample(),
+              _homeSearchBar(),
               const SizedBox(height: 40),
-              _body(),
+              _courseRows(),
               const SizedBox(height: 40),
               Text("여기, 주목!", style: titleStyle.copyWith(fontSize: 18.0)),
               const SizedBox(height: 14),
@@ -104,7 +143,45 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Row _body() {
+  SizedBox _homeSearchBar() {
+    return SizedBox(
+      height: 48.0,
+      width: 358.0,
+      child: CupertinoSearchTextField(
+        controller: _textEditingController,
+        focusNode: _focusNode,
+        decoration: BoxDecoration(
+          color: backgroundBtnColor,
+          border: Border.all(
+            color: _focusNode.hasFocus ? mainColor : textColor2,
+          ),
+          borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+        ),
+        prefixIcon: GestureDetector(
+          onTap: _onSearch,
+          child: Image.asset(
+            'assets/images/Const/MagnifyingGlass.png',
+            width: 20,
+            height: 20,
+          ),
+        ),
+        suffixIcon: const Icon(CupertinoIcons.xmark),
+        placeholder: "찾고자 하는 강좌를 검색해주세요.",
+        onChanged: (String value) {
+          setState(() {
+            searchText = value;
+          });
+        },
+        onSubmitted: (String value) {
+          setState(() {
+            searchText = value;
+          });
+        },
+      ),
+    );
+  }
+
+  Row _courseRows() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -132,14 +209,12 @@ class HomePage extends StatelessWidget {
 }
 
 class Banner extends StatelessWidget {
-
   const Banner({super.key});
 
   final String imageURL = "assets/images/";
 
   @override
   Widget build(BuildContext context) {
-
     List<String> list = [
       '$imageURL/Home/banner.png',
       '$imageURL/Home/banner.png',
