@@ -106,7 +106,7 @@ class _OnlineDetailPageState extends State<OnlineDetailPage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: customAppBar(context, '온라인강좌'),
+      appBar: customAppBar(context, widget.title),
       body: SingleChildScrollView(
         child: CoursesList(
           services: services,
@@ -129,7 +129,7 @@ class _OnlineDetailPageState extends State<OnlineDetailPage> {
           if (snapshot.hasError) {
             print("snapshot : $snapshot");
             return AppBar(
-              title: const Text("온라인 강좌"),
+              title: Text(widget.title),
               backgroundColor: Colors.white,
               foregroundColor: textColor1,
               automaticallyImplyLeading: false,

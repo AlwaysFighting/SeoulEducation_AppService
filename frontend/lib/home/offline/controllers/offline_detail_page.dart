@@ -83,7 +83,7 @@ class _OfflineDetailPageState extends State<OfflineDetailPage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: customAppBar(context, '오프라인강좌'),
+      appBar: customAppBar(context, widget.title),
       body: _Body(services: services, widget: widget, titleStyle: titleStyle, today: today, imageURL: imageURL, textStyle: textStyle),
     );
   }
@@ -121,7 +121,7 @@ class _OfflineDetailPageState extends State<OfflineDetailPage> {
           if (snapshot.hasError) {
             print("snapshot : $snapshot");
             return AppBar(
-              title: const Text("오프라인강좌"),
+              title: Text(widget.title),
               backgroundColor: Colors.white,
               foregroundColor: textColor1,
               automaticallyImplyLeading: false,
@@ -194,7 +194,8 @@ class _Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<CourseDetail>(
+    return SingleChildScrollView(
+      child: FutureBuilder<CourseDetail>(
         future: services,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
@@ -235,8 +236,8 @@ class _Body extends StatelessWidget {
                               title: DateTime.parse(snapshot.data?.data
                                               .applyStartDate as String)
                                           .isBefore(today) &&
-                                      DateTime.parse(snapshot
-                                              .data?.data.applyEndDate as String)
+                                      DateTime.parse(snapshot.data?.data
+                                              .applyEndDate as String)
                                           .isAfter(today)
                                   ? "신청가능"
                                   : "신청불가능",
@@ -316,34 +317,37 @@ class _Body extends StatelessWidget {
                             children: [
                               Text(
                                 "위치정보 안내",
-                              style: titleStyle.copyWith(fontSize: 16.0),
-                            ),
-                            const SizedBox(height: 16.0),
-                            LocationInfo(
-                              imageURL: imageURL,
-                              textStyle: textStyle,
-                              text: "${snapshot.data?.data.deptName}",
-                              alertLocation: '${snapshot.data?.data.deptAddr}',
-                              alertCall: '${snapshot.data?.data.deptTel}',
-                            ),
-                            const SizedBox(height: 20.0),
-                            KakaoMapView(
-                              deptLat: snapshot.data?.data.deptLat as double,
-                              deptLng: snapshot.data?.data.deptLng as double,
-                            ),
-                          ],
-                        ),
-                      )
-                    : Container(),
-              ],
-        ),
+                                style: titleStyle.copyWith(fontSize: 16.0),
+                              ),
+                              const SizedBox(height: 16.0),
+                              LocationInfo(
+                                imageURL: imageURL,
+                                textStyle: textStyle,
+                                text: "${snapshot.data?.data.deptName}",
+                                alertLocation:
+                                    '${snapshot.data?.data.deptAddr}',
+                                alertCall: '${snapshot.data?.data.deptTel}',
+                              ),
+                              const SizedBox(height: 20.0),
+                              KakaoMapView(
+                                deptLat: snapshot.data?.data.deptLat as double,
+                                deptLng: snapshot.data?.data.deptLng as double,
+                              ),
+                            ],
+                          ),
+                        )
+                      : Container(),
+                ],
+              ),
+              const SizedBox(height: 60.0),
               const Padding(
                 padding: EdgeInsets.only(bottom: 40.0),
                 child: RegisterButton(),
               ),
             ],
           );
-      },
+        },
+      ),
     );
   }
 }
