@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'const/navigation.dart';
-import 'package:flutter_screenutil/src/screen_util.dart';
 
 /*void main() {
   runApp(
@@ -13,7 +12,7 @@ import 'package:flutter_screenutil/src/screen_util.dart';
   );
 }*/
 void main(){
-  runApp(myapp());
+  runApp(const myapp());
 }
 class myapp extends StatelessWidget{
   const myapp({Key? key}) : super(key:key);
@@ -22,7 +21,7 @@ class myapp extends StatelessWidget{
     return ScreenUtilInit(
       designSize: const Size(390,844),
         builder: (context, child){
-          return MaterialApp(
+          return const MaterialApp(
             debugShowCheckedModeBanner: false,
             home: Scaffold(
               body: Navigation(),

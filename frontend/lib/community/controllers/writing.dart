@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/src/screen_util.dart';
 import 'package:seoul_education_service/const/colors.dart';
-import 'commuinty.dart';
 import 'package:seoul_education_service/const/navigation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -47,7 +46,7 @@ class _writingState extends State<writingScreen>{
               GestureDetector(
                 onTap: (){
                   _sendPostRequest();
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => Navigation()));
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Navigation()));
                 },
                 child: Text('완료',
                   style: TextStyle(
@@ -60,7 +59,7 @@ class _writingState extends State<writingScreen>{
           ),
           SizedBox(height: ScreenUtil().setHeight(29),),
           //제목 입력칸
-          Container(
+          SizedBox(
             width: ScreenUtil().setWidth(358),
               child:TextFormField(
                 maxLength: 40,
@@ -79,7 +78,7 @@ class _writingState extends State<writingScreen>{
               )
           ),
           //내용 입력칸
-          Container(
+          SizedBox(
               width: ScreenUtil().setWidth(358),
               child:SizedBox(
                 height: ScreenUtil().setHeight(608),
@@ -140,22 +139,22 @@ class _writingState extends State<writingScreen>{
               TextButton(onPressed: (){
                 Navigator.pop(context);
               },
-                  child: Text("아니오"),
+                  child: const Text("아니오"),
               ),
               TextButton(onPressed: (){
                 //게시판 화면으로
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => Navigation()));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Navigation()));
               },
-                  child: Text("예")),
+                  child: const Text("예")),
             ]
         );
         });
   }
   //글작성 api처리
   Future<void> _sendPostRequest() async{
-    final url = Uri.parse('${localhost}/post');
+    final url = Uri.parse('$localhost/post');
     //로그인 부분과 합치면 받아오기
-    final headers={'Authorization':'Bearer ${accessToken}', "Content-Type": "application/json"};
+    final headers={'Authorization':'Bearer $accessToken', "Content-Type": "application/json"};
     bool _submitForm(){
       if(_titleController.text.isEmpty || _contentController.text.isEmpty){
         if(_titleController.text.isEmpty)
@@ -179,7 +178,7 @@ class _writingState extends State<writingScreen>{
         {"title": _titleController.text,
           "content": _contentController.text});
     final response = await http.post(url, headers: headers, body: body);
-    print('request body:${body}');
+    print('request body:$body');
     if(response.statusCode == 200){
       print("Successfully Saved.");
     }
@@ -208,22 +207,5 @@ class _writingState extends State<writingScreen>{
       print("Server Error");
     }
   }
-
-  //글편집 api처리
-  /*Future<void> _editPostRequest() async{
-    final url = Uri.parse('${localhost}/post/${widget.postid}');
-    final headers={'Authorization':'Bearer ${accessToken}', "Content-Type": "application/json"};
-    final body = jsonEncode(
-        {"title": _titleController.text,
-          "content": _contentController.text});
-    final response = await http.post(url, headers: headers, body: body);
-    print('request body:${body}');
-    if(response.statusCode == 200){
-      print("Successfully Updated.");
-    }
-    else{
-      print("${response.statusCode}");
-    }
-  }*/
 
 }

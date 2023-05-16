@@ -55,7 +55,7 @@ class _editingState extends State<editingScreen>{
                 GestureDetector(
                   onTap: (){
                     _editPostRequest();
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => Navigation()));
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Navigation()));
                   },
                   child: Text('완료',
                     style: TextStyle(
@@ -68,7 +68,7 @@ class _editingState extends State<editingScreen>{
             ),
             SizedBox(height: ScreenUtil().setHeight(29),),
             //제목 입력칸
-            Container(
+            SizedBox(
                 width: ScreenUtil().setWidth(358),
                 child:TextFormField(
                   maxLength: 40,
@@ -87,7 +87,7 @@ class _editingState extends State<editingScreen>{
                 )
             ),
             //내용 입력칸
-            Container(
+            SizedBox(
                 width: ScreenUtil().setWidth(358),
                 child:SizedBox(
                   height: ScreenUtil().setHeight(608),
@@ -147,26 +147,26 @@ class _editingState extends State<editingScreen>{
                 TextButton(onPressed: (){
                   Navigator.pop(context);
                 },
-                  child: Text("아니오"),
+                  child: const Text("아니오"),
                 ),
                 TextButton(onPressed: (){
                   //게시판 화면으로
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => Navigation()));
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Navigation()));
                 },
-                    child: Text("예")),
+                    child: const Text("예")),
               ]
           );
         });
   }
 
   Future<void> _editPostRequest() async{
-    final url = Uri.parse('${localhost}/post/${widget.postid}');
-    final headers={'Authorization':'Bearer ${accessToken}', "Content-Type": "application/json"};
+    final url = Uri.parse('$localhost/post/${widget.postid}');
+    final headers={'Authorization':'Bearer $accessToken', "Content-Type": "application/json"};
     final body = jsonEncode(
         {"title": _titleController.text,
           "content": _contentController.text});
     final response = await http.patch(url, headers: headers, body: body);
-    print('request body:${body}');
+    print('request body:$body');
     if(response.statusCode == 200){
       print("Successfully Updated.");
     }

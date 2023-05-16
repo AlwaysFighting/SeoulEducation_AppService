@@ -36,8 +36,8 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Column(
-              children: const [
+            const Column(
+              children: [
                 Text("LOGO",
                     style: TextStyle(
                         fontSize: 24.0,
@@ -144,7 +144,7 @@ class _LoginPageState extends State<LoginPage> {
                       TextButton(
                         onPressed: () {
                           Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => RegisterPage()),
+                            MaterialPageRoute(builder: (_) => const RegisterPage()),
                           );
                         },
                         child: Text(
