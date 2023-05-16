@@ -8,7 +8,7 @@ import 'package:seoul_education_service/const/colors.dart';
 import 'package:seoul_education_service/home/online/controllers/online_detail_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../const/api.dart';
+import '../../../api/course_api.dart';
 import '../models/category_button.dart';
 import '../../offline/models/course_list_model.dart';
 import 'online_search_page.dart';

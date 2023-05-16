@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:seoul_education_service/const/colors.dart';
 import 'package:http/http.dart' as http;
 
-import '../../../const/api.dart';
+import '../../../api/course_api.dart';
 import '../models/dividers.dart';
 
 class RegisterPage extends StatefulWidget {

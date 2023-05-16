@@ -6,7 +6,7 @@ import 'package:seoul_education_service/const/back_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../const/api.dart';
+import '../../../api/course_api.dart';
 import '../../../const/colors.dart';
 import 'package:http/http.dart' as http;
 

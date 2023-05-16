@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../const/api.dart';
+import '../../../api/course_api.dart';
 import '../../../const/back_button.dart';
 import '../../../const/colors.dart';
 

@@ -1,7 +1,7 @@
 const API_AUTH_URL = "http://localhost:8080/auth";
 const API_COURSES_URL = "http://localhost:8080/course";
 const API_COURSES_SEARCH_URL = "http://localhost:8080/search/course";
-const API_COURSES_MYPAGE_URL = "http://localhost:8080/mypage/like";
+const API_ALARM_URL = "http://localhost:8080/notif";
 
 // API_AUTH_URL - 회원가입
 const EMAIL_LOGIN_API = "$API_AUTH_URL/login";
@@ -39,7 +39,7 @@ class CoursesAPI {
     return "$API_COURSES_URL/course/new/$type";
   }
 
-  // 4. 강좌 검색 (온/오프)
+  // 4. 강좌 검색 (온/오프/all)
   String searchCourses(String type, String query) {
     return "$API_COURSES_SEARCH_URL/$type?query=$query";
   }
@@ -50,3 +50,16 @@ class CoursesAPI {
   }
 }
 
+// API_ALARM_URL - 알림
+class AlarmAPI {
+  // 알림 목록 조회
+  // 1-1. 카테고리 미선택 시 (모든 알림)
+  String alarmList(int id) {
+    return "$API_ALARM_URL/$id";
+  }
+
+  // 1-2. 카테고리 선택 시
+  String alarmCatList(int id, String category) {
+    return "$API_ALARM_URL/$id?category=$category";
+  }
+}

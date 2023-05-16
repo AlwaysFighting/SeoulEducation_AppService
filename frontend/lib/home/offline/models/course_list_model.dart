@@ -23,7 +23,7 @@ class CourseList {
 }
 
 class Datum {
-  Type? type;
+  String type;
   int id;
   String title;
   String applyStartDate;
@@ -34,7 +34,7 @@ class Datum {
   bool? isLiked;
 
   Datum({
-    this.type,
+    required this.type,
     required this.id,
     required this.title,
     required this.applyStartDate,
@@ -46,7 +46,7 @@ class Datum {
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-        type: typeValues.map[json["type"]],
+        type: json["type"],
         id: json["id"],
         title: json["title"],
         applyStartDate: json["applyStartDate"] ?? "",
@@ -58,7 +58,7 @@ class Datum {
       );
 
   Map<String, dynamic> toJson() => {
-        "type": typeValues.reverse[type],
+        "type": type,
         "id": id,
         "title": title,
         "applyStartDate": applyStartDate,
@@ -68,23 +68,4 @@ class Datum {
         "capacity": capacity,
         "isLiked": isLiked,
       };
-}
-
-enum Type { ON, OFF }
-
-final typeValues = EnumValues({
-  "off": Type.OFF,
-  "on": Type.ON
-});
-
-class EnumValues<T> {
-  Map<String, T> map;
-  late Map<T, String> reverseMap;
-
-  EnumValues(this.map);
-
-  Map<T, String> get reverse {
-    reverseMap = map.map((k, v) => MapEntry(v, k));
-    return reverseMap;
-  }
 }

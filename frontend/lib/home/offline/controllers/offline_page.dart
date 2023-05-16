@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:seoul_education_service/const/back_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../const/api.dart';
+import '../../../api/course_api.dart';
 import '../../../const/colors.dart';
 
 import 'package:http/http.dart' as http;
 
-import '../../online/models/dropdown_button.dart';
+import '../../online/models/dropdown_button1.dart';
+import '../../online/models/dropdown_button2.dart';
+import '../../online/models/dropdown_button3.dart';
 import '../models/course_list_model.dart';
 import 'offline_detail_page.dart';
 import 'offline_search_page.dart';
@@ -188,11 +190,11 @@ class _bodyState extends State<_body> {
                 children: [
                   Row(
                     children: const [
-                      CategorySelection(isSelected: false,),
-                      SizedBox(width: 16.0),
-                      CategorySelection(isSelected: false,),
-                      SizedBox(width: 16.0),
-                      CategorySelection(isSelected: false,),
+                      CategorySelection1(isSelected: false,),
+                      SizedBox(width: 10.0),
+                      CategorySelection2(isSelected: false,),
+                      SizedBox(width: 10.0),
+                      CategorySelection3(isSelected: false,),
                     ],
                   ),
                   const SizedBox(height: 20.0),
