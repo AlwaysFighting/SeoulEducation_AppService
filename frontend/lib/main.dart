@@ -1,24 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
-import 'package:seoul_education_service/home/homepage/views/homepage.dart';
+import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:seoul_education_service/logins/login/views/login_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
+import 'const/navigation.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterConfig.loadEnvVariables();
 
+  AuthRepository.initialize(appKey: '${FlutterConfig.get('KAKAO_JAVA_KEY')}' ?? '');
+
   KakaoSdk.init(
     nativeAppKey: '${FlutterConfig.get('KAKAOLOGIN_APP_KEY')}',
   );
 
-  SharedPreferences prefs = await SharedPreferences.getInstance();
+  // SharedPreferences prefs = await SharedPreferences.getInstance();
+  //
+  // String? email = prefs.getString('email');
+  // String? password = prefs.getString('password');
+  //
+  // bool isLoggedIn = email != null && password != null;
 
-  String? email = prefs.getString('email');
-  String? password = prefs.getString('password');
-
-  bool isLoggedIn = email != null && password != null;
+  bool isLoggedIn = false;
 
   runApp(
     _APP(
@@ -40,7 +45,7 @@ class _APP extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'Spoqa Han Sans Neo'),
-      home: isLoggedIn ?  const HomePage() : const LoginPage(),
+      home: isLoggedIn ?  const Navigation() : const LoginPage(),
     );
   }
 }

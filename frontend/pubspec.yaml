@@ -38,7 +38,11 @@ dependencies:
   kakao_flutter_sdk_user: ^1.4.1
   flutter_config: ^2.0.0
   shared_preferences: ^2.1.0
-  http: ^0.13.5
+  http: ^0.13.6
+  url_launcher: ^6.1.11
+  carousel_slider: ^4.2.1
+  kakao_map_plugin: ^0.1.3
+  dropdown_button2: ^2.1.2
 
 dev_dependencies:
   flutter_test:
@@ -63,6 +67,11 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - assets/images/BottomNavBarItem/
+    - assets/images/Home/
+    - assets/images/Const/
+    - assets/images/Alarm/
+    - assets/images/Courses/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

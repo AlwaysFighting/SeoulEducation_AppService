@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:seoul_education_service/community/controllers/commuinty.dart';
-import '../home/homepage/views/homepage.dart';
+import '../home/homepage/controllers/homepage.dart';
 import '../mypage/mypage.dart';
+import 'colors.dart';
 
 class Navigation extends StatefulWidget {
   const Navigation({Key? key}) : super(key: key);
@@ -36,9 +37,8 @@ class _NavigationState extends State<Navigation> {
   BottomNavigationBar _bottomNavigation() {
     return BottomNavigationBar(
       backgroundColor: Colors.white,
-      unselectedItemColor: Colors.grey,
-      selectedLabelStyle: const TextStyle(color: Colors.black),
-      selectedItemColor: Colors.black,
+      unselectedItemColor: textColor2,
+      selectedLabelStyle: const TextStyle(color: mainColor),
       selectedFontSize: 12,
       unselectedFontSize: 12,
       type: BottomNavigationBarType.fixed,
@@ -48,18 +48,63 @@ class _NavigationState extends State<Navigation> {
         });
       },
       currentIndex: currentIndex,
-      items: const [
+      items: [
         BottomNavigationBarItem(
-          label: "홈",
-          icon: Icon(Icons.home_outlined),
+          icon: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Image.asset(
+              'assets/images/BottomNavBarItem/house_grey.png',
+              width: 24,
+              height: 24,
+            ),
+          ),
+          activeIcon: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Image.asset(
+              'assets/images/BottomNavBarItem/House.png',
+              width: 24,
+              height: 24,
+            ),
+          ),
+          label: '홈',
         ),
         BottomNavigationBarItem(
-          label: "게시판",
-          icon: Icon(Icons.chat_outlined),
+          icon: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Image.asset(
+              'assets/images/BottomNavBarItem/chats_grey.png',
+              width: 24,
+              height: 24,
+            ),
+          ),
+          activeIcon: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Image.asset(
+              'assets/images/BottomNavBarItem/Chats.png',
+              width: 24,
+              height: 24,
+            ),
+          ),
+          label: '질문게시판',
         ),
         BottomNavigationBarItem(
-          label: "마이페이지",
-          icon: Icon(Icons.person_outline),
+          icon: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Image.asset(
+              'assets/images/BottomNavBarItem/user_grey.png',
+              width: 24,
+              height: 24,
+            ),
+          ),
+          activeIcon: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Image.asset(
+              'assets/images/BottomNavBarItem/User.png',
+              width: 24,
+              height: 24,
+            ),
+          ),
+          label: '마이페이지',
         ),
       ],
     );
