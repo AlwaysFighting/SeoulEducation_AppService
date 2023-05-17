@@ -8,6 +8,7 @@ import 'package:seoul_education_service/community/models/postlist.dart';
 import 'package:seoul_education_service/const/colors.dart';
 import 'detailcontent.dart';
 import 'package:seoul_education_service/community/constant.dart';
+import 'package:seoul_education_service/community/apis/apiservice.dart';
 
 class CommunityPage extends StatefulWidget {
   const CommunityPage({Key? key}) : super(key:key);
@@ -100,7 +101,7 @@ class _CommunityState extends State<CommunityPage>{
       Navigator.of(context).push(MaterialPageRoute(builder: (context) => const writingScreen()));
   }
 
-  Future<void> _fetchPosts() async{
+  /*Future<void> _fetchPosts() async{
     var response = await http.get(Uri.parse('$localhost/post'));
     if(response.statusCode == 200){
       var jsonResponse = jsonDecode(response.body);
@@ -111,6 +112,12 @@ class _CommunityState extends State<CommunityPage>{
     }else{
       print('${response.statusCode}');
     }
+  }*/
+  Future<void> _fetchPosts() async{
+    var posts = await ApiService.fetchPosts();
+    setState(() {
+      _posts=posts;
+    });
   }
 
   Widget content(){
