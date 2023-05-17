@@ -11,7 +11,7 @@ const EMAIL_CODE_REQUEST_API = "$API_AUTH_URL/email";
 const EMAIL_CODE_CONFIRM_API = "$API_AUTH_URL/email/code";
 const REGISTER_API = "$API_AUTH_URL/join";
 
-// API_COURSES_URL - 강의
+// API_COURSES_URL - 강의 URL
 class CoursesAPI {
 
   // 1. 강의 세부 목록 조회
