@@ -98,12 +98,15 @@ class _OnlinePageState extends State<OnlinePage> {
             padding: const EdgeInsets.only(right: 16.0),
             child: GestureDetector(
               onTap: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (BuildContext context) {
-                  return const OnlineSearchPage(
-                    searchKeyword: '',
-                  );
-                }));
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return const OnlineSearchPage(
+                        searchKeyword: '',
+                      );
+                    },
+                  ),
+                );
               },
               child: Image.asset(
                 'assets/images/Const/MagnifyingGlass.png',
