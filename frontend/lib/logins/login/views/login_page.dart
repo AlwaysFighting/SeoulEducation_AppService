@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:provider/provider.dart';
 import 'package:seoul_education_service/const/colors.dart';
 import 'package:seoul_education_service/const/navigation.dart';
 import 'package:seoul_education_service/logins/register/views/register_page.dart';
@@ -10,6 +11,7 @@ import '../../../api/course_api.dart';
 import '../models/divider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -98,6 +100,8 @@ class _LoginPageState extends State<LoginPage> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('accessToken', accessToken);
 
+
+
       // await prefs.setString('email', key);
       // await prefs.setString('password', value);
 
@@ -151,8 +155,8 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Column(
-                    children: const [
+                  const Column(
+                    children: [
                       Text("LOGO",
                           style: TextStyle(
                               fontSize: 24.0,
@@ -348,7 +352,6 @@ class _LoginPageState extends State<LoginPage> {
 
 class _register extends StatelessWidget {
   const _register({
-    super.key,
     required this.mainTextStyle,
   });
 

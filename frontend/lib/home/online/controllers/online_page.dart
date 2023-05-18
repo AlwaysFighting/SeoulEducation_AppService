@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
@@ -127,7 +126,6 @@ class _OnlinePageState extends State<OnlinePage> {
 
 class _body extends StatefulWidget {
   const _body({
-    super.key,
     required this.services,
     required this.today,
     required this.subTitleStyle,
@@ -196,10 +194,10 @@ class _bodyState extends State<_body> {
               physics: const BouncingScrollPhysics(),
               child: Column(
                 children: [
-                  SingleChildScrollView(
+                  const SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children: const [
+                      children: [
                         CategorySelection1(),
                         SizedBox(width: 10.0),
                         CategorySelection2(),

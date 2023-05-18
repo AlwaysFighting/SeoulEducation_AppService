@@ -626,7 +626,7 @@ class Alert extends StatelessWidget {
               width: 280,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: mainColor,
+                  backgroundColor: mainColor,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24.0)),

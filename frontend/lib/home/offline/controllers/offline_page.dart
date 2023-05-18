@@ -120,7 +120,6 @@ class _OfflinePageState extends State<OfflinePage> {
 
 class _body extends StatefulWidget {
   const _body({
-    super.key,
     required this.services,
     required this.today,
     required this.subTitleStyle,
@@ -188,10 +187,10 @@ class _bodyState extends State<_body> {
               physics: const BouncingScrollPhysics(),
               child: Column(
                 children: [
-                  SingleChildScrollView(
+                  const SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children: const [
+                      children: [
                         CategorySelection1(),
                         SizedBox(width: 10.0),
                         CategorySelection2(),

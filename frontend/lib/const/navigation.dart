@@ -4,12 +4,14 @@ import '../home/homepage/controllers/homepage.dart';
 import '../mypage/mypage.dart';
 import 'colors.dart';
 
+
 class Navigation extends StatefulWidget {
   const Navigation({Key? key}) : super(key: key);
 
   @override
   State<Navigation> createState() => _NavigationState();
 }
+
 
 class _NavigationState extends State<Navigation> {
   int index = 0;
