@@ -153,7 +153,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                   Column(
+                  Column(
                     children: const [
                       Text("LOGO",
                           style: TextStyle(
