@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:seoul_education_service/const/back_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,10 +9,6 @@ import '../../../api/course_api.dart';
 import '../../../const/colors.dart';
 
 import 'package:http/http.dart' as http;
-
-import '../../online/models/dropdown_button1.dart';
-import '../../online/models/dropdown_button2.dart';
-import '../../online/models/dropdown_button3.dart';
 import '../models/course_list_model.dart';
 import 'offline_detail_page.dart';
 import 'offline_search_page.dart';
@@ -41,10 +38,19 @@ class _OfflinePageState extends State<OfflinePage> {
     fontFamily: "Spoqa Han Sans Neo",
   );
 
+  // 카테고리
+  final List<String> list1items = ['최신순', '관심설정순', "마감설정순"];
+  final List<String> list2items = ['신청예정', '신청가능', '신청완료'];
+  final List<String> list3items = ['시험대비'];
+
   late Future<CourseList> services;
 
+  String whatOrder = "new";
+  String whatFilter = "none";
+
   Future<CourseList> fetchData() async {
-    String endPointUrl = CoursesAPI().coursesList("off", "new");
+    String endPointUrl =
+        CoursesAPI().coursesFilterList("on", whatOrder, whatFilter);
     final Uri url = Uri.parse(endPointUrl);
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -112,8 +118,13 @@ class _OfflinePageState extends State<OfflinePage> {
           ),
         ],
       ),
-      body:
-          _body(services: services, today: today, subTitleStyle: subTitleStyle),
+      body: _body(
+        services: services,
+        today: today,
+        subTitleStyle: subTitleStyle,
+        whatSelectedOrder: whatOrder,
+        whatSelectedFilter: whatFilter,
+      ),
     );
   }
 }
@@ -123,11 +134,15 @@ class _body extends StatefulWidget {
     required this.services,
     required this.today,
     required this.subTitleStyle,
+    required this.whatSelectedOrder,
+    required this.whatSelectedFilter,
   });
 
   final Future<CourseList> services;
   final DateTime today;
   final TextStyle subTitleStyle;
+  final String whatSelectedOrder;
+  final String whatSelectedFilter;
 
   @override
   State<_body> createState() => _bodyState();
@@ -137,8 +152,29 @@ class _bodyState extends State<_body> {
 
   final String imageURL = "assets/images";
 
-  Future<void> postStarCourses(int courseID, bool result) async {
+  // 카테고리
+  final List<String> list1items = ['최신순', '관심설정순', "마감설정순"];
+  final List<String> list2items = ['신청예정', '신청가능', '신청완료'];
+  final List<String> list3items = ['시험대비'];
 
+  // 라벨 선택
+  String? orderValue;
+  String? filterValue;
+  String? selectedBtn3Value;
+
+  @override
+  void initState() {
+    orderValue = widget.whatSelectedOrder;
+    filterValue = widget.whatSelectedFilter;
+    super.initState();
+  }
+
+  // 컬러 선택
+  Color lineColors = lineColor;
+
+
+
+  Future<void> postStarCourses(int courseID, bool result) async {
     String endPointUrl = CoursesAPI().starCourses(courseID);
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -191,18 +227,219 @@ class _bodyState extends State<_body> {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: [
-                        CategorySelection1(),
-                        SizedBox(width: 10.0),
-                        CategorySelection2(),
-                        SizedBox(width: 10.0),
-                        CategorySelection3(),
+                        Container(
+                          height: 38,
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(18.5),
+                            border: Border.all(color: lineColors),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton2(
+                              iconStyleData: IconStyleData(
+                                icon: Image.asset(
+                                  "assets/images/Courses/CaretDown.png",
+                                  width: 16,
+                                  height: 16,
+                                ),
+                              ),
+                              hint: const Text(
+                                '최신순',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: textColor1,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              items: list1items
+                                  .map((item) => DropdownMenuItem<String>(
+                                        value: item,
+                                        child: Text(
+                                          item,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            color: textColor1,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ))
+                                  .toList(),
+                              value: orderValue,
+                              onChanged: (value) {
+                                setState(() {
+                                  orderValue = value as String;
+                                });
+                              },
+                              buttonStyleData: const ButtonStyleData(
+                                height: 40,
+                                width: 81,
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 40,
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                maxHeight: 200,
+                                width: MediaQuery.of(context).size.width,
+                                padding: null,
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                ),
+                                elevation: 1,
+                                scrollbarTheme: ScrollbarThemeData(
+                                  radius: const Radius.circular(40),
+                                  thickness: MaterialStateProperty.all(6),
+                                  thumbVisibility:
+                                      MaterialStateProperty.all(true),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10.0),
+                        Container(
+                          height: 38,
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(18.5),
+                            border: Border.all(color: lineColors),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton2(
+                              iconStyleData: IconStyleData(
+                                icon: Image.asset(
+                                  "assets/images/Courses/CaretDown.png",
+                                  width: 16,
+                                  height: 16,
+                                ),
+                              ),
+                              hint: const Text(
+                                '모집예정',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: textColor1,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              items: list2items
+                                  .map((item) => DropdownMenuItem<String>(
+                                        value: item,
+                                        child: Text(
+                                          item,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            color: textColor1,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ))
+                                  .toList(),
+                              value: filterValue,
+                              onChanged: (value) {
+                                setState(() {
+                                  filterValue = value as String;
+                                });
+                              },
+                              buttonStyleData: const ButtonStyleData(
+                                height: 40,
+                                width: 73,
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 40,
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                maxHeight: 200,
+                                width: MediaQuery.of(context).size.width,
+                                padding: null,
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                ),
+                                elevation: 1,
+                                scrollbarTheme: ScrollbarThemeData(
+                                  radius: const Radius.circular(40),
+                                  thickness: MaterialStateProperty.all(6),
+                                  thumbVisibility:
+                                      MaterialStateProperty.all(true),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10.0),
+                        Container(
+                          height: 38,
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(18.5),
+                            border: Border.all(color: lineColors),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton2(
+                              iconStyleData: IconStyleData(
+                                icon: Image.asset(
+                                  "assets/images/Courses/CaretDown.png",
+                                  width: 16,
+                                  height: 16,
+                                ),
+                              ),
+                              hint: const Text(
+                                '시험대비',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: textColor1,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              items: list3items
+                                  .map((item) => DropdownMenuItem<String>(
+                                        value: item,
+                                        child: Text(
+                                          item,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            color: textColor1,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ))
+                                  .toList(),
+                              value: selectedBtn3Value,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedBtn3Value = value as String;
+                                });
+                              },
+                              buttonStyleData: const ButtonStyleData(
+                                height: 40,
+                                width: 73,
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 40,
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                maxHeight: 200,
+                                width: MediaQuery.of(context).size.width,
+                                padding: null,
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                ),
+                                elevation: 1,
+                                scrollbarTheme: ScrollbarThemeData(
+                                  radius: const Radius.circular(40),
+                                  thickness: MaterialStateProperty.all(6),
+                                  thumbVisibility:
+                                      MaterialStateProperty.all(true),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 20.0),
                   ListView.builder(
                     shrinkWrap: true,
-                    cacheExtent: 10,
+                    cacheExtent: 20,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: snapshot.data?.data.length,
                     itemBuilder: (BuildContext context, int index) {

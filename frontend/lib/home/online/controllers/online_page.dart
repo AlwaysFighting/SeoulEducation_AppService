@@ -25,7 +25,6 @@ class OnlinePage extends StatefulWidget {
 class _OnlinePageState extends State<OnlinePage> {
 
   final String imageURL = "assets/images/";
-  double customAppBarSize = 112;
 
   final titleStyle = const TextStyle(
     color: textColor1,
@@ -44,10 +43,10 @@ class _OnlinePageState extends State<OnlinePage> {
   late Future<CourseList> services;
 
   String whatOrder = "new";
-  String whatFilter = "upcoming";
+  String whatFilter = "none";
 
   Future<CourseList> fetchData() async {
-    String endPointUrl = CoursesAPI().coursesList("on", whatOrder);
+    String endPointUrl = CoursesAPI().coursesFilterList("on", whatOrder, whatFilter);
     final Uri url = Uri.parse(endPointUrl);
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -209,7 +208,7 @@ class _bodyState extends State<_body> {
                   const SizedBox(height: 20.0),
                   ListView.builder(
                     shrinkWrap: true,
-                    cacheExtent: 10,
+                    cacheExtent: 20,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: snapshot.data?.data.length,
                     itemBuilder: (BuildContext context, int index) {

@@ -14,6 +14,7 @@ final String API_COMMUNITY_REREPLY = "http://localhost:8080/comment/reply";
 
 // API_AUTH_URL - 회원가입
 const EMAIL_LOGIN_API = "$API_AUTH_URL/login";
+const REFRESH_API = "$API_AUTH_URL/refresh";
 // const KAKAO_LOGIN__API = "$API_URL/login";
 const LOGOUT_API = "$API_AUTH_URL/logout";
 const EMAIL_CODE_REQUEST_API = "$API_AUTH_URL/email";
@@ -30,7 +31,7 @@ class CoursesAPI {
   }
   // 1-2. filter 선택 시
   String coursesFilterList(String type, String order, String filter ) {
-    return "$API_COURSES_URL/$type?order=$order?filter=$filter";
+    return "$API_COURSES_URL/$type?order=$order&filter=$filter";
   }
 
   // 2. 관심 강좌 설정 및 취소

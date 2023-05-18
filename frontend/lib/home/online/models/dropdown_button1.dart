@@ -13,7 +13,7 @@ class _CategorySelection1State extends State<CategorySelection1> {
 
   final List<String> list1items = ['최신순', '관심설정순', "마감설정순"];
 
-  String? selectedValue;
+  String? selectedBtn1Value;
   Color lineColors = lineColor;
 
   @override
@@ -57,10 +57,10 @@ class _CategorySelection1State extends State<CategorySelection1> {
                       ),
                     ))
                 .toList(),
-            value: selectedValue,
+            value: selectedBtn1Value,
             onChanged: (value) {
               setState(() {
-                selectedValue = value as String;
+                selectedBtn1Value = value as String;
               });
             },
             buttonStyleData: const ButtonStyleData(

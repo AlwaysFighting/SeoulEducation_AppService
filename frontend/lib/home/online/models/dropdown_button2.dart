@@ -12,7 +12,7 @@ class CategorySelection2 extends StatefulWidget {
 class _CategorySelection2State extends State<CategorySelection2> {
   final List<String> list2items = ['신청예정', '신청가능', '신청완료'];
 
-  String? selectedValue;
+  String? selectedBtn2Value;
   Color lineColors = lineColor;
 
   @override
@@ -54,10 +54,10 @@ class _CategorySelection2State extends State<CategorySelection2> {
                     ),
                   ))
               .toList(),
-          value: selectedValue,
+          value: selectedBtn2Value,
           onChanged: (value) {
             setState(() {
-              selectedValue = value as String;
+              selectedBtn2Value = value as String;
             });
           },
           buttonStyleData: const ButtonStyleData(
