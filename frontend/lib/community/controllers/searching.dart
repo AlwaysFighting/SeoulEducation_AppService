@@ -7,8 +7,6 @@ import 'detailcontent.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:seoul_education_service/community/model/postlist.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:seoul_education_service/logins/login/views/login_page.dart';
-
 
 class Searching extends StatefulWidget{
   const Searching({Key? key}) : super(key:key);
@@ -139,8 +137,8 @@ class SearchingState extends State<Searching> {
     }
     //검색어 자체를 입력하지 않았을때
     else if(_searchingController.text.isEmpty){
-      return const Column(
-        children: [
+      return Column(
+        children: const [
           Text(""),
         ],
       );

@@ -10,9 +10,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../api/course_api.dart';
 import '../models/category_button.dart';
 import '../../offline/models/course_list_model.dart';
-import '../models/dropdown_button1.dart';
-import '../models/dropdown_button2.dart';
-import '../models/dropdown_button3.dart';
 import 'online_search_page.dart';
 
 class OnlinePage extends StatefulWidget {
@@ -193,15 +190,15 @@ class _bodyState extends State<_body> {
               physics: const BouncingScrollPhysics(),
               child: Column(
                 children: [
-                  const SingleChildScrollView(
+                  SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: [
-                        CategorySelection1(),
-                        SizedBox(width: 10.0),
-                        CategorySelection2(),
-                        SizedBox(width: 10.0),
-                        CategorySelection3(),
+                        // CategorySelection1(),
+                        // SizedBox(width: 10.0),
+                        // CategorySelection2(),
+                        // SizedBox(width: 10.0),
+                        // CategorySelection3(),
                       ],
                     ),
                   ),
