@@ -72,7 +72,7 @@ class _OfflinePageState extends State<OfflinePage> {
 
   Future<CourseList> fetchData(String order, String filter) async {
     String endPointUrl =
-        CoursesAPI().coursesFilterList("on", order, filter);
+    CoursesAPI().coursesFilterList("on", order, filter);
     final Uri url = Uri.parse(endPointUrl);
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -122,231 +122,231 @@ class _OfflinePageState extends State<OfflinePage> {
     DateTime today = DateTime.now();
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
         backgroundColor: Colors.white,
-        foregroundColor: textColor1,
-        elevation: 0,
-        leading: const CustomBackButton(),
-        title: Text(
-          "오프라인강좌",
-          style: subTitleStyle.copyWith(
-            fontSize: 16.0,
-            color: textColor1,
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: IconButton(
-              icon: Image.asset(
-                '$imageURL/Const/MagnifyingGlass.png',
-                width: 24,
-                height: 24,
-              ),
-              onPressed: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (BuildContext context) {
-                  return const OfflineSearchPage(
-                    searchKeyword: '',
-                  );
-                }));
-              },
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          foregroundColor: textColor1,
+          elevation: 0,
+          leading: const CustomBackButton(),
+          title: Text(
+            "오프라인강좌",
+            style: subTitleStyle.copyWith(
+              fontSize: 16.0,
+              color: textColor1,
             ),
           ),
-        ],
-      ),
-      body: FutureBuilder<CourseList>(
-        future: services,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            print("snapshot : $snapshot");
-            return Text("${snapshot.error}");
-          }
-          if (!snapshot.hasData) {
-            return const Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  mainColor,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: IconButton(
+                icon: Image.asset(
+                  '$imageURL/Const/MagnifyingGlass.png',
+                  width: 24,
+                  height: 24,
+                ),
+                onPressed: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (BuildContext context) {
+                    return const OfflineSearchPage(
+                      searchKeyword: '',
+                    );
+                  }));
+                },
+              ),
+            ),
+          ],
+        ),
+        body: FutureBuilder<CourseList>(
+          future: services,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              print("snapshot : $snapshot");
+              return Text("${snapshot.error}");
+            }
+            if (!snapshot.hasData) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    mainColor,
+                  ),
+                ),
+              );
+            }
+            return Padding(
+              padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 20.0),
+              child: Scrollbar(
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    children: [
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              height: 37,
+                              width: 90,
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(18.5)),
+                                color: lineColor,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                child: DropdownButton<String>(
+                                  value: _selectedItem,
+                                  elevation: 0,
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _selectedItem = newValue!;
+                                      whatOrder = _selectedItem;
+                                      _handleSearch();
+                                    });
+                                  },
+                                  items: _dropdown1Items.map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Center(child: Text(value)),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10.0),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20.0),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        cacheExtent: 20,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: snapshot.data?.data.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => OfflineDetailPage(
+                                      courseID:
+                                      snapshot.data?.data[index].id as int,
+                                      title: "${snapshot.data?.data[index].title}",
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: lightBackgroundColor,
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 16.0, bottom: 16.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Text(
+                                                DateTime.parse(snapshot
+                                                    .data
+                                                    ?.data[index]
+                                                    .applyStartDate
+                                                as String)
+                                                    .isBefore(
+                                                    today) &&
+                                                    DateTime.parse(snapshot
+                                                        .data
+                                                        ?.data[index]
+                                                        .applyEndDate
+                                                    as String)
+                                                        .isAfter(today)
+                                                    ? "#신청가능"
+                                                    : "#신청불가능",
+                                                style: subTitleStyle,
+                                              ),
+                                              const SizedBox(width: 10),
+                                              Text("#시험대비",
+                                                  style: subTitleStyle),
+                                            ],
+                                          ),
+                                          IconButton(
+                                            onPressed: () {
+                                              bool? isLiked = snapshot.data?.data[index].isLiked;
+                                              postStarCourses(index, !isLiked!);
+                                              setState(() {
+                                                if (snapshot.data != null) {
+                                                  snapshot.data!.data[index].isLiked = !(snapshot.data!.data[index].isLiked ?? false);
+                                                }
+                                              });
+                                            },
+                                            icon: snapshot.data?.data[index].isLiked == false
+                                                ? Image.asset(
+                                              '$imageURL/Const/star_stroke.png',
+                                              width: 22,
+                                              height: 22,
+                                            )
+                                                : Image.asset(
+                                              '$imageURL/Const/star_fill.png',
+                                              width: 22,
+                                              height: 22,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        width: 302,
+                                        child: Text(
+                                          '${snapshot.data?.data[index].title}',
+                                          style: subTitleStyle.copyWith(
+                                              color: textColor1, fontSize: 16.0),
+                                          softWrap: true,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 14.0),
+                                      Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "신청기간: ${snapshot.data?.data[index].applyStartDate}~${snapshot.data?.data[index].applyEndDate}",
+                                            style: subTitleStyle.copyWith(
+                                              color: textColor2,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding:
+                                            const EdgeInsets.only(right: 16.0),
+                                            child: Text(
+                                                "정원 ${snapshot.data?.data[index].capacity}명",
+                                                style: subTitleStyle),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );
-          }
-          return Padding(
-            padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 20.0),
-            child: Scrollbar(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  children: [
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            height: 37,
-                            width: 90,
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(18.5)),
-                              color: lineColor,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: DropdownButton<String>(
-                                value: _selectedItem,
-                                elevation: 0,
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    _selectedItem = newValue!;
-                                    whatOrder = _selectedItem;
-                                    _handleSearch();
-                                  });
-                                },
-                                items: _dropdown1Items.map((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Center(child: Text(value)),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10.0),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20.0),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      cacheExtent: 20,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: snapshot.data?.data.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 16.0),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => OfflineDetailPage(
-                                    courseID:
-                                    snapshot.data?.data[index].id as int,
-                                    title: "${snapshot.data?.data[index].title}",
-                                  ),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: lightBackgroundColor,
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 16.0, bottom: 16.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Text(
-                                              DateTime.parse(snapshot
-                                                  .data
-                                                  ?.data[index]
-                                                  .applyStartDate
-                                              as String)
-                                                  .isBefore(
-                                                  today) &&
-                                                  DateTime.parse(snapshot
-                                                      .data
-                                                      ?.data[index]
-                                                      .applyEndDate
-                                                  as String)
-                                                      .isAfter(today)
-                                                  ? "#신청가능"
-                                                  : "#신청불가능",
-                                              style: subTitleStyle,
-                                            ),
-                                            const SizedBox(width: 10),
-                                            Text("#시험대비",
-                                                style: subTitleStyle),
-                                          ],
-                                        ),
-                                        IconButton(
-                                          onPressed: () {
-                                            bool? isLiked = snapshot.data?.data[index].isLiked;
-                                            postStarCourses(index, !isLiked!);
-                                            setState(() {
-                                              if (snapshot.data != null) {
-                                                snapshot.data!.data[index].isLiked = !(snapshot.data!.data[index].isLiked ?? false);
-                                              }
-                                            });
-                                          },
-                                          icon: snapshot.data?.data[index].isLiked == false
-                                              ? Image.asset(
-                                            '$imageURL/Const/star_stroke.png',
-                                            width: 22,
-                                            height: 22,
-                                          )
-                                              : Image.asset(
-                                            '$imageURL/Const/star_fill.png',
-                                            width: 22,
-                                            height: 22,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      width: 302,
-                                      child: Text(
-                                        '${snapshot.data?.data[index].title}',
-                                        style: subTitleStyle.copyWith(
-                                            color: textColor1, fontSize: 16.0),
-                                        softWrap: true,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 14.0),
-                                    Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "신청기간: ${snapshot.data?.data[index].applyStartDate}~${snapshot.data?.data[index].applyEndDate}",
-                                          style: subTitleStyle.copyWith(
-                                            color: textColor2,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                          const EdgeInsets.only(right: 16.0),
-                                          child: Text(
-                                              "정원 ${snapshot.data?.data[index].capacity}명",
-                                              style: subTitleStyle),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
-      )
+          },
+        )
     );
   }
 }
