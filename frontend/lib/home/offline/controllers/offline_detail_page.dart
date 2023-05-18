@@ -176,7 +176,6 @@ class _OfflineDetailPageState extends State<OfflineDetailPage> {
 
 class _Body extends StatelessWidget {
   const _Body({
-    super.key,
     required this.services,
     required this.widget,
     required this.titleStyle,
@@ -560,7 +559,7 @@ class Alert extends StatelessWidget {
               width: 280,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: mainColor,
+                  backgroundColor: mainColor,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24.0)),
