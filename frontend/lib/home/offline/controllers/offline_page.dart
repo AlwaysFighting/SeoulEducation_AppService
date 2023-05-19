@@ -38,9 +38,12 @@ class _OfflinePageState extends State<OfflinePage> {
   );
 
   String _selectedItem = 'new';
+  String _selected2Item = 'none';
+  String _selected3Item = '시험대비';
 
   final List<String> _dropdown1Items = ['new', 'like', "end"];
   final List<String> _dropdown2Items = ['none', 'upcoming', 'ongoing', 'done'];
+  final List<String> _dropdown3Items = ['시험대비'];
 
   late Future<CourseList> services;
 
@@ -71,8 +74,7 @@ class _OfflinePageState extends State<OfflinePage> {
   }
 
   Future<CourseList> fetchData(String order, String filter) async {
-    String endPointUrl =
-        CoursesAPI().coursesFilterList("on", order, filter);
+    String endPointUrl = CoursesAPI().coursesFilterList("off", order, filter);
     final Uri url = Uri.parse(endPointUrl);
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -99,8 +101,10 @@ class _OfflinePageState extends State<OfflinePage> {
     setState(() {
       _isLoading = true;
     });
+
+    _resetState();
+
     setState(() {
-      _resetState();
       _isLoading = false;
     });
   }
@@ -179,76 +183,179 @@ class _OfflinePageState extends State<OfflinePage> {
                 physics: const BouncingScrollPhysics(),
                 child: Column(
                   children: [
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            height: 37,
-                            width: 90,
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(18.5)),
-                              color: lineColor,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: DropdownButton<String>(
-                                value: _selectedItem,
-                                elevation: 0,
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    _selectedItem = newValue!;
-                                    whatOrder = _selectedItem;
-                                    _handleSearch();
-                                  });
-                                },
-                                items: _dropdown1Items.map((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Center(child: Text(value)),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10.0),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20.0),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      cacheExtent: 20,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: snapshot.data?.data.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 16.0),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => OfflineDetailPage(
-                                    courseID:
-                                    snapshot.data?.data[index].id as int,
-                                    title: "${snapshot.data?.data[index].title}",
-                                  ),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: lightBackgroundColor,
-                                borderRadius: BorderRadius.circular(10.0),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              height: 37,
+                              width: 96,
+                              decoration: const BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(18.5)),
+                                color: backgroundBtnColor,
                               ),
                               child: Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 16.0, bottom: 16.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0),
+                                child: DropdownButton<String>(
+                                  underline: const SizedBox(),
+                                  value: _selectedItem,
+                                  elevation: 0,
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _selectedItem = newValue!;
+                                      whatOrder = _selectedItem;
+                                      _handleSearch();
+                                    });
+                                  },
+                                  icon: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: SizedBox(
+                                      height: 16.0,
+                                      width: 16.0,
+                                      child: Image.asset(
+                                        "assets/images/Courses/CaretDown.png",
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                  items: _dropdown1Items.map(
+                                    (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Center(child: Text(value)),
+                                      );
+                                    },
+                                  ).toList(),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10.0),
+                            Container(
+                              height: 37,
+                              width: 131,
+                              decoration: const BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(18.5)),
+                                color: backgroundBtnColor,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0),
+                                child: DropdownButton<String>(
+                                  value: _selected2Item,
+                                  elevation: 0,
+                                  underline: const SizedBox(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _selected2Item = newValue!;
+                                      whatFilter = _selected2Item;
+                                      _handleSearch();
+                                    });
+                                  },
+                                  icon: Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: SizedBox(
+                                      height: 16.0,
+                                      width: 16.0,
+                                      child: Image.asset(
+                                        "assets/images/Courses/CaretDown.png",
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                  items: _dropdown2Items.map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Center(
+                                        child: Text(value),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10.0),
+                            Container(
+                              height: 37,
+                              width: 131,
+                              decoration: const BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(18.5)),
+                                color: backgroundBtnColor,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0),
+                                child: DropdownButton<String>(
+                                  value: _selected3Item,
+                                  elevation: 0,
+                                  underline: const SizedBox(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _selected3Item = newValue!;
+                                    });
+                                  },
+                                  icon: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: SizedBox(
+                                      height: 16.0,
+                                      width: 16.0,
+                                      child: Image.asset(
+                                        "assets/images/Courses/CaretDown.png",
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                  items: _dropdown3Items.map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Center(child: Text(value)),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20.0),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        cacheExtent: 20,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: snapshot.data?.data.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => OfflineDetailPage(
+                                      courseID:
+                                          snapshot.data?.data[index].id as int,
+                                      title:
+                                          "${snapshot.data?.data[index].title}",
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: lightBackgroundColor,
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 16.0, bottom: 16.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
                                     Row(
                                       mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,

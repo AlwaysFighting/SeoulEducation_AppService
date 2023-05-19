@@ -42,8 +42,17 @@ class _OnlinePageState extends State<OnlinePage> {
   String whatOrder = "new";
   String whatFilter = "none";
 
-  Future<CourseList> fetchData() async {
-    String endPointUrl = CoursesAPI().coursesFilterList("on", whatOrder, whatFilter);
+  String _selectedItem = 'new';
+  String _selected2Item = 'none';
+  String _selected3Item = '시험대비';
+
+  final List<String> _dropdown1Items = ['new', 'like', "end"];
+  final List<String> _dropdown2Items = ['none', 'upcoming', 'ongoing', 'done'];
+  final List<String> _dropdown3Items = ['시험대비'];
+
+  Future<CourseList> fetchData(String order, String filter) async {
+    String endPointUrl =
+    CoursesAPI().coursesFilterList("on", order, filter);
     final Uri url = Uri.parse(endPointUrl);
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -64,11 +73,53 @@ class _OnlinePageState extends State<OnlinePage> {
     }
   }
 
+  Future<void> postStarCourses(int courseID, bool result) async {
+
+    String endPointUrl = CoursesAPI().starCourses(courseID);
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('accessToken');
+
+    final response = await http.post(
+      Uri.parse(endPointUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: jsonEncode(<String, bool>{
+        'result': result,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+    } else {
+      print(response.body);
+    }
+  }
+
+  bool _isLoading = false;
+
+  Future<void> _handleSearch() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    _resetState();
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    fetchData();
-    services = fetchData();
+    _resetState();
+  }
+
+  void _resetState() {
+    fetchData(whatOrder, whatFilter);
+    services = fetchData(whatOrder, whatFilter);
   }
 
   @override
@@ -118,7 +169,228 @@ class _OnlinePageState extends State<OnlinePage> {
         ],
       ),
       body:
-          _body(services: services, today: today, subTitleStyle: subTitleStyle),
+      FutureBuilder<CourseList>(
+        future: services,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            print("snapshot : $snapshot");
+            return Text("${snapshot.error}");
+          }
+          if (!snapshot.hasData) {
+            return const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  mainColor,
+                ),
+              ),
+            );
+          }
+          // 데이터가 있을 때 출력할 위젯
+          return Padding(
+            padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 20.0),
+            child: Scrollbar(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  children: [
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          Container(
+                            height: 37,
+                            width: 90,
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(18.5)),
+                              color: backgroundBtnColor,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: DropdownButton<String>(
+                                value: _selectedItem,
+                                elevation: 0,
+                                underline: const SizedBox(),
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    _selectedItem = newValue!;
+                                    whatOrder = _selectedItem;
+                                    _handleSearch();
+                                  });
+                                },
+                                items: _dropdown1Items.map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Center(child: Text(value)),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10.0),
+                          Container(
+                            height: 37,
+                            width: 131,
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(18.5)),
+                              color: backgroundBtnColor,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: DropdownButton<String>(
+                                underline: const SizedBox(),
+                                value: _selected2Item,
+                                elevation: 0,
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    _selected2Item = newValue!;
+                                    whatFilter = _selected2Item;
+                                    _handleSearch();
+                                  });
+                                },
+                                items: _dropdown2Items.map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Center(child: Text(value)),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10.0),
+                          Container(
+                            height: 37,
+                            width: 131,
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(18.5)),
+                              color: backgroundBtnColor,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: DropdownButton<String>(
+                                value: _selected3Item,
+                                elevation: 0,
+                                underline: const SizedBox(),
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    _selected3Item = newValue!;
+                                  });
+                                },
+                                items: _dropdown3Items.map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Center(child: Text(value)),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20.0),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      cacheExtent: 20,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: snapshot.data?.data.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => OnlineDetailPage(
+                                  courseID:
+                                  snapshot.data?.data[index].id as int,
+                                  title: "${snapshot.data?.data[index].title}",
+                                ),
+                              ),
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: lightBackgroundColor,
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 16.0, bottom: 16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text(
+                                              DateTime.parse(snapshot.data?.data[index].applyStartDate as String).isBefore(today) && DateTime.parse(snapshot.data?.data[index].applyEndDate as String).isAfter(today) ? "#신청가능" : "#신청불가능",
+                                              style: subTitleStyle,
+                                            ),
+                                            const SizedBox(width: 10),
+                                            Text( snapshot.data?.data[index].isFree == true ? "#무료" : "#유료" , style: subTitleStyle),
+                                            const SizedBox(width: 10),
+                                            Text("#직업상담사", style: subTitleStyle),
+                                          ],
+                                        ),
+                                        IconButton(
+                                          onPressed: () {
+                                            bool? isLiked = snapshot.data?.data[index].isLiked;
+                                            postStarCourses(snapshot.data?.data[index].id ?? 0, !isLiked!);
+                                            setState(() {
+                                              if (snapshot.data != null) {
+                                                snapshot.data!.data[index].isLiked = !(snapshot.data!.data[index].isLiked ?? false);
+                                              }
+                                            });
+                                          },
+                                          icon: snapshot.data?.data[index].isLiked == false
+                                              ? Image.asset(
+                                            '$imageURL/Const/star_stroke.png',
+                                            width: 22,
+                                            height: 22,
+                                          )
+                                              : Image.asset(
+                                            '$imageURL/Const/star_fill.png',
+                                            width: 22,
+                                            height: 22,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      width: 302,
+                                      child: Text(
+                                        '${snapshot.data?.data[index].title}',
+                                        style: subTitleStyle.copyWith(
+                                            color: textColor1, fontSize: 16.0),
+                                        softWrap: true,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 14.0),
+                                    Text(
+                                      "신청기간: ${snapshot.data?.data[index].applyStartDate}~${snapshot.data?.data[index].applyEndDate}",
+                                      style: subTitleStyle.copyWith(
+                                        color: textColor2,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }
