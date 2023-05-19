@@ -171,7 +171,6 @@ class _OfflineDetailPageState extends State<OfflineDetailPage> {
       ),
     );
   }
-
 }
 
 class _Body extends StatelessWidget {
