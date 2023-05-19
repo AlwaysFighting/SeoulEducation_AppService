@@ -2,6 +2,7 @@ const API_AUTH_URL = "http://localhost:8080/auth";
 const API_COURSES_URL = "http://localhost:8080/course";
 const API_COURSES_SEARCH_URL = "http://localhost:8080/search/course";
 const API_ALARM_URL = "http://localhost:8080/notif";
+
 const API_COMMUNITY = "http://localhost:8080/post";
 final String API_DETAIL_COMMUNITY = "http://localhost:8080/post/";
 const API_DELETE_COMMUNITY = "http://localhost:8080/post";
@@ -64,12 +65,12 @@ class CoursesAPI {
 class AlarmAPI {
   // 알림 목록 조회
   // 1-1. 카테고리 미선택 시 (모든 알림)
-  String alarmList(int id) {
-    return "$API_ALARM_URL/$id";
+  String alarmList() {
+    return API_ALARM_URL;
   }
 
   // 1-2. 카테고리 선택 시
-  String alarmCatList(int id, String category) {
-    return "$API_ALARM_URL/$id?category=$category";
+  String alarmCatList(String category) {
+    return "$API_ALARM_URL?category=$category";
   }
 }

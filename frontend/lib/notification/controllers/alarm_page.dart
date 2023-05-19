@@ -1,9 +1,23 @@
-import 'package:flutter/material.dart';
-import '../../../const/colors.dart';
+import 'dart:convert';
 
-class AlarmPage extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../const/colors.dart';
+import '../../api/course_api.dart';
+import '../models/alarm_api.dart';
+
+import 'package:http/http.dart' as http;
+
+import '../models/alarm_model.dart';
+
+class AlarmPage extends StatefulWidget {
   AlarmPage({Key? key}) : super(key: key);
 
+  @override
+  State<AlarmPage> createState() => _AlarmPageState();
+}
+
+class _AlarmPageState extends State<AlarmPage> {
   DateTime now = DateTime.now();
 
   final subTitleStyle = const TextStyle(
@@ -12,6 +26,40 @@ class AlarmPage extends StatelessWidget {
     fontWeight: FontWeight.w500,
     fontFamily: "Spoqa Han Sans Neo",
   );
+
+  late Future<Alarm> services;
+
+  Future<Alarm> fetchData() async {
+    String endPointUrl = AlarmAPI().alarmList();
+    final Uri url = Uri.parse(endPointUrl);
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('accessToken');
+
+    final response = await http.get(
+      url,
+      headers: <String, String>{
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print(json.decode(response.body));
+      return Alarm.fromJson(json.decode(response.body));
+    } else {
+      print(response.body);
+      throw Exception("Failed to load Services..");
+    }
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    LocalNotification.initialize();
+    LocalNotification.requestPermission();
+    services = fetchData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,8 +155,14 @@ class WitchAlarm extends StatelessWidget {
                       color: textColor2,
                     ),
                   ),
+                  ElevatedButton(
+                      onPressed: () {
+                        LocalNotification.sampleNotification("아니요 그건..");
+                        print("LocalNotification");
+                      },
+                      child: const Text("Local Notification")),
                 ],
-              )
+              ),
             ],
           ),
         );

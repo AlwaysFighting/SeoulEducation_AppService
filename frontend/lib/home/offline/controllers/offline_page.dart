@@ -37,18 +37,18 @@ class _OfflinePageState extends State<OfflinePage> {
     fontFamily: "Spoqa Han Sans Neo",
   );
 
-  String _selectedItem = 'new';
-  String _selected2Item = 'none';
+  String _selectedItem = '최신순';
+  String _selected2Item = '모두';
   String _selected3Item = '시험대비';
 
-  final List<String> _dropdown1Items = ['new', 'like', "end"];
-  final List<String> _dropdown2Items = ['none', 'upcoming', 'ongoing', 'done'];
+  final List<String> _dropdown1Items = ['최신순', '관심설정순', "마감날짜순"];
+  final List<String> _dropdown2Items = ['모두', '신청예정', '신청중', '신청마감'];
   final List<String> _dropdown3Items = ['시험대비'];
 
   late Future<CourseList> services;
 
-  String whatOrder = "new";
-  String whatFilter = "none";
+  String whatOrder = "최신순";
+  String whatFilter = "모두";
 
   Future<void> postStarCourses(int courseID, bool result) async {
     String endPointUrl = CoursesAPI().starCourses(courseID);
@@ -74,7 +74,7 @@ class _OfflinePageState extends State<OfflinePage> {
   }
 
   Future<CourseList> fetchData(String order, String filter) async {
-    String endPointUrl = CoursesAPI().coursesFilterList("off", order, filter);
+      String endPointUrl = CoursesAPI().coursesFilterList("오프라인", order, filter);
     final Uri url = Uri.parse(endPointUrl);
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -191,7 +191,7 @@ class _OfflinePageState extends State<OfflinePage> {
                           children: [
                             Container(
                               height: 37,
-                              width: 96,
+                              width: 130,
                               decoration: const BoxDecoration(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(18.5)),
