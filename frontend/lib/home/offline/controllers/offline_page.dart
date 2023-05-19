@@ -198,8 +198,7 @@ class _OfflinePageState extends State<OfflinePage> {
                                 color: backgroundBtnColor,
                               ),
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16.0),
+                                padding: const EdgeInsets.only(left: 20.0),
                                 child: DropdownButton<String>(
                                   underline: const SizedBox(),
                                   value: _selectedItem,
