@@ -27,9 +27,9 @@ class _AlarmPageState extends State<AlarmPage> {
     fontFamily: "Spoqa Han Sans Neo",
   );
 
-  late Future<Alarm> services;
+  late Future<Alarm?> services;
 
-  Future<Alarm> fetchData() async {
+  Future<Alarm?> fetchData() async {
     String endPointUrl = AlarmAPI().alarmList();
     final Uri url = Uri.parse(endPointUrl);
 
@@ -43,15 +43,19 @@ class _AlarmPageState extends State<AlarmPage> {
       },
     );
 
-    if (response.statusCode == 200) {
+    final jsonResponse = json.decode(response.body);
+    final data = jsonResponse['data'];
+
+    if (response.statusCode == 200 && data != null) {
       print(json.decode(response.body));
       return Alarm.fromJson(json.decode(response.body));
+    } else if (data == null) {
+      return null;
     } else {
       print(response.body);
       throw Exception("Failed to load Services..");
     }
   }
-
 
   @override
   void initState() {

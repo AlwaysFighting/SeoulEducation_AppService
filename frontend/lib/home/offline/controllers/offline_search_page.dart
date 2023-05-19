@@ -47,7 +47,7 @@ class _OfflineSearchPageState extends State<OfflineSearchPage> {
 
   Future<SearchCourse?> fetchData(String text) async {
 
-    String endPointUrl = CoursesAPI().searchCourses("on", text);
+    String endPointUrl = CoursesAPI().searchCourses("off", text);
     final Uri url = Uri.parse(endPointUrl);
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
