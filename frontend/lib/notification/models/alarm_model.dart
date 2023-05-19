@@ -1,4 +1,3 @@
-
 class Alarm {
   int status;
   String message;
@@ -24,29 +23,29 @@ class Alarm {
 }
 
 class Datum {
-  int notifyId;
-  String category;
-  bool isChecked;
-  DateTime publishDate;
+  int? notifyId;
+  String? category;
+  bool? isChecked;
+  String? publishDate;
   dynamic courseId;
-  int postId;
-  int commentId;
+  int? postId;
+  int? commentId;
 
   Datum({
-    required this.notifyId,
-    required this.category,
-    required this.isChecked,
-    required this.publishDate,
+    this.notifyId,
+    this.category,
+    this.isChecked,
+    this.publishDate,
     this.courseId,
-    required this.postId,
-    required this.commentId,
+    this.postId,
+    this.commentId,
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
     notifyId: json["notifyId"],
     category: json["category"],
     isChecked: json["isChecked"],
-    publishDate: DateTime.parse(json["publishDate"]),
+    publishDate:json["publishDate"],
     courseId: json["courseId"],
     postId: json["postId"],
     commentId: json["commentId"],
@@ -56,7 +55,7 @@ class Datum {
     "notifyId": notifyId,
     "category": category,
     "isChecked": isChecked,
-    "publishDate": publishDate.toIso8601String(),
+    "publishDate": publishDate,
     "courseId": courseId,
     "postId": postId,
     "commentId": commentId,
