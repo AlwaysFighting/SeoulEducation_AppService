@@ -12,6 +12,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:seoul_education_service/logins/login/views/login_page.dart';
 import 'package:seoul_education_service/const/navigation.dart';
 
+import '../../notification/models/alarm.dart';
+
 
 class Detailcontent extends StatefulWidget {
   final int postid;
@@ -146,6 +148,11 @@ class DetailState extends State<Detailcontent> {
     });
     final response = await http.post(url,headers:headers, body:body);
     if(response.statusCode == 200){
+      final responseJson = json.decode(response.body);
+      final int commentID = responseJson['data']['commentId'];
+      final int userID = responseJson['data']['postId'];
+
+      ConnectSocket().commentAlarm(userID, commentID);
       print("Successfully Saved");
     }
     else{

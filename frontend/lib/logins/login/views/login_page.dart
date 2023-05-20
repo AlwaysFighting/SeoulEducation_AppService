@@ -96,9 +96,12 @@ class _LoginPageState extends State<LoginPage> {
 
       final responseJson = json.decode(response.body);
       final String accessToken = responseJson['data']['accessToken'];
+      final int userID = responseJson['data']['userId'];
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
+
       prefs.setString('accessToken', accessToken);
+      prefs.setInt('userId', userID);
 
       // await prefs.setString('email', key);
       // await prefs.setString('password', value);

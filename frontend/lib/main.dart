@@ -5,8 +5,6 @@ import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:seoul_education_service/logins/login/views/login_page.dart';
 import 'const/navigation.dart';
 
-
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterConfig.loadEnvVariables();

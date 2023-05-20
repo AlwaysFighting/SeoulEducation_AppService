@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:seoul_education_service/api/course_api.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../../notification/models/alarm.dart';
 import 'detailcontent.dart';
 
 class rereply extends StatefulWidget {
@@ -39,6 +40,10 @@ class RereplyState extends State<rereply> {
     String? accessToken = await _loadAccessToken();
     final url = Uri.parse('${API_COMMUNITY_REREPLY}/${widget.commentid}');
     final headers = {'Authorization' : 'Bearer ${accessToken}',"Content-Type" : "application/json"};
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userID = prefs.getString('userId');
+
     bool _rereplyForm(){
       if(_rereplycotroller.text.isEmpty || _rereplycotroller.text==' '){
         print('작성하지 않았습니다');
@@ -59,6 +64,11 @@ class RereplyState extends State<rereply> {
       url, headers: headers, body: body
     );
     if(response.statusCode == 200){
+      final responseJson = json.decode(response.body);
+      final int commentID = responseJson['data']['commentId'];
+      final int userID = responseJson['data']['userId'];
+
+      ConnectSocket().replyAlarm(userID, commentID);
       print("successfully saved");
     }
     else{
