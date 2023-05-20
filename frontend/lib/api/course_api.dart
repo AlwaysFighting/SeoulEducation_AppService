@@ -1,16 +1,22 @@
-const API_AUTH_URL = "http://localhost:8080/auth";
-const API_COURSES_URL = "http://localhost:8080/course";
-const API_COURSES_SEARCH_URL = "http://localhost:8080/search/course";
-const API_ALARM_URL = "http://localhost:8080/notif";
-const API_COMMUNITY = "http://localhost:8080/post";
-final String API_DETAIL_COMMUNITY = "http://localhost:8080/post/";
-const API_DELETE_COMMUNITY = "http://localhost:8080/post";
-const API_REPLY_COMMUNITY = "http://localhost:8080/comment";
-final String API_WRITING_REPLY = "http://localhost:8080/comment";
-const API_COMMUNITY_EDIT = "http://localhost:8080/post";
-final String API_COMMUNITY_SEARCH = "http://localhost:8080/search/post?query=";
-const API_COMMUNITY_WRITING = "http://localhost:8080/post";
-final String API_COMMUNITY_REREPLY = "http://localhost:8080/comment/reply";
+const localhost = "172.30.1.29";
+//const localhost = "10.0.2.15";
+const API_AUTH_URL = "http://${localhost}:8080/auth";
+const API_COURSES_URL = "http://${localhost}:8080/course";
+const API_COURSES_SEARCH_URL = "http://${localhost}:8080/search/course";
+const API_ALARM_URL = "http://${localhost}:8080/notif";
+const API_COMMUNITY = "http://${localhost}:8080/post";
+final String API_DETAIL_COMMUNITY = "http://${localhost}:8080/post/";
+const API_DELETE_COMMUNITY = "http://${localhost}:8080/post";
+const API_REPLY_COMMUNITY = "http://${localhost}:8080/comment";
+final String API_WRITING_REPLY = "http://${localhost}:8080/comment";
+const API_COMMUNITY_EDIT = "http://${localhost}:8080/post";
+final String API_COMMUNITY_SEARCH = "http://${localhost}:8080/search/post?query=";
+const API_COMMUNITY_WRITING = "http://${localhost}:8080/post";
+final String API_COMMUNITY_REREPLY = "http://${localhost}:8080/comment/reply";
+const API_MYPAGE_NICKCHANGE = "http://${localhost}:8080/mypage/nickname";
+const API_MYPAGE_PASSWORD_CHANGE = "http://${localhost}:8080/mypage/password";
+final String API_MYPAGE_LIKEDLECTURE="http://${localhost}:8080/mypage/like";
+const API_MYPAGE_WRITED="http://${localhost}:8080/mypage/post";
 
 // API_AUTH_URL - 회원가입
 const EMAIL_LOGIN_API = "$API_AUTH_URL/login";

@@ -5,6 +5,12 @@ import 'writed.dart';
 import 'recentlecture.dart';
 import 'changeprivate.dart';
 import 'package:seoul_education_service/const/colors.dart';
+import 'package:seoul_education_service/mypage/model/writerModel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'package:seoul_education_service/api/course_api.dart';
+import 'dart:convert';
+
 class MyPage extends StatefulWidget {
   const MyPage({Key? key}) : super(key: key);
   @override
@@ -12,6 +18,47 @@ class MyPage extends StatefulWidget {
 }
 
 class  _MypageState extends State<MyPage>{
+  List<Model>? _writtenlist = [];
+  String? usernickname;
+
+  @override
+  void initState(){
+    super.initState();
+    //ScreenUtil.init(context);
+    _loadAccessToken();
+    _fetchcontent();
+  }
+  //accesstoken 호출
+  Future<String?> _loadAccessToken() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('accessToken');
+  }
+
+  Future<void> _fetchcontent() async{
+    String? accessToken = await _loadAccessToken();
+    var response= await http.get(
+      Uri.parse('${API_MYPAGE_WRITED}'),
+      headers:{'Authorization' : 'Bearer ${accessToken}'},
+    );
+    if(response.statusCode == 200){
+      var jsonResponse = jsonDecode(response.body);
+      var writer = Writer.fromJson(jsonResponse);
+      if(writer.data != null){
+        var model = writer.data![0];
+        setState(() {
+          usernickname = model.userNickname;
+        });
+      }
+      else{
+        print('${response.statusCode}');
+      }
+
+    }
+    else{
+      print('${response.statusCode}');
+    }
+  }
+
   @override
   Widget build(BuildContext context)
   {ScreenUtil.init(context, designSize: const Size(390,844));
@@ -51,7 +98,7 @@ class  _MypageState extends State<MyPage>{
             children: [
               SizedBox(width: 16.w,),
               //환영멘트
-              Text("평생배움 님,\n오늘도 배움을 응원합니다!",
+              Text("${usernickname} 님,\n오늘도 배움을 응원합니다!",
                 style: TextStyle(
                   fontFamily: 'Spoqa Han Sans Neo',
                   fontSize: 20.sp,
@@ -119,7 +166,7 @@ class  _MypageState extends State<MyPage>{
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => changeprivate(),
+                builder: (context) => changeprivate(usernickname: usernickname ?? '',),
               ),
             );
           },

@@ -11,6 +11,7 @@ import 'package:seoul_education_service/community/model/replylist.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:seoul_education_service/logins/login/views/login_page.dart';
 import 'package:seoul_education_service/const/navigation.dart';
+import 'commuinty.dart';
 
 
 class Detailcontent extends StatefulWidget {
@@ -26,6 +27,7 @@ class DetailState extends State<Detailcontent> {
   List<Data>? _detaillist;
   replylist? _replylist;
   bool cando = false;
+  CommunityPage communitypage = CommunityPage();
 
 
   @override
@@ -242,10 +244,12 @@ class DetailState extends State<Detailcontent> {
                                     color: Colors.red,
                                   ),),
                               ),
-                            onTap: (){
-                                _deleteData();
+                            onTap: () async{
+                                await _deleteData();
                               if(cando){
                                 Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Navigation()));
+                                //게시글 조회로
+                                //await communitypage._fetchPosts();
                               }
                             },
                           ),

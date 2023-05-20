@@ -311,12 +311,12 @@ class _changepassword extends State<changepassword> {
                         ),
                       )),
                   TextButton(onPressed: (){
-                    Navigator.push(
+                    /*Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => changeprivate(),
                       ),
-                    );
+                    );*/
                   },
                       child: const Text("예",
                         style: TextStyle(
@@ -333,12 +333,12 @@ class _changepassword extends State<changepassword> {
   Widget success(){
     return GestureDetector(
       onTap: (){
-       ( _currentcontroller.text.isNotEmpty || _newcontroller.text.isNotEmpty || _checkcontroller.text.isNotEmpty) ? Navigator.push(
+       /*( _currentcontroller.text.isNotEmpty || _newcontroller.text.isNotEmpty || _checkcontroller.text.isNotEmpty) ? Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => changeprivate(),
+            builder: (context) => changeprivate(usernickname: usernickname,),
           ),
-        ) : print("이름이 입력되지 않음");
+        ) : print("이름이 입력되지 않음");*/
       },
       child: Container(
         height: 80.h,

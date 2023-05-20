@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
-import 'package:provider/provider.dart';
 import 'package:seoul_education_service/community/controllers/commuinty.dart';
 import 'package:seoul_education_service/logins/login/views/login_page.dart';
-import 'package:seoul_education_service/mypage/mypage.dart';
+import 'package:seoul_education_service/mypage/controllers/mypage.dart';
 import 'const/navigation.dart';
 
 

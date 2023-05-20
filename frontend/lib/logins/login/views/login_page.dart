@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
-import 'package:provider/provider.dart';
 import 'package:seoul_education_service/const/colors.dart';
 import 'package:seoul_education_service/const/navigation.dart';
 import 'package:seoul_education_service/logins/register/views/register_page.dart';

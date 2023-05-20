@@ -1,27 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:seoul_education_service/const/colors.dart';
-import 'changeprivate.dart';
+import 'package:seoul_education_service/mypage/controllers/changeprivate.dart';
+import 'package:seoul_education_service/api/course_api.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class changename extends StatefulWidget{
-  const changename({Key? key}):super(key:key);
-
+  final usernickname;
+  const changename({Key? key, required this.usernickname}):super(key:key);
   @override
   State<changename> createState() => _changename();
 }
 class _changename extends State<changename> {
+  late String _updateNickname;
   bool _showSuffixicon = false;
   TextEditingController _textcontroller = TextEditingController();
   @override
   void initState() {
     super.initState();
     ScreenUtil.init(context);
+    _loadAccessToken();
+  }
+
+  Future<String?> _loadAccessToken() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('accessToken');
+  }
+
+  Future<void> _editNickname() async{
+    String? accessToken = await _loadAccessToken();
+    final url = Uri.parse('${API_MYPAGE_NICKCHANGE}');
+    final headers = {'Authorization' : 'Bearer ${accessToken}', 'Content-Type': 'application/json'};
+    final body = jsonEncode({"nickname":"${_textcontroller.text}"});
+    final response = await http.patch(url, headers:headers, body:body);
+    if(response.statusCode == 200){
+      print("Updated Successfully");
+    }
+    else{
+      print('${response.statusCode}');
+    }
+  }
+
+  @override
+  void didChange(){
+    super.didChangeDependencies();
+    _updateNickname = widget.usernickname;
   }
 
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, designSize: const Size(390, 844));
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Column(
         children: [
           SizedBox(height: 44.h,),
@@ -112,7 +144,7 @@ class _changename extends State<changename> {
                       ),
                     ),
                     border: InputBorder.none,
-                    hintText: "usernickname",
+                    hintText: "${widget.usernickname}",
                     hintStyle: TextStyle(
                       fontFamily: 'Spoqa Han Sans Neo',
                       fontSize: ScreenUtil().setSp(14),
@@ -142,13 +174,19 @@ class _changename extends State<changename> {
   }
   Widget success(){
     return GestureDetector(
-      onTap: (){
-        _textcontroller.text.isNotEmpty ? Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => changeprivate(),
-          ),
-        ) : print("이름이 입력되지 않음");
+      onTap: () async{
+        if( _textcontroller.text.isNotEmpty){
+        await _editNickname();
+        Navigator.push(
+        context,
+        MaterialPageRoute(
+        builder: (context) => changeprivate(usernickname:  _textcontroller.text,),
+        ),
+        );
+        }
+        else{
+          print("이름이 입력되지 않음");
+        }
       },
       child: Container(
         height: 80.h,
@@ -212,7 +250,7 @@ class _changename extends State<changename> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => changeprivate(),
+                        builder: (context) => changeprivate(usernickname: widget.usernickname,),
                       ),
                     );
                   },

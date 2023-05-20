@@ -34,7 +34,7 @@ class _CommunityState extends State<CommunityPage>{
           Positioned(
               top: ScreenUtil().setHeight(17),
               child:appbar()),
-          Padding(padding: EdgeInsets.only(top:ScreenUtil().setHeight(76)),
+          Padding(padding: EdgeInsets.only(top:ScreenUtil().setHeight(120)),
             child: content(),),
           Positioned(
               bottom: ScreenUtil().setHeight(40),
@@ -46,54 +46,46 @@ class _CommunityState extends State<CommunityPage>{
   }
 
   Widget appbar(){
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Padding(
-          padding: EdgeInsets.only(left:ScreenUtil().setWidth(16)),
-          child: Text(
-            '질문게시판',
-            style: TextStyle(
-              fontSize: ScreenUtil().setSp(18),
-              fontWeight: FontWeight.bold,
-              fontFamily: "Spoqa Han Sans Neo",
+    return Container(
+      height: 56.h,
+      child: Row(
+        children: [
+            SizedBox(width: 16.w,),
+            Text(
+              '질문게시판',
+              style: TextStyle(
+                fontSize: ScreenUtil().setSp(18),
+                fontWeight: FontWeight.bold,
+                fontFamily: "Spoqa Han Sans Neo",
+              ),
+            ),
+
+          //padding: EdgeInsets.fromLTRB(ScreenUtil().setHeight(310), ScreenUtil().setHeight(16), ScreenUtil().setHeight(56), ScreenUtil().setHeight(16)),
+          //SizedBox(width: ScreenUtil().setWidth(211),),
+          Padding(
+            padding: EdgeInsets.fromLTRB(211.w, 16.h, 16.w, 16.h),
+            child: GestureDetector(
+              onTap: (){
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Searching()));
+              },
+              child:Image.asset("assets/images/Const/MagnifyingGlass.png",width: 24.w,height: 24.h,)
             ),
           ),
-        ),
-        //padding: EdgeInsets.fromLTRB(ScreenUtil().setHeight(310), ScreenUtil().setHeight(16), ScreenUtil().setHeight(56), ScreenUtil().setHeight(16)),
-        SizedBox(width: ScreenUtil().setWidth(211),),
-        SizedBox(
-          width: ScreenUtil().setWidth(40),
-          height:ScreenUtil().setHeight(50),
-          child: IconButton(onPressed: (){
-            //검색화면으로
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Searching()));
-          },
-            icon: Image.asset("assets/images/Const/MagnifyingGlass.png"),
-            iconSize:24,
-          ),
-        ),
 
-        //padding: EdgeInsets.fromLTRB(ScreenUtil().setHeight(350), ScreenUtil().setHeight(16), ScreenUtil().setHeight(16), ScreenUtil().setHeight(16)),
-        SizedBox(width: ScreenUtil().setWidth(0),),
-        SizedBox(
-          width: ScreenUtil().setWidth(40),
-          height:ScreenUtil().setHeight(50),
-          child: IconButton(onPressed: (){
-            //알림화면으로
-          },
-            icon: GestureDetector(
-              onTap: (){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AlarmPage()),
-                );
-              },
-                child: Image.asset("assets/images/Const/Bell.png")),
-            iconSize:24,
+          //SizedBox(width: 16.w),
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, 16.h, 16.w, 16.h),
+            child: GestureDetector(
+                onTap: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AlarmPage()),
+                  );
+                },
+                child: Image.asset("assets/images/Const/Bell.png",width: 24.w,height: 24.h,)),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
   Widget button()
@@ -124,12 +116,22 @@ class _CommunityState extends State<CommunityPage>{
 
   Widget content(){
     if(_posts == null || _posts!.isEmpty){
-      return const Center(child: CircularProgressIndicator());
+      return Scaffold(
+        body: Center(
+          child:Text("아직 작성된 글이 없어요!",
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontFamily: 'Spoqa Han Sans Neo',
+              color: textColor2,
+            ),
+          )
+        ),
+      );
     }
     else{
       //게시글이 있다면
       return Container(
-        padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(16), ScreenUtil().setHeight(24), ScreenUtil().setWidth(16), ScreenUtil().setHeight(24)),
+        //padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(16), ScreenUtil().setHeight(24), ScreenUtil().setWidth(16), ScreenUtil().setHeight(24)),
         child: ListView.builder(
             itemCount: _posts!.length,
             itemBuilder: (BuildContext context, int index){
@@ -147,7 +149,7 @@ class _CommunityState extends State<CommunityPage>{
                 child: ListTile(
                   //제목
                   title:Padding(
-                    padding: const EdgeInsets.only(bottom:10),
+                    padding: EdgeInsets.only(bottom:10),
                     //padding: const EdgeInsets.all(8.0),
                     child: Text(post.title!,
                       style: TextStyle(
@@ -185,8 +187,9 @@ class _CommunityState extends State<CommunityPage>{
                               fontSize: ScreenUtil().setSp(12),
                             ),
                           ),
-                          SizedBox(width: 150.w),
-                          Image.asset("assets/images/Const/ChatCircleDots.png", width: ScreenUtil().setWidth(14),height: ScreenUtil().setHeight(14),),
+                          SizedBox(width: 182.w),
+                          Image.asset("assets/images/Const/ChatCircleDots.png", width: 14.w,height: 14.h,),
+                          SizedBox(width: 4.w),
                           Text(post.commentCount!.toString(),
                             style: TextStyle(
                               color: textColor2,
@@ -195,9 +198,16 @@ class _CommunityState extends State<CommunityPage>{
                             ),
                           ),
                           const SizedBox(height: 24,),
+
                         ],
                       ),
                       SizedBox(height:ScreenUtil().setHeight(24)),
+                      SizedBox(
+                        height: 1.h,
+                        child: Container(
+                          color: backgroundBtnColor,
+                        ),
+                      ),
                     ],
                   ),
                 ),
