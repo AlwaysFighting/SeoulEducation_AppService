@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,8 +7,11 @@ import 'package:seoul_education_service/home/offline/controllers/offline_page.da
 import 'package:seoul_education_service/home/online/controllers/online_page.dart';
 import 'package:seoul_education_service/home/recommend/controllers/recommend_page.dart';
 import 'package:seoul_education_service/notification/controllers/alarm_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
 
+import '../../../api/course_api.dart';
 import '../../../const/colors.dart';
 import 'homepage_search_page.dart';
 
@@ -35,8 +40,40 @@ class _HomePageState extends State<HomePage> {
   );
 
   late final FocusNode _focusNode = FocusNode();
-
   final TextEditingController _textEditingController = TextEditingController();
+  late bool alarmCheck = true;
+
+  Future<bool> fetchData() async {
+    String endPointUrl = AlarmAPI().alarmCheck();
+    final Uri url = Uri.parse(endPointUrl);
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('accessToken');
+
+    final response = await http.get(
+      url,
+      headers: <String, String>{
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final bool check = data['isAllChecked'];
+      setState(() {
+        alarmCheck = check;
+      });
+      return check;
+    } else {
+      throw Exception("Failed to load Services..");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
 
   @override
   void dispose() {
@@ -59,9 +96,59 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: const PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight),
-        child: AppHeader(),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: false,
+        titleTextStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+          color: textColor1,
+        ),
+        title: const Text("LOGO"),
+        actions: [
+          FutureBuilder<bool>(
+            future: Future.value(alarmCheck),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: CircularProgressIndicator(),
+                );
+              } else if (snapshot.hasData) {
+                final bool alarmCheckValue = snapshot.data!;
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AlarmPage()),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: alarmCheckValue
+                        ? Image.asset(
+                      'assets/images/Const/Bell.png',
+                      width: 24,
+                      height: 24,
+                    )
+                        : Image.asset(
+                      'assets/images/Const/Bell_ON.png',
+                      width: 24,
+                      height: 24,
+                    ),
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                // 데이터 로드 중 오류 발생 시 에러 처리
+                return Text('Error: ${snapshot.error}');
+              } else {
+                // 데이터가 없는 경우에 대한 처리
+                return Text('No Data');
+              }
+            },
+          ),
+        ],
       ),
       body: _body(context),
     );

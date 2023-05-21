@@ -103,8 +103,6 @@ class _LoginPageState extends State<LoginPage> {
       prefs.setString('accessToken', accessToken);
       prefs.setInt('userID', userID);
 
-
-
       // await prefs.setString('email', key);
       // await prefs.setString('password', value);
 

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
 
@@ -20,28 +21,16 @@ StreamSocket streamSocket =StreamSocket();
 
 class ConnectSocket {
 
-  void connectAndListenOne(String name, String content, String event){
-    IO.Socket socket = IO.io('http://localhost:8080',
-        OptionBuilder()
-            .setTransports(['websocket']).build());
-
-    socket.onConnect((_) {
-      print('connect');
-      socket.emit(name, content);
-    });
-
-    socket.on(event, (data) => streamSocket.addResponse);
-    socket.onDisconnect((_) => print('disconnect'));
-  }
-
   // Subscribe
-  void subscribeAlarm(int user){
+  Future<void> subscribeAlarm(int user) async {
     IO.Socket socket = IO.io('http://localhost:8080',
         OptionBuilder()
             .setTransports(['websocket']).build());
 
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int user = prefs.getInt('userID') ?? 0;
+
     socket.onConnect((_) {
-      print('user connect');
       socket.emit("subscribe", {
         "userId": user,
       });
