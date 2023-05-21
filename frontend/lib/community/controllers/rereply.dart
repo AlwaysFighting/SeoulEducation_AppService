@@ -42,7 +42,6 @@ class RereplyState extends State<rereply> {
     final headers = {'Authorization' : 'Bearer ${accessToken}',"Content-Type" : "application/json"};
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userID = prefs.getString('userId');
 
     bool _rereplyForm(){
       if(_rereplycotroller.text.isEmpty || _rereplycotroller.text==' '){
@@ -64,11 +63,13 @@ class RereplyState extends State<rereply> {
       url, headers: headers, body: body
     );
     if(response.statusCode == 200){
-      final responseJson = json.decode(response.body);
-      final int commentID = responseJson['data']['commentId'];
-      final int userID = responseJson['data']['userId'];
 
-      ConnectSocket().replyAlarm(userID, commentID);
+      final int commentID = widget.postId + 1;
+      final int? userID = prefs.getInt('userID');
+
+      print("댓글 response : $commentID, userID : $userID");
+
+      ConnectSocket().replyAlarm(userID ?? 0, commentID);
       print("successfully saved");
     }
     else{
