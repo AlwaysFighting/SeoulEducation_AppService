@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../const/colors.dart';
 import '../../api/course_api.dart';
@@ -20,6 +21,7 @@ class AlarmPage extends StatefulWidget {
 }
 
 class _AlarmPageState extends State<AlarmPage> {
+
   DateTime now = DateTime.now();
 
   final subTitleStyle = const TextStyle(
@@ -49,7 +51,6 @@ class _AlarmPageState extends State<AlarmPage> {
     final data = jsonResponse['data'];
 
     if (response.statusCode == 200 && data != null) {
-      print(json.decode(response.body));
       return Alarm.fromJson(json.decode(response.body));
     } else if (data == null) {
       print(json.decode(response.body));
@@ -57,6 +58,26 @@ class _AlarmPageState extends State<AlarmPage> {
     } else {
       print(response.body);
       throw Exception("Failed to load Services..");
+    }
+  }
+
+  String formatTimeDifference(String dateTimeString) {
+    DateTime currentTime = DateTime.now();
+    DateTime givenTime = DateTime.parse(dateTimeString);
+
+    Duration difference = currentTime.difference(givenTime);
+
+    if (difference.inDays == 0) {
+      int hoursDifference = difference.inHours;
+      if (hoursDifference >= 1) {
+        return "$hoursDifference시간 전";
+      } else {
+        int minutesDifference = difference.inMinutes;
+        return "$minutesDifference분 전";
+      }
+    } else {
+      String formattedDate = DateFormat("M월 d일").format(givenTime);
+      return formattedDate;
     }
   }
 
@@ -93,7 +114,7 @@ class _AlarmPageState extends State<AlarmPage> {
             return const Center(child: Text("Error"));
           }
           if (!snapshot.hasData || snapshot.data == null) {
-            return const Center(child: Text("null..."));
+            return const Center(child: Text("아직 알림이 없어요!"));
           }
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -102,7 +123,7 @@ class _AlarmPageState extends State<AlarmPage> {
           }
           if (snapshot.data!.data == null || snapshot.data!.data!.isEmpty) {
             return const Center(
-              child: Text('No data'),
+              child: Text('아직 알림이 없어요!'),
             );
           }
           return Padding(
@@ -135,6 +156,9 @@ class _AlarmPageState extends State<AlarmPage> {
                           ] else if (snapshot.data?.data[index].category ==
                               "last") ...[
                             Text("마감 알림", style: subTitleStyle),
+                          ] else if (snapshot.data?.data[index].category ==
+                              "reply") ...[
+                            Text("대댓글 알림", style: subTitleStyle),
                           ] else ...[
                             Text("댓글 알림", style: subTitleStyle),
                           ],
@@ -150,6 +174,11 @@ class _AlarmPageState extends State<AlarmPage> {
                                 style: subTitleStyle.copyWith(
                                     fontWeight: FontWeight.w400,
                                     fontSize: 14.0)),
+                          ] else if (snapshot.data?.data[index].category ==
+                              "reply") ...[
+                            Text("작성하신 댓글에 대댓글이 달렸어요.", style: subTitleStyle.copyWith(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14.0)),
                           ] else ...[
                             Text("작성하신 게시글에 댓글이 달렸어요",
                                 style: subTitleStyle.copyWith(
@@ -158,20 +187,20 @@ class _AlarmPageState extends State<AlarmPage> {
                           ],
                           const SizedBox(height: 8.0),
                           Text(
-                            "${snapshot.data?.data[index].publishDate}",
+                            formatTimeDifference("${snapshot.data?.data[index].publishDate}"),
                             style: subTitleStyle.copyWith(
                               fontWeight: FontWeight.w400,
                               fontSize: 12.0,
                               color: textColor2,
                             ),
                           ),
-                          ElevatedButton(
-                            onPressed: () {
-                              LocalNotification.sampleNotification("아니요 그건..");
-                              print("LocalNotification");
-                            },
-                            child: const Text("Local Notification"),
-                          ),
+                          // ElevatedButton(
+                          //   onPressed: () {
+                          //     LocalNotification.sampleNotification("아니요 그건..");
+                          //     print("LocalNotification");
+                          //   },
+                          //   child: const Text("Local Notification"),
+                          // ),
                         ],
                       ),
                     ],

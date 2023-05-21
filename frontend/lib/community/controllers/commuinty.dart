@@ -142,7 +142,6 @@ class _CommunityState extends State<CommunityPage>{
                     MaterialPageRoute(
                         builder: (context) => Detailcontent(postid:post.postId!)),
                   );
-
                 },
                 child: ListTile(
                   //제목
