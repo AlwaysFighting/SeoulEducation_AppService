@@ -41,10 +41,13 @@ class ConnectSocket {
   }
 
   // Last
-  void lastAlarm(int user){
+  void lastAlarm() async {
     IO.Socket socket = IO.io('http://localhost:8080',
         OptionBuilder()
             .setTransports(['websocket']).build());
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int user = prefs.getInt('userID') ?? 0;
 
     socket.onConnect((_) {
       print('alarm connect');
@@ -54,7 +57,7 @@ class ConnectSocket {
     });
 
     socket.on("last", (data) => streamSocket.addResponse(data));
-    socket.onDisconnect((_) => print('disconnect'));
+    socket.onDisconnect((_) => print('last disconnect'));
   }
 
   // Comment

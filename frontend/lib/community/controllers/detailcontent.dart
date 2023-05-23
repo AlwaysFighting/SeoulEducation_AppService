@@ -9,7 +9,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:seoul_education_service/api/course_api.dart';
 import 'package:seoul_education_service/community/model/replylist.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:seoul_education_service/logins/login/views/login_page.dart';
 import 'package:seoul_education_service/const/navigation.dart';
 
 import '../../notification/models/alarm.dart';

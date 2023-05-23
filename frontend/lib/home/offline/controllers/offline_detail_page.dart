@@ -73,7 +73,6 @@ class _OfflineDetailPageState extends State<OfflineDetailPage> {
     super.initState();
     fetchData();
     services = fetchData();
-    print(widget.courseID);
   }
 
   @override

@@ -5,8 +5,9 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../const/colors.dart';
 import '../../api/course_api.dart';
+import '../../community/controllers/detailcontent.dart';
+import '../../const/back_button.dart';
 import '../models/alarm.dart';
-import '../models/notification_model.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -25,6 +26,7 @@ class _AlarmPageState extends State<AlarmPage> {
 
   DateTime now = DateTime.now();
   int userid = 0;
+  List<bool> isCheckedList = [];
 
   final subTitleStyle = const TextStyle(
     color: textColor1,
@@ -82,7 +84,6 @@ class _AlarmPageState extends State<AlarmPage> {
       );
 
       if (response.statusCode == 200) {
-        print("읽음");
       } else {
         print('Failed to update data: ${response.body}');
       }
@@ -115,8 +116,12 @@ class _AlarmPageState extends State<AlarmPage> {
   void initState() {
     super.initState();
     ConnectSocket().subscribeAlarm(userid);
-    // LocalNotification.initialize();
-    // LocalNotification.requestPermission();
+    ConnectSocket().lastAlarm();
+    _resetState();
+  }
+
+  void _resetState() {
+    fetchData();
     services = fetchData();
   }
 
@@ -125,11 +130,7 @@ class _AlarmPageState extends State<AlarmPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: const BackButton()),
+        leading: const CustomBackButton(),
         title: Text(
           "알림",
           style: subTitleStyle.copyWith(fontSize: 16.0),
@@ -157,17 +158,59 @@ class _AlarmPageState extends State<AlarmPage> {
               child: Text('아직 알림이 없어요!'),
             );
           }
-          return Padding(
-            padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 20.0),
-            child: ListView.builder(
-              itemCount: snapshot.data?.data.length ?? 0,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () {
-                    updateData(index + 1);
-                  },
+          return ListView.builder(
+            itemCount: snapshot.data?.data.length ?? 0,
+            itemBuilder: (context, index) {
+              List<bool> isCheckedList = List.generate(
+                  snapshot.data?.data.length ?? 0,
+                  (index) => snapshot.data?.data[index].isChecked as bool);
+
+              return GestureDetector(
+                onTap: () {
+                  updateData(snapshot.data?.data[index].notifyId ?? 0);
+                  setState(() {
+                    _resetState();
+                  });
+                  if (snapshot.data?.data[index].category == "last") {
+                    // snapshot.data?.data?[index].type ==
+                    //     "off" ? Navigator.of(context).push(
+                    //   MaterialPageRoute(
+                    //     builder: (_) => OfflineDetailPage(
+                    //       courseID:
+                    //       snapshot.data?.data?[index].id as int,
+                    //       title:
+                    //       "${snapshot.data?.data?[index].title}",
+                    //     ),
+                    //   ),
+                    // ) : Navigator.of(context).push(
+                    //   MaterialPageRoute(
+                    //     builder: (_) => OnlineDetailPage(
+                    //       courseID:
+                    //       snapshot.data?.data?[index].id as int,
+                    //       title:
+                    //       "${snapshot.data?.data?[index].title}",
+                    //     ),
+                    //   ),
+                    // );
+                  } else if (snapshot.data?.data[index].category == "comment"){
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (BuildContext context) {
+                      return Detailcontent(postid: snapshot.data?.data[index].postId as int,);
+                    }));
+                  } else if (snapshot.data?.data[index].category == "reply") {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (BuildContext context) {
+                      return Detailcontent(postid: snapshot.data?.data[index].postId as int,);
+                    }));
+                  }
+                },
+                child: Container(
+                  color: isCheckedList[index]
+                      ? Colors.white
+                      : lightBackgroundColor,
                   child: Padding(
-                    padding: const EdgeInsets.only(bottom: 24.0),
+                    padding: const EdgeInsets.only(
+                        left: 16.0, right: 16.0, top: 20.0, bottom: 24.0),
                     child: Row(
                       children: [
                         if (snapshot.data?.data[index].category == "new") ...[
@@ -186,7 +229,8 @@ class _AlarmPageState extends State<AlarmPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            if (snapshot.data?.data[index].category == "new") ...[
+                            if (snapshot.data?.data[index].category ==
+                                "new") ...[
                               Text("새로운 강좌", style: subTitleStyle),
                             ] else if (snapshot.data?.data[index].category ==
                                 "last") ...[
@@ -198,7 +242,8 @@ class _AlarmPageState extends State<AlarmPage> {
                               Text("댓글 알림", style: subTitleStyle),
                             ],
                             const SizedBox(height: 8.0),
-                            if (snapshot.data?.data[index].category == "new") ...[
+                            if (snapshot.data?.data[index].category ==
+                                "new") ...[
                               Text("새로운 강좌가 들어왔어요! 확인해보세요",
                                   style: subTitleStyle.copyWith(
                                       fontWeight: FontWeight.w400,
@@ -211,9 +256,10 @@ class _AlarmPageState extends State<AlarmPage> {
                                       fontSize: 14.0)),
                             ] else if (snapshot.data?.data[index].category ==
                                 "reply") ...[
-                              Text("작성하신 댓글에 대댓글이 달렸어요.", style: subTitleStyle.copyWith(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 14.0)),
+                              Text("작성하신 댓글에 대댓글이 달렸어요.",
+                                  style: subTitleStyle.copyWith(
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 14.0)),
                             ] else ...[
                               Text("작성하신 게시글에 댓글이 달렸어요",
                                   style: subTitleStyle.copyWith(
@@ -222,28 +268,22 @@ class _AlarmPageState extends State<AlarmPage> {
                             ],
                             const SizedBox(height: 8.0),
                             Text(
-                              formatTimeDifference("${snapshot.data?.data[index].publishDate}"),
+                              formatTimeDifference(
+                                  "${snapshot.data?.data[index].publishDate}"),
                               style: subTitleStyle.copyWith(
                                 fontWeight: FontWeight.w400,
                                 fontSize: 12.0,
                                 color: textColor2,
                               ),
                             ),
-                            // ElevatedButton(
-                            //   onPressed: () {
-                            //     LocalNotification.sampleNotification("아니요 그건..");
-                            //     print("LocalNotification");
-                            //   },
-                            //   child: const Text("Local Notification"),
-                            // ),
                           ],
                         ),
                       ],
                     ),
                   ),
-                );
-              },
-            ),
+                ),
+              );
+            },
           );
         },
       ),

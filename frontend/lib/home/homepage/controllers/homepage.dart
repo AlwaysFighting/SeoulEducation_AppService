@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:seoul_education_service/home/homepage/controllers/notice_detail_page.dart';
 import 'package:seoul_education_service/home/offline/controllers/offline_page.dart';
 import 'package:seoul_education_service/home/online/controllers/online_page.dart';
 import 'package:seoul_education_service/home/recommend/controllers/recommend_page.dart';
@@ -23,7 +24,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
   final String imageURL = "assets/images/";
+  late bool alarmCheck = true;
+
+  late final FocusNode _focusNode = FocusNode();
+  final TextEditingController _textEditingController = TextEditingController();
 
   final titleStyle = const TextStyle(
     color: textColor1,
@@ -38,10 +44,6 @@ class _HomePageState extends State<HomePage> {
     fontWeight: FontWeight.w500,
     fontFamily: "Spoqa Han Sans Neo",
   );
-
-  late final FocusNode _focusNode = FocusNode();
-  final TextEditingController _textEditingController = TextEditingController();
-  late bool alarmCheck = true;
 
   Future<bool> fetchData() async {
     String endPointUrl = AlarmAPI().alarmCheck();
@@ -116,7 +118,6 @@ class _HomePageState extends State<HomePage> {
                   child: CircularProgressIndicator(),
                 );
               } else if (snapshot.hasData) {
-                final bool alarmCheckValue = snapshot.data!;
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -126,7 +127,7 @@ class _HomePageState extends State<HomePage> {
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: alarmCheckValue
+                    child: alarmCheck
                         ? Image.asset(
                       'assets/images/Const/Bell.png',
                       width: 24,
@@ -139,9 +140,6 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 );
-              } else if (snapshot.hasError) {
-                // 데이터 로드 중 오류 발생 시 에러 처리
-                return Text('Error: ${snapshot.error}');
               } else {
                 // 데이터가 없는 경우에 대한 처리
                 return Text('No Data');
@@ -191,7 +189,10 @@ class _HomePageState extends State<HomePage> {
                   Text("공지사항", style: titleStyle.copyWith(fontSize: 18.0)),
                   TextButton(
                     onPressed: () {
-                      print("공지사항");
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (BuildContext context) {
+                            return const NoticeDetailPage(title: '공지사항',);
+                          }));
                     },
                     child: Text("전체보기",
                         style: subTitleStyle.copyWith(color: textColor1)),
