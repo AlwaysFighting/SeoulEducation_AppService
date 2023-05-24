@@ -41,12 +41,11 @@ class _OfflinePageState extends State<OfflinePage> {
   String _selected2Item = '모두';
   String _selected3Item = '시험대비';
 
-  final List<String> _dropdown1Items = ['최신순', '관심설정순', "마감날짜순"];
+  final List<String> _dropdown1Items = ['최신순', '관심설정순', "마감임박순"];
   final List<String> _dropdown2Items = ['모두', '신청예정', '신청중', '신청마감'];
   final List<String> _dropdown3Items = ['시험대비'];
 
   late Future<CourseList> services;
-
   String whatOrder = "최신순";
   String whatFilter = "모두";
 
@@ -68,6 +67,7 @@ class _OfflinePageState extends State<OfflinePage> {
     );
 
     if (response.statusCode == 200) {
+      print("Success");
     } else {
       print(response.body);
     }
@@ -337,8 +337,6 @@ class _OfflinePageState extends State<OfflinePage> {
                                     builder: (_) => OfflineDetailPage(
                                       courseID:
                                           snapshot.data?.data[index].id as int,
-                                      title:
-                                          "${snapshot.data?.data[index].title}",
                                     ),
                                   ),
                                 );
@@ -387,7 +385,7 @@ class _OfflinePageState extends State<OfflinePage> {
                                         IconButton(
                                           onPressed: () {
                                             bool? isLiked = snapshot.data?.data[index].isLiked;
-                                            postStarCourses(index, !isLiked!);
+                                            postStarCourses(snapshot.data?.data[index].id as int, !isLiked!);
                                             setState(() {
                                               if (snapshot.data != null) {
                                                 snapshot.data!.data[index].isLiked = !(snapshot.data!.data[index].isLiked ?? false);

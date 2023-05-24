@@ -73,4 +73,14 @@ class AlarmAPI {
   String alarmCatList(String category) {
     return "$API_ALARM_URL?category=$category";
   }
+
+  // 모든 알림 확인 여부
+  String alarmCheck() {
+    return "$API_ALARM_URL/check";
+  }
+
+  // 알림 읽음 처리
+  String alarmRead(int index) {
+    return "$API_ALARM_URL/$index";
+  }
 }
