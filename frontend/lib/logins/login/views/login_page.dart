@@ -95,11 +95,12 @@ class _LoginPageState extends State<LoginPage> {
 
       final responseJson = json.decode(response.body);
       final String accessToken = responseJson['data']['accessToken'];
+      final int userID = responseJson['data']['userId'];
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
+
       prefs.setString('accessToken', accessToken);
-
-
+      prefs.setInt('userID', userID);
 
       // await prefs.setString('email', key);
       // await prefs.setString('password', value);
@@ -154,8 +155,8 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Column(
-                    children: [
+                  Column(
+                    children: const [
                       Text("LOGO",
                           style: TextStyle(
                               fontSize: 24.0,

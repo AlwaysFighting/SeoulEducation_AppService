@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:seoul_education_service/api/course_api.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../../notification/models/alarm.dart';
 import 'detailcontent.dart';
 
 class rereply extends StatefulWidget {
@@ -37,8 +38,11 @@ class RereplyState extends State<rereply> {
 
   Future<void> _sendRereply() async{
     String? accessToken = await _loadAccessToken();
-    final url = Uri.parse('$API_COMMUNITY_REREPLY/${widget.commentid}');
-    final headers = {'Authorization' : 'Bearer $accessToken',"Content-Type" : "application/json"};
+    final url = Uri.parse('${API_COMMUNITY_REREPLY}/${widget.commentid}');
+    final headers = {'Authorization' : 'Bearer ${accessToken}',"Content-Type" : "application/json"};
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     bool _rereplyForm(){
       if(_rereplycotroller.text.isEmpty || _rereplycotroller.text==' '){
         print('작성하지 않았습니다');
@@ -52,13 +56,18 @@ class RereplyState extends State<rereply> {
     _rereplyForm();
     final body = jsonEncode(
       {
-        "content": _rereplycotroller.text
+        "content": "${_rereplycotroller.text}"
       }
     );
     final response = await http.post(
       url, headers: headers, body: body
     );
     if(response.statusCode == 200){
+      final int commentID = widget.postId + 1;
+      final int? userID = prefs.getInt('userID');
+      setState(() {
+        ConnectSocket().replyAlarm(userID!, commentID);
+      });
       print("successfully saved");
     }
     else{
@@ -169,7 +178,7 @@ class RereplyState extends State<rereply> {
   }
   Widget replybar(){
     return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
+      physics: BouncingScrollPhysics(),
       child: Padding(
         padding: EdgeInsets.only(bottom:MediaQuery.of(context).viewInsets.bottom,),
         child: Row(

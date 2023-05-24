@@ -1,27 +1,21 @@
-const localhost = "172.18.15.148";
-const API_AUTH_URL = "http://$localhost:8080/auth";
-const API_COURSES_URL = "http://$localhost:8080/course";
-const API_COURSES_SEARCH_URL = "http://$localhost:8080/search/course";
-const API_ALARM_URL = "http://$localhost:8080/notif";
-const API_COMMUNITY = "http://$localhost:8080/post";
-const String API_DETAIL_COMMUNITY = "http://$localhost:8080/post/";
-const API_DELETE_COMMUNITY = "http://$localhost:8080/post";
-const API_REPLY_COMMUNITY = "http://$localhost:8080/comment";
-const String API_WRITING_REPLY = "http://$localhost:8080/comment";
-const API_COMMUNITY_EDIT = "http://$localhost:8080/post";
-const String API_COMMUNITY_SEARCH = "http://$localhost:8080/search/post?query=";
-const API_COMMUNITY_WRITING = "http://$localhost:8080/post";
-const String API_COMMUNITY_REREPLY = "http://$localhost:8080/comment/reply";
-const API_MYPAGE_NICKCHANGE = "http://$localhost:8080/mypage/nickname";
-const API_MYPAGE_PASSWORD_CHANGE = "http://$localhost:8080/mypage/password";
-const String API_MYPAGE_LIKEDLECTURE="http://$localhost:8080/mypage/like";
-const API_MYPAGE_WRITED="http://$localhost:8080/mypage/post";
-const API_LOGOUT = "http://$localhost:8080/auth/logout";
-const API_MYPAGE_LIKED = "http://$localhost:8080/mypage/like/";
-const API_MYPAGE_CANCELLIKED = "http://$localhost:8080/course/";
+const API_AUTH_URL = "http://localhost:8080/auth";
+const API_COURSES_URL = "http://localhost:8080/course";
+const API_COURSES_SEARCH_URL = "http://localhost:8080/search/course";
+const API_ALARM_URL = "http://localhost:8080/notif";
+
+const API_COMMUNITY = "http://localhost:8080/post";
+final String API_DETAIL_COMMUNITY = "http://localhost:8080/post/";
+const API_DELETE_COMMUNITY = "http://localhost:8080/post";
+const API_REPLY_COMMUNITY = "http://localhost:8080/comment";
+final String API_WRITING_REPLY = "http://localhost:8080/comment";
+const API_COMMUNITY_EDIT = "http://localhost:8080/post";
+final String API_COMMUNITY_SEARCH = "http://localhost:8080/search/post?query=";
+const API_COMMUNITY_WRITING = "http://localhost:8080/post";
+final String API_COMMUNITY_REREPLY = "http://localhost:8080/comment/reply";
 
 // API_AUTH_URL - 회원가입
 const EMAIL_LOGIN_API = "$API_AUTH_URL/login";
+const REFRESH_API = "$API_AUTH_URL/refresh";
 // const KAKAO_LOGIN__API = "$API_URL/login";
 const LOGOUT_API = "$API_AUTH_URL/logout";
 const EMAIL_CODE_REQUEST_API = "$API_AUTH_URL/email";
@@ -38,7 +32,7 @@ class CoursesAPI {
   }
   // 1-2. filter 선택 시
   String coursesFilterList(String type, String order, String filter ) {
-    return "$API_COURSES_URL/$type?order=$order?filter=$filter";
+    return "$API_COURSES_URL/$type?order=$order&filter=$filter";
   }
 
   // 2. 관심 강좌 설정 및 취소
@@ -71,12 +65,22 @@ class CoursesAPI {
 class AlarmAPI {
   // 알림 목록 조회
   // 1-1. 카테고리 미선택 시 (모든 알림)
-  String alarmList(int id) {
-    return "$API_ALARM_URL/$id";
+  String alarmList() {
+    return API_ALARM_URL;
   }
 
   // 1-2. 카테고리 선택 시
-  String alarmCatList(int id, String category) {
-    return "$API_ALARM_URL/$id?category=$category";
+  String alarmCatList(String category) {
+    return "$API_ALARM_URL?category=$category";
+  }
+
+  // 모든 알림 확인 여부
+  String alarmCheck() {
+    return "$API_ALARM_URL/check";
+  }
+
+  // 알림 읽음 처리
+  String alarmRead(int index) {
+    return "$API_ALARM_URL/$index";
   }
 }

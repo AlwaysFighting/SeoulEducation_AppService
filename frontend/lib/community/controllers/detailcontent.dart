@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:seoul_education_service/const/navigation.dart';
 import 'commuinty.dart';
 
+import '../../notification/models/alarm.dart';
 
 class Detailcontent extends StatefulWidget {
   final int postid;
@@ -53,7 +54,7 @@ class DetailState extends State<Detailcontent> {
       headers: {'Authorization':'Bearer $accessToken'},
     );
     if (response.statusCode == 200) {
-      print(response.body);
+      // (response.body);
       var jsonResponse = jsonDecode(response.body);
       var details = DetailResponse.fromJson(jsonResponse);
       setState(() {
@@ -101,7 +102,7 @@ class DetailState extends State<Detailcontent> {
       headers: {'Authorization' : 'Bearer $accessToken'}
     );
     if(response2.statusCode == 200){
-      print(response2.body);
+      // print(response2.body);
       var jsonResponse = jsonDecode(response2.body);
       var replies = replylist.fromJson(jsonResponse);
       setState(() {
@@ -143,17 +144,15 @@ class DetailState extends State<Detailcontent> {
       "content": _replycotroller.text
     });
     final response = await http.post(url,headers:headers, body:body);
+
     if(response.statusCode == 200){
+      await ConnectSocket().commentAlarm(widget.postid);
       print("Successfully Saved");
     }
     else{
       print("${response.statusCode}");
     }
   }
-
-
-
-
 
   @override
   Widget build(BuildContext context) {

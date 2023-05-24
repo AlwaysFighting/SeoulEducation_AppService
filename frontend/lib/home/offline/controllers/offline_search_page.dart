@@ -47,7 +47,7 @@ class _OfflineSearchPageState extends State<OfflineSearchPage> {
 
   Future<SearchCourse?> fetchData(String text) async {
 
-    String endPointUrl = CoursesAPI().searchCourses("on", text);
+    String endPointUrl = CoursesAPI().searchCourses("off", text);
     final Uri url = Uri.parse(endPointUrl);
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -225,8 +225,6 @@ class _BodyState extends State<Body> {
                                   OfflineDetailPage(
                                     courseID:
                                     snapshot.data?.data?[index].id as int,
-                                    title: "${snapshot.data?.data?[index]
-                                        .title}",
                                   ),
                             ),
                           );
