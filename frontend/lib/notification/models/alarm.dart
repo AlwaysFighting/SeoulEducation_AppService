@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
 
+// 알림
 class ConnectSocket {
 
   // Subscribe
@@ -56,7 +57,6 @@ class ConnectSocket {
 
   // Comment
   commentAlarm(int post) async {
-
     IO.Socket socket = IO.io('http://localhost:8080',
         OptionBuilder()
             .setTransports(['websocket']).build());
