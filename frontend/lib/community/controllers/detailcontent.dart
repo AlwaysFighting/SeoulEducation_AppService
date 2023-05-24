@@ -147,15 +147,7 @@ class DetailState extends State<Detailcontent> {
     final response = await http.post(url,headers:headers, body:body);
 
     if(response.statusCode == 200){
-
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-
-      final int commentID = widget.postid;
-      final int? userID = prefs.getInt('userID');
-
-      print("댓글 response : $commentID, userID : $userID");
-
-      ConnectSocket().commentAlarm(userID ?? 0, commentID);
+      await ConnectSocket().commentAlarm(widget.postid);
       print("Successfully Saved");
     }
     else{

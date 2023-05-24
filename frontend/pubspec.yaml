@@ -78,7 +78,7 @@ flutter:
     - assets/images/Alarm/
     - assets/images/Courses/
     - assets/images/community/
-
+    - assets/images/Notice/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

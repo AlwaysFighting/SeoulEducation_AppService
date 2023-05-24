@@ -225,8 +225,6 @@ class _BodyState extends State<Body> {
                                   OfflineDetailPage(
                                     courseID:
                                     snapshot.data?.data?[index].id as int,
-                                    title: "${snapshot.data?.data?[index]
-                                        .title}",
                                   ),
                             ),
                           );

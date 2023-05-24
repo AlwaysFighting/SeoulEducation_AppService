@@ -63,13 +63,11 @@ class RereplyState extends State<rereply> {
       url, headers: headers, body: body
     );
     if(response.statusCode == 200){
-
       final int commentID = widget.postId + 1;
       final int? userID = prefs.getInt('userID');
-
-      print("댓글 response : $commentID, userID : $userID");
-
-      ConnectSocket().replyAlarm(userID ?? 0, commentID);
+      setState(() {
+        ConnectSocket().replyAlarm(userID!, commentID);
+      });
       print("successfully saved");
     }
     else{

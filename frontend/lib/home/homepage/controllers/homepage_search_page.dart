@@ -189,8 +189,6 @@ class _BodyState extends State<Body> {
                                 builder: (_) => OfflineDetailPage(
                                   courseID:
                                   snapshot.data?.data?[index].id as int,
-                                  title:
-                                  "${snapshot.data?.data?[index].title}",
                                 ),
                               ),
                             ) : Navigator.of(context).push(
@@ -198,8 +196,6 @@ class _BodyState extends State<Body> {
                                 builder: (_) => OnlineDetailPage(
                                   courseID:
                                   snapshot.data?.data?[index].id as int,
-                                  title:
-                                  "${snapshot.data?.data?[index].title}",
                                 ),
                               ),
                             );

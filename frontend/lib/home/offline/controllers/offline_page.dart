@@ -337,8 +337,6 @@ class _OfflinePageState extends State<OfflinePage> {
                                     builder: (_) => OfflineDetailPage(
                                       courseID:
                                           snapshot.data?.data[index].id as int,
-                                      title:
-                                          "${snapshot.data?.data[index].title}",
                                     ),
                                   ),
                                 );

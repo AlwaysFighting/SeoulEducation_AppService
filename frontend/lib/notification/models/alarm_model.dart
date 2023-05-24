@@ -30,6 +30,7 @@ class Datum {
   dynamic courseId;
   int? postId;
   int? commentId;
+  String? type;
 
   Datum({
     this.notifyId,
@@ -39,6 +40,7 @@ class Datum {
     this.courseId,
     this.postId,
     this.commentId,
+    this.type,
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
@@ -49,6 +51,7 @@ class Datum {
     courseId: json["courseId"],
     postId: json["postId"],
     commentId: json["commentId"],
+    type: json["type"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -59,5 +62,6 @@ class Datum {
     "courseId": courseId,
     "postId": postId,
     "commentId": commentId,
+    "type": type,
   };
 }

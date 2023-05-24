@@ -14,12 +14,10 @@ import '../models/kakao_map.dart';
 
 class OfflineDetailPage extends StatefulWidget {
   final int courseID;
-  final String title;
 
   const OfflineDetailPage({
     Key? key,
     required this.courseID,
-    required this.title,
   }) : super(key: key);
 
   @override
@@ -82,7 +80,66 @@ class _OfflineDetailPageState extends State<OfflineDetailPage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: customAppBar(context, widget.title),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: FutureBuilder<CourseDetail>(
+          future: services,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              print("snapshot : $snapshot");
+              return AppBar(
+                title: Text(snapshot.data?.data.title as String, style: titleStyle,),
+                backgroundColor: Colors.white,
+                foregroundColor: textColor1,
+                automaticallyImplyLeading: false,
+                elevation: 0,
+                leading: const CustomBackButton(),
+              );
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Container();
+            }
+            return AppBar(
+              backgroundColor: Colors.white,
+              foregroundColor: textColor1,
+              automaticallyImplyLeading: false,
+              elevation: 0,
+              title: Text(
+                snapshot.data?.data.title as String,
+                style: titleStyle,
+              ),
+              leading: const CustomBackButton(),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 16.0),
+                  child: IconButton(
+                    onPressed: () {
+                      bool? isLiked = snapshot.data?.data.isLiked;
+                      postStarCourses(snapshot.data?.data.courseId ?? 0, !isLiked!);
+                      setState(() {
+                        if (snapshot.data != null) {
+                          snapshot.data!.data.isLiked = !(snapshot.data!.data.isLiked ?? false);
+                        }
+                      });
+                    },
+                    icon: snapshot.data?.data.isLiked == false
+                        ? Image.asset(
+                      '$imageURL/Const/star_stroke.png',
+                      width: 22,
+                      height: 22,
+                    )
+                        : Image.asset(
+                      '$imageURL/Const/star_fill.png',
+                      width: 22,
+                      height: 22,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
       body: _Body(services: services, widget: widget, titleStyle: titleStyle, today: today, imageURL: imageURL, textStyle: textStyle),
     );
   }
@@ -109,66 +166,6 @@ class _OfflineDetailPageState extends State<OfflineDetailPage> {
     } else {
       print(response.body);
     }
-  }
-
-  PreferredSize customAppBar(BuildContext context, String title) {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(kToolbarHeight),
-      child: FutureBuilder<CourseDetail>(
-        future: services,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            print("snapshot : $snapshot");
-            return AppBar(
-              title: Text(widget.title),
-              backgroundColor: Colors.white,
-              foregroundColor: textColor1,
-              automaticallyImplyLeading: false,
-              elevation: 0,
-              leading: const CustomBackButton(),
-            );
-          }
-          return AppBar(
-            backgroundColor: Colors.white,
-            foregroundColor: textColor1,
-            automaticallyImplyLeading: false,
-            elevation: 0,
-            title: Text(
-              title,
-              style: titleStyle,
-            ),
-            leading: const CustomBackButton(),
-            actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 16.0),
-                child: IconButton(
-                  onPressed: () {
-                    bool? isLiked = snapshot.data?.data.isLiked;
-                    postStarCourses(snapshot.data?.data.courseId ?? 0, !isLiked!);
-                    setState(() {
-                      if (snapshot.data != null) {
-                        snapshot.data!.data.isLiked = !(snapshot.data!.data.isLiked ?? false);
-                      }
-                    });
-                  },
-                  icon: snapshot.data?.data.isLiked == false
-                      ? Image.asset(
-                    '$imageURL/Const/star_stroke.png',
-                    width: 22,
-                    height: 22,
-                  )
-                      : Image.asset(
-                    '$imageURL/Const/star_fill.png',
-                    width: 22,
-                    height: 22,
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
   }
 }
 
@@ -222,7 +219,7 @@ class _Body extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.title,
+                          snapshot.data?.data.title as String,
                           style: titleStyle.copyWith(fontSize: 18.0),
                         ),
                         const SizedBox(height: 16.0),

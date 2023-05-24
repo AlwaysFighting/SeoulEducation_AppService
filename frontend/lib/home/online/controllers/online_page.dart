@@ -301,8 +301,7 @@ class _OnlinePageState extends State<OnlinePage> {
                               MaterialPageRoute(
                                 builder: (_) => OnlineDetailPage(
                                   courseID:
-                                  snapshot.data?.data[index].id as int,
-                                  title: "${snapshot.data?.data[index].title}",
+                                  snapshot.data?.data[index].id as int
                                 ),
                               ),
                             );
@@ -493,7 +492,6 @@ class _bodyState extends State<_body> {
                               builder: (_) => OnlineDetailPage(
                                 courseID:
                                 snapshot.data?.data[index].id as int,
-                                title: "${snapshot.data?.data[index].title}",
                               ),
                             ),
                           );

@@ -1,12 +1,14 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../../../const/colors.dart';
 import '../../api/course_api.dart';
 import '../../community/controllers/detailcontent.dart';
 import '../../const/back_button.dart';
+import '../../home/offline/controllers/offline_detail_page.dart';
+import '../../home/online/controllers/online_detail_page.dart';
 import '../models/alarm.dart';
 
 import 'package:http/http.dart' as http;
@@ -161,6 +163,7 @@ class _AlarmPageState extends State<AlarmPage> {
           return ListView.builder(
             itemCount: snapshot.data?.data.length ?? 0,
             itemBuilder: (context, index) {
+
               List<bool> isCheckedList = List.generate(
                   snapshot.data?.data.length ?? 0,
                   (index) => snapshot.data?.data[index].isChecked as bool);
@@ -168,30 +171,23 @@ class _AlarmPageState extends State<AlarmPage> {
               return GestureDetector(
                 onTap: () {
                   updateData(snapshot.data?.data[index].notifyId ?? 0);
-                  setState(() {
-                    _resetState();
-                  });
                   if (snapshot.data?.data[index].category == "last") {
-                    // snapshot.data?.data?[index].type ==
-                    //     "off" ? Navigator.of(context).push(
-                    //   MaterialPageRoute(
-                    //     builder: (_) => OfflineDetailPage(
-                    //       courseID:
-                    //       snapshot.data?.data?[index].id as int,
-                    //       title:
-                    //       "${snapshot.data?.data?[index].title}",
-                    //     ),
-                    //   ),
-                    // ) : Navigator.of(context).push(
-                    //   MaterialPageRoute(
-                    //     builder: (_) => OnlineDetailPage(
-                    //       courseID:
-                    //       snapshot.data?.data?[index].id as int,
-                    //       title:
-                    //       "${snapshot.data?.data?[index].title}",
-                    //     ),
-                    //   ),
-                    // );
+                    snapshot.data?.data?[index].type ==
+                        "off" ? Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => OfflineDetailPage(
+                          courseID:
+                          snapshot.data?.data?[index].courseId as int,
+                        ),
+                      ),
+                    ) : Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => OnlineDetailPage(
+                          courseID:
+                          snapshot.data?.data?[index].courseId as int,
+                        ),
+                      ),
+                    );
                   } else if (snapshot.data?.data[index].category == "comment"){
                     Navigator.of(context)
                         .push(MaterialPageRoute(builder: (BuildContext context) {
