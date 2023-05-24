@@ -16,7 +16,7 @@ class changename extends StatefulWidget{
 class _changename extends State<changename> {
   late String _updateNickname;
   bool _showSuffixicon = false;
-  TextEditingController _textcontroller = TextEditingController();
+  final TextEditingController _textcontroller = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -31,9 +31,9 @@ class _changename extends State<changename> {
 
   Future<void> _editNickname() async{
     String? accessToken = await _loadAccessToken();
-    final url = Uri.parse('${API_MYPAGE_NICKCHANGE}');
-    final headers = {'Authorization' : 'Bearer ${accessToken}', 'Content-Type': 'application/json'};
-    final body = jsonEncode({"nickname":"${_textcontroller.text}"});
+    final url = Uri.parse(API_MYPAGE_NICKCHANGE);
+    final headers = {'Authorization' : 'Bearer $accessToken', 'Content-Type': 'application/json'};
+    final body = jsonEncode({"nickname":_textcontroller.text});
     final response = await http.patch(url, headers:headers, body:body);
     if(response.statusCode == 200){
       print("Updated Successfully");

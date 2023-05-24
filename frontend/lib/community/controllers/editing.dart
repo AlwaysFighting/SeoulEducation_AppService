@@ -6,8 +6,7 @@ import 'package:seoul_education_service/const/colors.dart';
 import 'package:seoul_education_service/const/navigation.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:seoul_education_service/logins/login/views/login_page.dart';
-import 'detailcontent.dart';
+import 'commuinty.dart';
 
 //user id로 권한 부여하기
 class editingScreen extends StatefulWidget{
@@ -41,8 +40,8 @@ class _editingState extends State<editingScreen>{
 
   Future<void> _editPostRequest() async{
     String? accessToken = await _loadAccessToken();
-    final url = Uri.parse('${API_COMMUNITY_EDIT}/${widget.postid}');
-    final headers={'Authorization':'Bearer ${accessToken}', "Content-Type": "application/json"};
+    final url = Uri.parse('$API_COMMUNITY_EDIT/${widget.postid}');
+    final headers={'Authorization':'Bearer $accessToken', "Content-Type": "application/json"};
     final body = jsonEncode(
         {"title": _titleController.text,
           "content": _contentController.text});
@@ -183,7 +182,9 @@ class _editingState extends State<editingScreen>{
                 ),
                 TextButton(onPressed: (){
                   //게시판 화면으로
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Navigation()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                  const Navigation(initialIndex: 1,),
+                  ));
                 },
                     child: const Text("예")),
               ]

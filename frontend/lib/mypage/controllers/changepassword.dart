@@ -2,36 +2,87 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:seoul_education_service/const/colors.dart';
 import 'changeprivate.dart';
-//비밀번호 입력시 한번에 x 버튼 나오는 문제 해결해야함
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:seoul_education_service/api/course_api.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class changepassword extends StatefulWidget{
-  const changepassword({Key? key}):super(key:key);
+  final usernickname;
+  const changepassword({Key? key, required this.usernickname}):super(key:key);
 
   @override
   State<changepassword> createState() => _changepassword();
 }
 class _changepassword extends State<changepassword> {
-  bool _showSuffixicon = false;
-  TextEditingController _currentcontroller = TextEditingController();
-  TextEditingController _newcontroller = TextEditingController();
-  TextEditingController _checkcontroller = TextEditingController();
+  bool _showSuffixicon1 = false;
+  bool _showSuffixicon2 = false;
+  bool _showSuffixicon3 = false;
+  bool _iscorrespond = false;
+  bool _isnotcorrect = false;
+  final TextEditingController _currentcontroller = TextEditingController();
+  final TextEditingController _newcontroller = TextEditingController();
+  final TextEditingController _checkcontroller = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     ScreenUtil.init(context);
+    _loadAccessToken();
   }
+
+  Future<String?> _loadAccessToken() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('accessToken');
+  }
+
+  Future<void> _editPassword() async {
+    String? accessToken = await _loadAccessToken();
+    final url = Uri.parse(API_MYPAGE_PASSWORD_CHANGE);
+    final headers = {
+      'Authorization': 'Bearer $accessToken',
+      'Content-Type': 'application/json'
+    };
+    final body = jsonEncode(
+        {"password": _currentcontroller.text,
+          "newPassword": _checkcontroller.text});
+    final response = await http.patch(
+      url, headers: headers, body: body
+    );
+    if(response.statusCode == 200){
+      print("Updated Successfully");
+    }
+    else if(response.statusCode == 401)
+      {
+        print("Token problem");
+      }
+    else if(response.statusCode == 403){
+      print("Invalid User");
+      setState(() {
+        _isnotcorrect = true;
+      });
+    }
+    else if(response.statusCode == 400){
+      print("Invalid Password");
+    }
+    else{
+      print("Server error");
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, designSize: const Size(390, 844));
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Column(
         children: [
           SizedBox(height: 44.h,),
           appbar(),
           SizedBox(height: 20.h,),
           content(),
+          const Spacer(),
           success(),
         ],
       ),
@@ -83,57 +134,76 @@ class _changepassword extends State<changepassword> {
           ],
         ),
         SizedBox(height: 10.h,),
-        SizedBox(
-          width: 358.w,
-          height: 48.h,
-          child: TextFormField(
-            obscureText: true,
-            controller: _currentcontroller,
-            onChanged: (_currentcontroller){
-              setState(() {
-                _showSuffixicon = _currentcontroller.isNotEmpty;
-              });
-            },
-            style: TextStyle(
-              fontFamily: 'Spoqa Han Sans Neo',
-              fontSize: 14.sp,
-            ),
-            decoration: InputDecoration(
-              suffixIcon: Visibility(
-                visible: _showSuffixicon,
-                child:GestureDetector(
-                    onTap: (){
-                      //다지워지기
-                    },
-                    child:SizedBox(
-                        width: 24.w,
-                        height: 24.h,
-                        child: Image.asset("assets/images/Const/XCircle.png"))
+        Row(
+          children: [
+            SizedBox(width: 16.w,),
+            SizedBox(
+              width: 358.w,
+              height: 48.h,
+              child: TextFormField(
+                obscureText: true,
+                controller: _currentcontroller,
+                onChanged: (currentcontroller){
+                  setState(() {
+                    _showSuffixicon1 = currentcontroller.isNotEmpty;
+                  });
+                },
+                style: TextStyle(
+                  fontFamily: 'Spoqa Han Sans Neo',
+                  fontSize: 14.sp,
+                ),
+                decoration: InputDecoration(
+                  suffixIcon: Visibility(
+                    visible: _currentcontroller.text.isNotEmpty,
+                    child:GestureDetector(
+                      onTap: (){
+                        _currentcontroller.clear();
+                      },
+                      child: const Icon(Icons.cancel, color:textColor2),
+                    ),
+                  ),
+                  border: InputBorder.none,
+                  hintText: "현재 비밀번호 입력",
+                  hintStyle: TextStyle(
+                    fontFamily: 'Spoqa Han Sans Neo',
+                    fontSize: ScreenUtil().setSp(14),
+                    color: textColor2,
+                  ),
+                  contentPadding: EdgeInsets.fromLTRB(16.w, 16.h, 236.w, 15.h
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color:_isnotcorrect ? errorColor: mainColor),
+                    borderRadius: const BorderRadius.all(Radius.circular(24)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: const BorderRadius.all(Radius.circular(24)),
+                    borderSide: BorderSide(color:_isnotcorrect ? errorColor: mainColor),
+                  ),
+                  filled: true,
+                  fillColor: backgroundBtnColor,
                 ),
               ),
-              border: InputBorder.none,
-              hintText: "현재 비밀번호 입력",
-              hintStyle: TextStyle(
-                fontFamily: 'Spoqa Han Sans Neo',
-                fontSize: ScreenUtil().setSp(14),
-                color: textColor2,
-              ),
-              contentPadding: EdgeInsets.fromLTRB(16.w, 16.h, 0, 15.h
-              ),
-              enabledBorder: const OutlineInputBorder(
-                borderSide: BorderSide(color: mainColor),
-                borderRadius: BorderRadius.all(Radius.circular(24)),
-
-              ),
-              focusedBorder: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(24)),
-                borderSide: BorderSide(color:mainColor),
-              ),
-              filled: true,
-              fillColor: backgroundBtnColor,
             ),
-          ),
+          ],
         ),
+        Visibility(
+          visible: _isnotcorrect,
+            child: Column(
+              children: [
+                SizedBox(height: 8.h,),
+                Row(
+                  children: [
+                    SizedBox(width: 16.w,),
+                    Text("비밀번호가 맞지 않습니다. 다시 확인해주세요",
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      fontFamily: 'Spoqa Han Sans Neo',
+                      color: errorColor,
+                    ),),
+                  ],
+                ),
+              ],
+            )),
         //새로운 비밀번호 입력하는
         SizedBox(height: 40.h,),
         Row(
@@ -147,56 +217,58 @@ class _changepassword extends State<changepassword> {
           ],
         ),
         SizedBox(height: 10.h,),
-        SizedBox(
-          width: 358.w,
-          height: 48.h,
-          child: TextFormField(
-            obscureText: true,
-            controller: _newcontroller,
-            onChanged: (_newcontroller){
-              setState(() {
-                _showSuffixicon = _newcontroller.isNotEmpty;
-              });
-            },
-            style: TextStyle(
-              fontFamily: 'Spoqa Han Sans Neo',
-              fontSize: 14.sp,
-            ),
-            decoration: InputDecoration(
-              suffixIcon: Visibility(
-                visible: _showSuffixicon,
-                child:GestureDetector(
-                    onTap: (){
-                      //다지워지기
-                    },
-                    child:SizedBox(
-                        width: 24.w,
-                        height: 24.h,
-                        child: Image.asset("assets/images/Const/XCircle.png"))
+        Row(
+          children: [
+            SizedBox(width: 16.w,),
+            SizedBox(
+              width: 358.w,
+              height: 48.h,
+              child: TextFormField(
+                obscureText: true,
+                controller: _newcontroller,
+                onChanged: (newcontroller){
+                  setState(() {
+                    _showSuffixicon2 = newcontroller.isNotEmpty;
+                  });
+                },
+                style: TextStyle(
+                  fontFamily: 'Spoqa Han Sans Neo',
+                  fontSize: 14.sp,
+                ),
+                decoration: InputDecoration(
+                  suffixIcon: Visibility(
+                    visible: _newcontroller.text.isNotEmpty,
+                    child:GestureDetector(
+                        onTap: (){
+                          _newcontroller.clear();
+                        },
+                        child:const Icon(Icons.cancel, color:textColor2),
+                    ),
+                  ),
+                  border: InputBorder.none,
+                  hintText: "새로운 비밀번호를 입력해주세요",
+                  hintStyle: TextStyle(
+                    fontFamily: 'Spoqa Han Sans Neo',
+                    fontSize: ScreenUtil().setSp(14),
+                    color: textColor2,
+                  ),
+                  contentPadding: EdgeInsets.fromLTRB(16.w, 16.h, 236.w, 15.h
+                  ),
+                  enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: mainColor),
+                    borderRadius: BorderRadius.all(Radius.circular(24)),
+
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(24)),
+                    borderSide: BorderSide(color: mainColor),
+                  ),
+                  filled: true,
+                  fillColor: backgroundBtnColor,
                 ),
               ),
-              border: InputBorder.none,
-              hintText: "새로운 비밀번호를 입력해주세요",
-              hintStyle: TextStyle(
-                fontFamily: 'Spoqa Han Sans Neo',
-                fontSize: ScreenUtil().setSp(14),
-                color: textColor2,
-              ),
-              contentPadding: EdgeInsets.fromLTRB(16.w, 16.h, 0, 15.h
-              ),
-              enabledBorder: const OutlineInputBorder(
-                borderSide: BorderSide(color: mainColor),
-                borderRadius: BorderRadius.all(Radius.circular(24)),
-
-              ),
-              focusedBorder: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(24)),
-                borderSide: BorderSide(color:mainColor),
-              ),
-              filled: true,
-              fillColor: backgroundBtnColor,
             ),
-          ),
+          ],
         ),
         //비밀번호 확인
         SizedBox(height: 40.h,),
@@ -211,57 +283,78 @@ class _changepassword extends State<changepassword> {
           ],
         ),
         SizedBox(height: 10.h,),
-        SizedBox(
-          width: 358.w,
-          height: 48.h,
-          child: TextFormField(
-            obscureText: true,
-            controller: _checkcontroller,
-            onChanged: (value){
-              setState(() {
-                _showSuffixicon = value.isNotEmpty;
-              });
-            },
-            style: TextStyle(
-              fontFamily: 'Spoqa Han Sans Neo',
-              fontSize: 14.sp,
-            ),
-            decoration: InputDecoration(
-              suffixIcon: Visibility(
-                visible: _showSuffixicon,
-                child:GestureDetector(
-                    onTap: (){
-                      //다지워지기
-                    },
-                    child:SizedBox(
-                        width: 24.w,
-                        height: 24.h,
-                        child: Image.asset("assets/images/Const/XCircle.png"))
+        Row(
+          children: [
+            SizedBox(width: 16.w,),
+            SizedBox(
+              width: 358.w,
+              height: 48.h,
+              child: TextFormField(
+                obscureText: true,
+                controller: _checkcontroller,
+                onChanged: (checkcontroller){
+                  setState(() {
+                    _showSuffixicon3 = checkcontroller.isNotEmpty;
+                  });
+                },
+                style: TextStyle(
+                  fontFamily: 'Spoqa Han Sans Neo',
+                  fontSize: 14.sp,
+                ),
+                decoration: InputDecoration(
+                  suffixIcon: Visibility(
+                    visible: _checkcontroller.text.isNotEmpty,
+                    child:GestureDetector(
+                        onTap: (){
+                          _checkcontroller.clear();
+                        },
+                        child:const Icon(Icons.cancel, color:textColor2),
+                    ),
+                  ),
+                  border: InputBorder.none,
+                  hintText: "새로운 비밀번호를 한번 더 입력해주세요",
+                  hintStyle: TextStyle(
+                    fontFamily: 'Spoqa Han Sans Neo',
+                    fontSize: ScreenUtil().setSp(14),
+                    color: textColor2,
+                  ),
+                  contentPadding: EdgeInsets.fromLTRB(16.w, 16.h, 236.w, 15.h
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: _iscorrespond ? errorColor : mainColor),
+                    borderRadius: const BorderRadius.all(Radius.circular(24)),
+
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: const BorderRadius.all(Radius.circular(24)),
+                    borderSide: BorderSide(color:_iscorrespond ? errorColor : mainColor),
+                  ),
+                  filled: true,
+                  fillColor: backgroundBtnColor,
                 ),
               ),
-              border: InputBorder.none,
-              hintText: "새로운 비밀번호를 한번 더 입력해주세요",
-              hintStyle: TextStyle(
-                fontFamily: 'Spoqa Han Sans Neo',
-                fontSize: ScreenUtil().setSp(14),
-                color: textColor2,
-              ),
-              contentPadding: EdgeInsets.fromLTRB(16.w, 16.h, 0, 15.h
-              ),
-              enabledBorder: const OutlineInputBorder(
-                borderSide: BorderSide(color: mainColor),
-                borderRadius: BorderRadius.all(Radius.circular(24)),
-
-              ),
-              focusedBorder: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(24)),
-                borderSide: BorderSide(color:mainColor),
-              ),
-              filled: true,
-              fillColor: backgroundBtnColor,
             ),
-          ),
+          ],
         ),
+        Visibility(
+            visible: _iscorrespond,
+            child: Column(
+              children: [
+                SizedBox(height: 8.h,),
+                Row(
+                  children: [
+                    SizedBox(width: 16.w,),
+                    Text("비밀번호가 맞지 않습니다. 다시 확인해주세요.",
+                      style: TextStyle(
+                        fontFamily: 'Spoqa Han Sans Neo',
+                        fontSize: 12.sp,
+                        color:errorColor,
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            )),
       ],
     );
   }
@@ -311,12 +404,12 @@ class _changepassword extends State<changepassword> {
                         ),
                       )),
                   TextButton(onPressed: (){
-                    /*Navigator.push(
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => changeprivate(),
+                        builder: (context) => changeprivate(usernickname: widget.usernickname,),
                       ),
-                    );*/
+                    );
                   },
                       child: const Text("예",
                         style: TextStyle(
@@ -332,13 +425,29 @@ class _changepassword extends State<changepassword> {
   }
   Widget success(){
     return GestureDetector(
-      onTap: (){
-       /*( _currentcontroller.text.isNotEmpty || _newcontroller.text.isNotEmpty || _checkcontroller.text.isNotEmpty) ? Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => changeprivate(usernickname: usernickname,),
-          ),
-        ) : print("이름이 입력되지 않음");*/
+      onTap: () async{
+        //패스워드 확인 결과 불일치라면
+        if(_newcontroller.text != _checkcontroller.text)
+          {
+            setState(() {
+              _iscorrespond =true;
+            });
+          }
+        else{
+          await _editPassword();
+          if(_isnotcorrect)
+            {
+              print("현재 비밀번호를 다시 확인하세요");
+            }
+          else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => changeprivate(usernickname: widget.usernickname,),
+              ),
+            );
+          }
+        }
       },
       child: Container(
         height: 80.h,

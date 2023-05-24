@@ -46,7 +46,7 @@ class _CommunityState extends State<CommunityPage>{
   }
 
   Widget appbar(){
-    return Container(
+    return SizedBox(
       height: 56.h,
       child: Row(
         children: [
@@ -149,7 +149,7 @@ class _CommunityState extends State<CommunityPage>{
                 child: ListTile(
                   //제목
                   title:Padding(
-                    padding: EdgeInsets.only(bottom:10),
+                    padding: const EdgeInsets.only(bottom:10),
                     //padding: const EdgeInsets.all(8.0),
                     child: Text(post.title!,
                       style: TextStyle(

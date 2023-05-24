@@ -35,8 +35,8 @@ class _writedState extends State<writed>{
   Future<void> _fetchcontent() async{
     String? accessToken = await _loadAccessToken();
     var response= await http.get(
-      Uri.parse('${API_MYPAGE_WRITED}'),
-      headers:{'Authorization' : 'Bearer ${accessToken}'},
+      Uri.parse(API_MYPAGE_WRITED),
+      headers:{'Authorization' : 'Bearer $accessToken'},
     );
     if(response.statusCode == 200){
       var jsonResponse = jsonDecode(response.body);
@@ -119,7 +119,7 @@ class _writedState extends State<writed>{
                   );
                 },
                 child: ListTile(
-                  title:Padding(padding: EdgeInsets.only(bottom:10),
+                  title:Padding(padding: const EdgeInsets.only(bottom:10),
                     child: Text(list.title!,
                       style: TextStyle(
                         fontFamily: 'Spoqa Han Sans Neo',

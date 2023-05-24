@@ -11,15 +11,15 @@ class Writer {
     if (json['data'] != null) {
       data = <Model>[];
       json['data'].forEach((v) {
-        data!.add(new Model.fromJson(v));
+        data!.add(Model.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['message'] = this.message;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['message'] = message;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
@@ -59,15 +59,15 @@ class Model {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['title'] = this.title;
-    data['content'] = this.content;
-    data['userId'] = this.userId;
-    data['publishDate'] = this.publishDate;
-    data['viewCount'] = this.viewCount;
-    data['commentCount'] = this.commentCount;
-    data['userNickname'] = this.userNickname;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['title'] = title;
+    data['content'] = content;
+    data['userId'] = userId;
+    data['publishDate'] = publishDate;
+    data['viewCount'] = viewCount;
+    data['commentCount'] = commentCount;
+    data['userNickname'] = userNickname;
     return data;
   }
 }

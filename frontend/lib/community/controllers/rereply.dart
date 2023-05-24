@@ -37,8 +37,8 @@ class RereplyState extends State<rereply> {
 
   Future<void> _sendRereply() async{
     String? accessToken = await _loadAccessToken();
-    final url = Uri.parse('${API_COMMUNITY_REREPLY}/${widget.commentid}');
-    final headers = {'Authorization' : 'Bearer ${accessToken}',"Content-Type" : "application/json"};
+    final url = Uri.parse('$API_COMMUNITY_REREPLY/${widget.commentid}');
+    final headers = {'Authorization' : 'Bearer $accessToken',"Content-Type" : "application/json"};
     bool _rereplyForm(){
       if(_rereplycotroller.text.isEmpty || _rereplycotroller.text==' '){
         print('작성하지 않았습니다');
@@ -52,7 +52,7 @@ class RereplyState extends State<rereply> {
     _rereplyForm();
     final body = jsonEncode(
       {
-        "content": "${_rereplycotroller.text}"
+        "content": _rereplycotroller.text
       }
     );
     final response = await http.post(
@@ -169,7 +169,7 @@ class RereplyState extends State<rereply> {
   }
   Widget replybar(){
     return SingleChildScrollView(
-      physics: BouncingScrollPhysics(),
+      physics: const BouncingScrollPhysics(),
       child: Padding(
         padding: EdgeInsets.only(bottom:MediaQuery.of(context).viewInsets.bottom,),
         child: Row(

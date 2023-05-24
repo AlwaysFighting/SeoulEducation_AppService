@@ -4,6 +4,7 @@ import 'package:seoul_education_service/const/colors.dart';
 import 'package:seoul_education_service/mypage/controllers/changename.dart';
 import 'package:seoul_education_service/mypage/controllers/mypage.dart';
 import 'changepassword.dart';
+import 'package:seoul_education_service/const/navigation.dart';
 
 class changeprivate extends StatefulWidget{
   final usernickname;
@@ -53,12 +54,8 @@ class _privateState extends State<changeprivate> {
           SizedBox(width: 16.w,),
           GestureDetector(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MyPage(),
-                ),
-              );
+              Navigator.push(context, MaterialPageRoute(builder: (context) =>
+              const Navigation(initialIndex: 2,)));
             },
             child: Image.asset(
               'assets/images/Const/ArrowLeft.png', width: 24.w, height: 24.w,),
@@ -128,7 +125,7 @@ class _privateState extends State<changeprivate> {
                   fontSize: 16.sp,
                 ),
                 ),
-                Spacer(),
+                const Spacer(),
                 Text('${widget.usernickname}',
                   style: TextStyle(
                     fontFamily: 'Spoqa Han Sans Neo',
@@ -147,7 +144,7 @@ class _privateState extends State<changeprivate> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => changepassword(),
+                builder: (context) => changepassword(usernickname : widget.usernickname),
               ),
             );
           },
@@ -162,7 +159,7 @@ class _privateState extends State<changeprivate> {
                     fontSize: 16.sp,
                   ),
                 ),
-                Spacer(),
+                const Spacer(),
                 Image.asset("assets/images/Const/CaretRight.png",width: 24.w, height: 24.h,),
               ],
             ),

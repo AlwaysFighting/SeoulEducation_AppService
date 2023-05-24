@@ -6,8 +6,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:seoul_education_service/api/course_api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:seoul_education_service/logins/login/views/login_page.dart';
-import 'commuinty.dart';
 
 class writingScreen extends StatefulWidget{
   final postid;
@@ -67,7 +65,7 @@ class _writingState extends State<writingScreen>{
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => Navigation(),
+                      builder: (context) => const Navigation(),
                     ),
                   );
                 },
@@ -166,8 +164,11 @@ class _writingState extends State<writingScreen>{
               ),
               TextButton(onPressed: (){
                 //게시판 화면으로
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Navigation()));
-              },
+                Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                const Navigation(initialIndex: 1,),
+                ));
+
+                },
                   child: const Text("예")),
             ]
         );
@@ -176,7 +177,7 @@ class _writingState extends State<writingScreen>{
   //글작성 api처리
   Future<void> _sendPostRequest() async{
     String? accessToken = await _loadAccessToken();
-      final url = Uri.parse('${API_COMMUNITY_WRITING}');
+      final url = Uri.parse(API_COMMUNITY_WRITING);
       //로그인 부분과 합치면 받아오기
       final headers={'Authorization':'Bearer $accessToken', "Content-Type": "application/json"};
       bool _submitForm(){
