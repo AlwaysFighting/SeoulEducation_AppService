@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:seoul_education_service/community/model/postlist.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+
 class Searching extends StatefulWidget{
   const Searching({Key? key}) : super(key:key);
   @override
@@ -17,6 +18,7 @@ class SearchingState extends State<Searching> {
   List<Data>? _results = [];
   final TextEditingController _searchingController = TextEditingController();
 
+  @override
   void initState() {
     //ScreenUtil.init(context);
     super.initState();
@@ -32,8 +34,8 @@ class SearchingState extends State<Searching> {
   Future<void> _fetchResult() async{
     String? accessToken = await _loadAccessToken();
     var response= await http.get(
-        Uri.parse("${API_COMMUNITY_SEARCH}${_searchingController.text}"),
-        headers:{'Authorization':'Bearer ${accessToken}'},
+        Uri.parse("$API_COMMUNITY_SEARCH${_searchingController.text}"),
+        headers:{'Authorization':'Bearer $accessToken'},
     );
     if(response.statusCode == 200){
       var jsonResponse=jsonDecode(response.body);
@@ -137,8 +139,8 @@ class SearchingState extends State<Searching> {
     }
     //검색어 자체를 입력하지 않았을때
     else if(_searchingController.text.isEmpty){
-      return Column(
-        children: const [
+      return const Column(
+        children: [
           Text(""),
         ],
       );

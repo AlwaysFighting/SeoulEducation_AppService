@@ -10,6 +10,7 @@ import 'package:seoul_education_service/api/course_api.dart';
 import 'package:seoul_education_service/community/model/replylist.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:seoul_education_service/const/navigation.dart';
+import 'commuinty.dart';
 
 import '../../notification/models/alarm.dart';
 
@@ -26,6 +27,7 @@ class DetailState extends State<Detailcontent> {
   List<Data>? _detaillist;
   replylist? _replylist;
   bool cando = false;
+  CommunityPage communitypage = const CommunityPage();
 
 
   @override
@@ -33,11 +35,8 @@ class DetailState extends State<Detailcontent> {
     //ScreenUtil.init(context);
     super.initState();
     _loadAccessToken();
-    if(widget.postid != null)
-      {
-        _fetchDetails();
-        _fetchReply();
-      }
+      _fetchDetails();
+      _fetchReply();
     _sendReply();
   }
   //accesstoken 호출
@@ -50,7 +49,7 @@ class DetailState extends State<Detailcontent> {
   Future<void> _fetchDetails() async {
     String? accessToken = await _loadAccessToken();
     var response = await http.get(
-      Uri.parse('${API_DETAIL_COMMUNITY}${widget.postid}'),
+      Uri.parse('$API_DETAIL_COMMUNITY${widget.postid}'),
       //API_DETAIL_COMMUNITY
       headers: {'Authorization':'Bearer $accessToken'},
     );
@@ -75,7 +74,7 @@ class DetailState extends State<Detailcontent> {
   //게시글 삭제
   Future<void> _deleteData() async{
     String? accessToken = await _loadAccessToken();
-    final url = Uri.parse('${API_DELETE_COMMUNITY}/${widget.postid}');
+    final url = Uri.parse('$API_DELETE_COMMUNITY/${widget.postid}');
     final headers = {'Authorization':'Bearer $accessToken'};
     var response = await http.delete(url, headers: headers);
     if(response.statusCode==401){
@@ -99,8 +98,8 @@ class DetailState extends State<Detailcontent> {
   Future<void> _fetchReply() async{
     String? accessToken = await _loadAccessToken();
     var response2 = await http.get(
-      Uri.parse('${API_REPLY_COMMUNITY}/${widget.postid!}'),
-      headers: {'Authorization' : 'Bearer ${accessToken}'}
+      Uri.parse('$API_REPLY_COMMUNITY/${widget.postid}'),
+      headers: {'Authorization' : 'Bearer $accessToken'}
     );
     if(response2.statusCode == 200){
       // print(response2.body);
@@ -123,8 +122,8 @@ class DetailState extends State<Detailcontent> {
   //댓글 작성
   Future<void> _sendReply() async{
     String? accessToken = await _loadAccessToken();
-    final url = Uri.parse('${API_WRITING_REPLY}/${widget.postid!}');
-    final headers = {'Authorization' : 'Bearer ${accessToken}', "Content-Type" : "application/json"};
+    final url = Uri.parse('$API_WRITING_REPLY/${widget.postid}');
+    final headers = {'Authorization' : 'Bearer $accessToken', "Content-Type" : "application/json"};
     bool _replysumitForm(){
       if(_replycotroller.text.isEmpty){
         print("content is empty");
@@ -210,7 +209,7 @@ class DetailState extends State<Detailcontent> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           ListTile(
-                            title:Align(
+                            title:const Align(
                               alignment : Alignment.center,
                               child: Text("글편집하기",
                               style: TextStyle(
@@ -230,9 +229,9 @@ class DetailState extends State<Detailcontent> {
                             },
                           ),
                           ListTile(
-                              title:Align(
+                              title:const Align(
                                 alignment:Alignment.center,
-                                child: const Text("글삭제하기",
+                                child: Text("글삭제하기",
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontFamily: "Spoqa Han Sans Neo",
@@ -240,10 +239,12 @@ class DetailState extends State<Detailcontent> {
                                     color: Colors.red,
                                   ),),
                               ),
-                            onTap: (){
-                                _deleteData();
+                            onTap: () async{
+                                await _deleteData();
                               if(cando){
                                 Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Navigation()));
+                                //게시글 조회로
+                                //await communitypage._fetchPosts();
                               }
                             },
                           ),
@@ -354,9 +355,9 @@ class DetailState extends State<Detailcontent> {
         itemCount: _replylist!.data!.length,
         itemBuilder: (BuildContext context, int index){
           var reply = _replylist!.data![index];
-          var userNickname = reply?.userNickname ?? '';
-          var content = reply?.content ?? '';
-          var publishdate=reply?.publishDate ?? '';
+          var userNickname = reply.userNickname ?? '';
+          var content = reply.content ?? '';
+          var publishdate=reply.publishDate ?? '';
               return ListTile(
                 title: Row(
                   children: [
@@ -389,10 +390,10 @@ class DetailState extends State<Detailcontent> {
                               await Navigator.push(
                                 context,//reply?.userNickname
                                 MaterialPageRoute(builder: (context) =>
-                                    rereply(commentid:reply?.commentId ?? '',
-                                      content: reply?.content ?? '',
-                                    userNickname: reply?.userNickname ?? '',
-                                    publishDate: reply?.publishDate ?? '',
+                                    rereply(commentid:reply.commentId ?? '',
+                                      content: reply.content ?? '',
+                                    userNickname: reply.userNickname ?? '',
+                                    publishDate: reply.publishDate ?? '',
                                     postId: widget.postid,)),
                               );
                             },
@@ -416,7 +417,7 @@ class DetailState extends State<Detailcontent> {
                     SizedBox(height: 20.h,),
                     ListView.builder(
                       shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       itemCount: reply.reply != null ? reply.reply!.length:0,
                       itemBuilder: (BuildContext innerContext, int innerIndex){
                         var rereply = reply.reply != null ? reply.reply![innerIndex]:null;
@@ -429,7 +430,7 @@ class DetailState extends State<Detailcontent> {
                               Image.asset("assets/images/community/ArrowElbowDownRight.png", width: 16,height:16),
                               SizedBox(width: 8.w),
                               Text(usernickname,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontFamily: 'Spoqa Han Sans Neo',
                                   fontWeight: FontWeight.bold,
                                   fontSize: 12,
@@ -493,7 +494,7 @@ class DetailState extends State<Detailcontent> {
 
   Widget replybar(){
          return SingleChildScrollView(
-           physics: BouncingScrollPhysics(),
+           physics: const BouncingScrollPhysics(),
            child: Padding(
              padding: EdgeInsets.only(bottom:MediaQuery.of(context).viewInsets.bottom,),
              child: Row(

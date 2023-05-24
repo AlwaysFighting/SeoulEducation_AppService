@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:seoul_education_service/community/controllers/commuinty.dart';
 import '../home/homepage/controllers/homepage.dart';
-import '../mypage/mypage.dart';
+import '../mypage/controllers/mypage.dart';
 import 'colors.dart';
 
 
 class Navigation extends StatefulWidget {
-  const Navigation({Key? key}) : super(key: key);
+  final int initialIndex;
+  const Navigation({Key? key,this.initialIndex=0} ) : super(key: key);
 
   @override
   State<Navigation> createState() => _NavigationState();
@@ -18,6 +19,12 @@ class _NavigationState extends State<Navigation> {
 
   // 현재 페이지를 나타낼 index
   int currentIndex = 0;
+
+  @override
+  void initState(){
+    super.initState();
+    currentIndex= widget.initialIndex;
+  }
 
 // 이동할 페이지 Widget
   final List<Widget> _widgetOptions = <Widget>[

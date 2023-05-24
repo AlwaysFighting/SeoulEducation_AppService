@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:seoul_education_service/const/colors.dart';
-import 'changename.dart';
+import 'package:seoul_education_service/mypage/controllers/changename.dart';
+import 'package:seoul_education_service/mypage/controllers/mypage.dart';
 import 'changepassword.dart';
+import 'package:seoul_education_service/const/navigation.dart';
 
 class changeprivate extends StatefulWidget{
-  const changeprivate({Key? key}):super(key:key);
+  final usernickname;
+  const changeprivate({Key? key, required this.usernickname}):super(key:key);
 
   @override
   State<changeprivate> createState() => _privateState();
 }
 class _privateState extends State<changeprivate> {
+
   @override
   void initState() {
     super.initState();
@@ -50,7 +54,8 @@ class _privateState extends State<changeprivate> {
           SizedBox(width: 16.w,),
           GestureDetector(
             onTap: () {
-              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) =>
+              const Navigation(initialIndex: 2,)));
             },
             child: Image.asset(
               'assets/images/Const/ArrowLeft.png', width: 24.w, height: 24.w,),
@@ -78,7 +83,7 @@ class _privateState extends State<changeprivate> {
         children: [
           Image.asset("assets/images/Const/profile.png",width: 60.w,height: 60.h,),
           SizedBox(height: 16.h,),
-          Text("usernickname",
+          Text("${widget.usernickname}",
           style: TextStyle(
             fontSize: 16.sp,
             fontFamily: 'Spoqa Han Sans'
@@ -105,7 +110,7 @@ class _privateState extends State<changeprivate> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => changename(),
+                builder: (context) => changename(usernickname: widget.usernickname,),
               ),
             );
           },
@@ -120,8 +125,8 @@ class _privateState extends State<changeprivate> {
                   fontSize: 16.sp,
                 ),
                 ),
-                Spacer(),
-                Text("usernickname",
+                const Spacer(),
+                Text('${widget.usernickname}',
                   style: TextStyle(
                     fontFamily: 'Spoqa Han Sans Neo',
                     fontSize: 14.sp,
@@ -139,7 +144,7 @@ class _privateState extends State<changeprivate> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => changepassword(),
+                builder: (context) => changepassword(usernickname : widget.usernickname),
               ),
             );
           },
@@ -154,7 +159,7 @@ class _privateState extends State<changeprivate> {
                     fontSize: 16.sp,
                   ),
                 ),
-                Spacer(),
+                const Spacer(),
                 Image.asset("assets/images/Const/CaretRight.png",width: 24.w, height: 24.h,),
               ],
             ),

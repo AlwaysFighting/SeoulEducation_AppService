@@ -12,6 +12,7 @@ import '../models/category_button.dart';
 import '../../offline/models/course_list_model.dart';
 import 'online_search_page.dart';
 
+
 class OnlinePage extends StatefulWidget {
   const OnlinePage({Key? key}) : super(key: key);
 
@@ -20,6 +21,9 @@ class OnlinePage extends StatefulWidget {
 }
 
 class _OnlinePageState extends State<OnlinePage> {
+
+  //최근본 강의구현 추가코드
+  final List<Map<String, dynamic>> lectureList = [];
 
   final String imageURL = "assets/images/";
 
@@ -486,8 +490,8 @@ class _bodyState extends State<_body> {
                     itemCount: snapshot.data?.data.length,
                     itemBuilder: (BuildContext context, int index) {
                       return GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(
+                        onTap: () async{
+                          await Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (_) => OnlineDetailPage(
                                 courseID:
@@ -495,6 +499,7 @@ class _bodyState extends State<_body> {
                               ),
                             ),
                           );
+
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(bottom: 16.0),
