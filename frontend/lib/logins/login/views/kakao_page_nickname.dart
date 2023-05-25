@@ -48,7 +48,7 @@ class _KakaoLicknameState extends State<KakaoLickname> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final int? userID = prefs.getInt('userID');
 
-    String endPointUrl = LoginAPI().RegisterLickname(userID!);
+    String endPointUrl = LoginAPI().RegisterLickname(userID ?? 0);
 
     final response = await http.post(
       Uri.parse(endPointUrl),
@@ -61,6 +61,10 @@ class _KakaoLicknameState extends State<KakaoLickname> {
     );
 
     if (response.statusCode == 200) {
+      Navigator.of(context).push(
+          MaterialPageRoute(builder: (BuildContext context) {
+            return const Navigation();
+          }));
       print("WELCOME $nick님!");
     } else {
       print(response.body);
@@ -100,10 +104,6 @@ class _KakaoLicknameState extends State<KakaoLickname> {
           onPressed: () {
             if (_isRegisterButtonEnabled == true) {
               kakaoCreateNickame(_nameEditingController.text);
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (BuildContext context) {
-                    return const Navigation();
-                  }));
             }
           },
           style: ElevatedButton.styleFrom(

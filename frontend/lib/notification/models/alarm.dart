@@ -4,6 +4,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
 
+class StreamSocket{
+  final _socketResponse= StreamController<String>();
+
+  void Function(String) get addResponse => _socketResponse.sink.add;
+
+  Stream<String> get getResponse => _socketResponse.stream;
+
+  void dispose(){
+    _socketResponse.close();
+  }
+}
+
+StreamSocket streamSocket = StreamSocket();
+
 // 알림
 class ConnectSocket {
 
@@ -18,17 +32,11 @@ class ConnectSocket {
 
     socket.onConnect((_) {
       print('subscribe connect');
-      socket.emitWithAck('subscribe', {
-        "userId": user,
-      }, ack: (data) {
-        print('ack $data');
-        if (data != null) {
-          print('from server $data');
-        } else {
-          print("Null");
-        }
-      });
+      socket.emit('subscribe', {
+        user,
+      },);
     });
+    socket.on('subscribe', (data) => streamSocket.addResponse);
   }
 
   // Last
@@ -42,17 +50,12 @@ class ConnectSocket {
 
     socket.onConnect((_) {
       print('last connect');
-      socket.emitWithAck('last', {
-        "userId": user,
-      }, ack: (data) {
-        print('ack $data');
-        if (data != null) {
-          print('from server $data');
-        } else {
-          print("Null");
-        }
-      });
+      socket.emit(
+        'last',
+        user,
+      );
     });
+    socket.on('last', (data) => streamSocket.addResponse);
   }
 
   // Comment

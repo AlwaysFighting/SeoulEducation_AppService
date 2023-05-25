@@ -52,6 +52,7 @@ const REGISTER_API = "$API_AUTH_URL/join";
 
 
 class LoginAPI {
+
   // 카카오 로그인
   String kakaoLogin(String authCode) {
     return "$EMAIL_LOGIN_API/kakao?code=$authCode";
