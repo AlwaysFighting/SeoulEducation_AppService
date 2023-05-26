@@ -84,13 +84,30 @@ class _LoginPageState extends State<LoginPage> {
       }),
     );
 
-    if (response.statusCode == 200) {
-      print("KAKAO LOGIN SUCCESS");
+    String responseBody = response.body;
+    Map<String, dynamic> responseData = jsonDecode(responseBody);
+
+    int userId = responseData['data']['userId'];
+    final String accessToken = responseData['data']['accessToken'];
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('userID', userId);
+    print('User ID: $userId');
+
+    if (response.statusCode == 201) {
+      print("NEED KAKAO LICKNAME");
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => KakaoLickname()),
+        MaterialPageRoute(builder: (context) => KakaoLickname(id: userId,)),
+      );
+    } else if (response.statusCode == 200){
+      await prefs.setString('accessToken', accessToken);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Navigation()),
       );
     } else {
+      print("ERROR");
       print(response.body);
     }
   }

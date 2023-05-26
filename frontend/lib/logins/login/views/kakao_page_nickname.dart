@@ -11,7 +11,10 @@ import '../../../const/navigation.dart';
 import 'package:http/http.dart' as http;
 
 class KakaoLickname extends StatefulWidget {
-  KakaoLickname({Key? key}) : super(key: key);
+
+  final int id;
+
+  const KakaoLickname({Key? key, required this.id}) : super(key: key);
 
   @override
   State<KakaoLickname> createState() => _KakaoLicknameState();
@@ -26,6 +29,9 @@ class _KakaoLicknameState extends State<KakaoLickname> {
 
   // 이름
   bool _isUserButtonEnabled = false;
+
+  // 확인 눌렀을 때 null 인 경우
+  bool checkNull = false;
 
   void _updateUserButtonState() {
     setState(() {
@@ -60,12 +66,17 @@ class _KakaoLicknameState extends State<KakaoLickname> {
       }),
     );
 
+    String responseBody = response.body;
+    Map<String, dynamic> responseData = jsonDecode(responseBody);
+    final String accessToken = responseData['data']['accessToken'];
+
     if (response.statusCode == 200) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('accessToken', accessToken);
       Navigator.of(context).push(
           MaterialPageRoute(builder: (BuildContext context) {
             return const Navigation();
           }));
-      print("WELCOME $nick님!");
     } else {
       print(response.body);
     }
@@ -73,48 +84,62 @@ class _KakaoLicknameState extends State<KakaoLickname> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: const CustomBackButton(),
-        title: const Text(
-          "닉네임 설정",
-          style: TextStyle(
-            fontSize: 16.0,
-            fontWeight: FontWeight.w500,
-            color: textColor1,
-          ),
-        ),
-      ),
-      body: Column(
-        children: [
-          const Text(
-            "이름",
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          leading: const CustomBackButton(),
+          elevation: 0,
+          title: const Text(
+            "닉네임 설정",
             style: TextStyle(
+              fontSize: 16.0,
               fontWeight: FontWeight.w500,
-              fontSize: 14.0,
               color: textColor1,
             ),
           ),
-          _userName(),
-        ],
-      ),
-      bottomNavigationBar: SizedBox(
-        width: double.infinity,
-        child: ElevatedButton(
-          onPressed: () {
-            if (_isRegisterButtonEnabled == true) {
-              kakaoCreateNickame(_nameEditingController.text);
-            }
-          },
-          style: ElevatedButton.styleFrom(
-            primary: mainColor,
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "닉네임",
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14.0,
+                  color: textColor1,
+                ),
+              ),
+              const SizedBox(height: 15.0),
+              _userName(),
+            ],
           ),
-          child: const Text(
-            '확인',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w500,
-              fontSize: 16.0,
+        ),
+        bottomNavigationBar: SizedBox(
+          height: 60.0,
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () {
+              if (_isRegisterButtonEnabled == true) {
+                kakaoCreateNickame(_nameEditingController.text);
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              primary: _isRegisterButtonEnabled == true
+                  ? mainColor
+                  : const Color(0xFF5DBFF0),
+            ),
+            child: const Text(
+              '확인',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w500,
+                fontSize: 16.0,
+              ),
             ),
           ),
         ),
@@ -124,7 +149,7 @@ class _KakaoLicknameState extends State<KakaoLickname> {
 
   _userName() {
     return SizedBox(
-      width: 260,
+      width: double.infinity,
       height: 48,
       child: TextFormField(
         controller: _nameEditingController,
@@ -141,9 +166,11 @@ class _KakaoLicknameState extends State<KakaoLickname> {
             borderSide: const BorderSide(color: backgroundBtnColor, width: 0.0),
             borderRadius: BorderRadius.circular(24),
           ),
-          focusedBorder: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(24)),
-            borderSide: BorderSide(width: 1, color: mainColor),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: const BorderRadius.all(Radius.circular(24)),
+            borderSide: _nameEditingController.text.isEmpty
+                ? const BorderSide(width: 1, color: errorColor)
+                : const BorderSide(width: 1, color: mainColor),
           ),
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
