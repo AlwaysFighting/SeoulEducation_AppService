@@ -5,7 +5,7 @@ import 'writed.dart';
 import 'recentlecture.dart';
 import 'changeprivate.dart';
 import 'package:seoul_education_service/const/colors.dart';
-import 'package:seoul_education_service/mypage/model/writerModel.dart';
+import 'package:seoul_education_service/mypage/model/memberModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:seoul_education_service/api/course_api.dart';
@@ -22,7 +22,7 @@ class MyPage extends StatefulWidget {
 }
 
 class  _MypageState extends State<MyPage>{
-  final List<Model> _writtenlist = [];
+  List<Member>? _infolist;
   String? usernickname;
 
   @override
@@ -30,7 +30,7 @@ class  _MypageState extends State<MyPage>{
     super.initState();
     //ScreenUtil.init(context);
     _loadAccessToken();
-    _fetchcontent();
+    _fetchmember();
   }
   //accesstoken 호출
   Future<String?> _loadAccessToken() async{
@@ -38,28 +38,18 @@ class  _MypageState extends State<MyPage>{
     return prefs.getString('accessToken');
   }
 
-  Future<void> _fetchcontent() async{
+  Future<void> _fetchmember() async{
     String? accessToken = await _loadAccessToken();
     var response= await http.get(
-      Uri.parse(API_MYPAGE_WRITED),
+      Uri.parse(API_MEMBER_INFO),
       headers:{'Authorization' : 'Bearer $accessToken'},
     );
-    if(response.statusCode == 200){
+    if(response.statusCode ==200){
       var jsonResponse = jsonDecode(response.body);
-      var writer = Writer.fromJson(jsonResponse);
-      if(writer.data != null){
-        var model = writer.data![0];
-        setState(() {
-          usernickname = model.userNickname;
-        });
-      }
-      else{
-        print('${response.statusCode}');
-      }
-
-    }
-    else{
-      print('${response.statusCode}');
+      var info = memberModel.fromJson(jsonResponse);
+      setState(() {
+        _infolist = info.data != null ? [info.data!] : [];
+      });
     }
   }
 
@@ -98,7 +88,7 @@ class  _MypageState extends State<MyPage>{
   Widget middle(){
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      height: 233,
+      //height: 233,
       child: Column(
         children: [
           Row(
@@ -107,11 +97,12 @@ class  _MypageState extends State<MyPage>{
               SizedBox(width: 16),
               //환영멘트
               Expanded(
-                child: usernickname != null ? Text("$usernickname 님,\n오늘도 배움을 응원합니다!",
+                child: _infolist != null ? Text("${_infolist!.first.nickname} 님,\n오늘도 배움을 응원합니다!",
                   style: TextStyle(
                     fontFamily: 'Spoqa Han Sans Neo',
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w500,
                     height: 1.5,
                   ),
                 ) :
@@ -131,9 +122,10 @@ class  _MypageState extends State<MyPage>{
                           children: [
                             Text("로그인 및 회원가입",
                             style: TextStyle(
-                              fontWeight: FontWeight.bold,
                               fontFamily: 'Spoqa Han Sans Neo',
-                              fontSize: 20.sp,
+                              fontSize: 20,
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.w500,
                             ),),
                             Image.asset("assets/images/Const/CaretRight.png", width: 24,height: 24,),
                           ],
@@ -149,15 +141,13 @@ class  _MypageState extends State<MyPage>{
               ),
             ],
           ),
-          SizedBox(height: 42),
+          SizedBox(height: 40),
           //개인의 강의들
           Container(
             width: 293,
-            height: 83,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                //SizedBox(width: 49),
                 GestureDetector(
                     onTap: (){
                       Navigator.push(
@@ -170,12 +160,13 @@ class  _MypageState extends State<MyPage>{
                     child: Column(
                       children: [
                         Image.asset("assets/images/Const/scrap.png",width:54,height: 54,),
-                        SizedBox(height: 12.h,),
+                        SizedBox(height: 12),
                         Text("찜한강의",style:
                           TextStyle(
-                            fontSize: 14.sp,
+                            fontSize: 14,
                             fontStyle: FontStyle.normal,
                             fontFamily: 'Spoqa Han Sans Neo',
+                            fontWeight: FontWeight.w500,
                           ),)
                       ],
                    )),
@@ -192,12 +183,13 @@ class  _MypageState extends State<MyPage>{
                   child: Column(
                     children: [
                       Image.asset("assets/images/Const/mywritten.png",width:54,height: 54,),
-                      SizedBox(height: 12.h,),
+                      SizedBox(height: 12),
                       Text("내가쓴글",style:
                       TextStyle(
-                        fontSize: 14.sp,
+                        fontSize: 14,
                         fontStyle: FontStyle.normal,
                         fontFamily: 'Spoqa Han Sans Neo',
+                        fontWeight: FontWeight.w500,
                       ),)
                     ],
                   ),
@@ -205,22 +197,23 @@ class  _MypageState extends State<MyPage>{
                 SizedBox(width: 60.w,),
                 GestureDetector(
                   onTap: (){
-                    /*Navigator.push(
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) =>  recentlecture(),
                       ),
-                    );*/
+                    );
                   },
                   child: Column(
                     children: [
                       Image.asset("assets/images/Const/myrecent.png",width:54,height: 54,),
-                      SizedBox(height: 12.h,),
+                      SizedBox(height: 12),
                       Text("최근본강의",style:
                       TextStyle(
-                        fontSize: 14.sp,
+                        fontSize: 14,
                         fontStyle: FontStyle.normal,
                         fontFamily: 'Spoqa Han Sans Neo',
+                        fontWeight: FontWeight.w500,
                       ),)
                     ],
                   ),
@@ -229,8 +222,8 @@ class  _MypageState extends State<MyPage>{
               ],
             ),
           ),
-          SizedBox(height: 30.h,),
-          SizedBox(height: 10.h,
+          SizedBox(height: 30,),
+          SizedBox(height: 10,
             child: Container(color: lightBackgroundColor,),)
         ],
       ),
@@ -240,27 +233,29 @@ class  _MypageState extends State<MyPage>{
     return Column(
       children: [
         GestureDetector(
-          onTap: (){
+          onTap: ()async{
             //기본정보수정으로
-            Navigator.push(
+            await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => changeprivate(usernickname: usernickname ?? '',),
+                builder: (context) => changeprivate(usernickname: "${_infolist!.first.nickname}", email: "${_infolist!.first.email}"),
               ),
             );
           },
           child: SizedBox(
             width: MediaQuery.of(context).size.width,
-            height: 56.h,
+            height: 56,
             child: Row(
               children: [
-                SizedBox(width: 16.w,),
+                SizedBox(width: 16,),
                 Expanded(
                   child: Text("기본정보 수정",
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
                       fontFamily: 'Spoqa Han Sans Neo',
+                        fontStyle: FontStyle.normal,
+
                     ),
                   ),
                 ),
@@ -282,16 +277,17 @@ class  _MypageState extends State<MyPage>{
           },
           child: SizedBox(
             width: MediaQuery.of(context).size.width,
-            height: 56.h,
+            height: 56,
             child: Row(
               children: [
-                SizedBox(width: 16.w,),
+                SizedBox(width: 16,),
                 Expanded(
                   child: Text("설정",
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
                       fontFamily: 'Spoqa Han Sans Neo',
+                      fontStyle: FontStyle.normal,
                     ),
                   ),
                 ),
@@ -310,16 +306,17 @@ class  _MypageState extends State<MyPage>{
           },
           child: SizedBox(
             width: MediaQuery.of(context).size.width,
-            height: 56.h,
+            height: 56,
             child: Row(
               children: [
-                SizedBox(width: 16.w,),
+                SizedBox(width: 16,),
                 Expanded(
                   child: Text("공지사항",
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
                       fontFamily: 'Spoqa Han Sans Neo',
+                      fontStyle: FontStyle.normal,
                     ),
                   ),
                 ),

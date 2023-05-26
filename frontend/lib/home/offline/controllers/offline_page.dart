@@ -20,6 +20,8 @@ class OfflinePage extends StatefulWidget {
 }
 
 class _OfflinePageState extends State<OfflinePage> {
+  //최근본 강의구현 추가코드
+  final List<Map<String, dynamic>> offlectureList = [];
 
   final String imageURL = "assets/images/";
 
@@ -584,8 +586,8 @@ class _OfflinePageState extends State<OfflinePage> {
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 16.0),
                             child: GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).push(
+                              onTap: () async{
+                                await Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (_) => OfflineDetailPage(
                                       courseID:
@@ -593,6 +595,26 @@ class _OfflinePageState extends State<OfflinePage> {
                                     ),
                                   ),
                                 );
+
+                                //최근본 강좌 구현위해 추가 코드
+                                Map<String, dynamic> offlectureInfo = {
+                                  'courseID' : snapshot.data?.data[index].id as int,
+                                  'title' : snapshot.data?.data[index].title as String,
+                                  'isLiked' : snapshot.data?.data[index].isLiked,
+                                  'applyStartDate' : snapshot.data?.data[index].applyStartDate,
+                                  'applyEndDate' : snapshot.data?.data[index].applyEndDate,
+                                  'isFree' : snapshot.data?.data[index].isFree,
+                                };
+                                SharedPreferences prefs = await SharedPreferences.getInstance();
+                                List<String> offlectureListJson = prefs.getStringList('lectureList') ?? [];
+                                offlectureListJson.add(json.encode(offlectureInfo));
+                                await prefs.setStringList('lectureList', offlectureListJson);
+                                setState(() {
+                                  if(snapshot.data!=null){
+                                    snapshot.data!.data[index].isLiked =
+                                    !(snapshot.data!.data[index].isLiked ?? false);
+                                  }
+                                });
                               },
                               child: Container(
                                 decoration: BoxDecoration(

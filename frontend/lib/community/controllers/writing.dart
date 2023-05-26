@@ -49,36 +49,46 @@ class _writingState extends State<writingScreen>{
                 onTap:(){
                   xDialog();
                 },
-                child: Image.asset('assets/images/community/close.png', width: ScreenUtil().setWidth(24),height: ScreenUtil().setHeight(24),),
+                child: Image.asset('assets/images/community/close.png', width: 24,height: 24,),
               ),
-              SizedBox(width: ScreenUtil().setWidth(132),),
+              SizedBox(width: 132,),
               Text('글쓰기',
                 style: TextStyle(
                   fontFamily: "Spoqa Han Sans Neo",
                     fontWeight: FontWeight.bold,
                     fontSize: ScreenUtil().setSp(16)
                 ),),
-              SizedBox(width: ScreenUtil().setWidth(127),),
+              //SizedBox(width: ScreenUtil().setWidth(127),),
+              Spacer(),
               GestureDetector(
                 onTap: () async{
                   await _sendPostRequest();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const Navigation(),
-                    ),
-                  );
+                  Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                  const Navigation(initialIndex: 1,)));
                 },
-                child: Text('완료',
-                  style: TextStyle(
+                child: Padding(
+                  padding: EdgeInsets.only(right: 16),
+                  child: _titleController.text == '' && _contentController.text == '' ?
+                  Text('완료',
+                    style: TextStyle(
+                        fontFamily: "Spoqa Han Sans Neo",
+                        fontSize: 16,
+                      color: textColor2,
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.w500,
+                    ),) :Text('완료',
+                    style: TextStyle(
                       fontFamily: "Spoqa Han Sans Neo",
-                    //추가적으로 글쓰기 완료시 색깔 변하고 버튼 활성화 기능 구현
-                      fontSize: ScreenUtil().setSp(16)
-                  ),),
+                      fontSize: 16,
+                      color: mainColor,
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.w500,
+                    ),)
+                ),
               ),
             ],
           ),
-          SizedBox(height: ScreenUtil().setHeight(29),),
+          SizedBox(height: 10),
           //제목 입력칸
           SizedBox(
             width: ScreenUtil().setWidth(358),
@@ -89,11 +99,14 @@ class _writingState extends State<writingScreen>{
                   enabledBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color:textColor2)
                   ),
+                    border: InputBorder.none,
                     hintText: '제목을 입력해주세요',
                   hintStyle: TextStyle(
                     color: textColor2,
                     fontSize: 16,
-                    fontFamily:"Spoqa Han Sans Neo"
+                    fontFamily:"Spoqa Han Sans Neo",
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w500,
                   )
                 ),
               )
@@ -112,7 +125,9 @@ class _writingState extends State<writingScreen>{
                       hintStyle: TextStyle(
                           color: textColor2,
                           fontSize: 14,
-                          fontFamily:"Spoqa Han Sans Neo"
+                          fontFamily:"Spoqa Han Sans Neo",
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w400,
                       )
                   ),
                 ),
@@ -137,7 +152,9 @@ class _writingState extends State<writingScreen>{
                 Text("취소하기",
                 style: TextStyle(
                   fontFamily: "Spoqa Han Sans Neo",
-                  fontSize: ScreenUtil().setSp(17),
+                  fontSize: 17,
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.w500,
                 ),),
 
               ],
@@ -150,27 +167,81 @@ class _writingState extends State<writingScreen>{
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: "Spoqa Han Sans Neo",
-                  fontSize: ScreenUtil().setSp(13),
+                  fontSize: 13,
                   color: textColor2,
-                ),)
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.w400,
+                ),),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(top: 24),
+                    child: SizedBox(
+                      width: 100,
+                      height: 48,
+                      child: ElevatedButton(
+                        onPressed: (){
+                          Navigator.pop(context);
+                        },
+                        child: Text("아니오", style: (
+                            TextStyle(
+                              fontSize: 16,
+                              fontFamily: 'Spoqa Han Sans Neo',
+                              color: Colors.black,
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.w500,
+                            )
+                        ),),
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(backgroundBtnColor),
+                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(24)
+                                )
+                            )
+                        ),
+
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8,),
+                  Container(
+                    padding: EdgeInsets.only(top: 24),
+                    child: SizedBox(
+                      width: 100,
+                      height: 48,
+                      child: ElevatedButton(
+                          onPressed: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                            const Navigation(initialIndex: 1,),
+                            ));
+                          },
+                          child: Text("예", style: (
+                              TextStyle(
+                                fontSize: 16,
+                                fontFamily: 'Spoqa Han Sans Neo',
+                                color: Colors.white,
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.w500,
+                              )
+                          ),),
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(mainColor),
+                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(24)
+                                  )
+                              )
+                          ),
+
+                      ),
+                    ),
+                  )
+                ],
+              )
             ],
           ),
-          actions:
-            [
-              TextButton(onPressed: (){
-                Navigator.pop(context);
-              },
-                  child: const Text("아니오"),
-              ),
-              TextButton(onPressed: (){
-                //게시판 화면으로
-                Navigator.push(context, MaterialPageRoute(builder: (context) =>
-                const Navigation(initialIndex: 1,),
-                ));
-
-                },
-                  child: const Text("예")),
-            ]
         );
         });
   }

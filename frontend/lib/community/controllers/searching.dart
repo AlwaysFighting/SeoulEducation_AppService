@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+ import 'package:flutter/material.dart';
 import 'package:seoul_education_service/const/colors.dart';
 import 'package:http/http.dart' as http;
 import 'package:seoul_education_service/api/course_api.dart';
@@ -56,7 +56,7 @@ class SearchingState extends State<Searching> {
   Widget build(BuildContext context)
   {ScreenUtil.init(context, designSize: const Size(390,844));
     return Scaffold(
-      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: false,
       body: Column(
         children: [
           SizedBox(height: 30.h,),
@@ -71,7 +71,7 @@ class SearchingState extends State<Searching> {
     return Row(
       children: [
         Container(
-          padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 16.h),
+          padding: EdgeInsets.fromLTRB(16, 16, 0, 16),
           child: GestureDetector(
             onTap: (){
               Navigator.pop(context);
@@ -79,39 +79,44 @@ class SearchingState extends State<Searching> {
             child:Image.asset("assets/images/community/ArrowLeft.png",width: 24,height: 24,)
           ),
         ),
-        SizedBox(
-          width: 318.w,
-          height: 40,
-          child: TextFormField(
-            controller: _searchingController,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              prefixIcon: GestureDetector(
-                onTap: (){
-                  _fetchResult();
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(left:16),
-                  child: Image.asset("assets/images/community/MagnifyingGlass2.png",width: 20.w,height: 20.h,),
+        Padding(
+          padding: EdgeInsets.only(left: 16),
+          child: SizedBox(
+            width: 318.w,
+            height: 40,
+            child: TextFormField(
+              controller: _searchingController,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                prefixIcon: GestureDetector(
+                  onTap: (){
+                    _fetchResult();
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(left:16),
+                    child: Image.asset("assets/images/Const/MagnifyingGlass2.png",width: 20,height: 20,)
+                  ),
                 ),
+                hintText: '찾고자 하는 키워드를 검색해주세요',
+                contentPadding: EdgeInsets.fromLTRB(8, 11.5, 0, 11.5),
+                hintStyle: TextStyle(
+                  color: textColor2,
+                  fontFamily: "Spoqa Han Sans Neo",
+                  fontSize: 14,
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.w400,
+                ),
+                enabledBorder: const OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                ),
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                ),
+                filled: true,
+                fillColor: backgroundBtnColor,
               ),
-              hintText: '찾고자 하는 키워드를 검색해주세요',
-              contentPadding: EdgeInsets.fromLTRB(8.w, 11.h, 0, 11.h),
-              hintStyle: TextStyle(
-                color: textColor2,
-                fontFamily: "Spoqa Han Sans Neo",
-                fontSize: 14.sp
-              ),
-              enabledBorder: const OutlineInputBorder(
-                borderSide: BorderSide.none,
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-              ),
-              focusedBorder: const OutlineInputBorder(
-                borderSide: BorderSide.none,
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-              ),
-              filled: true,
-              fillColor: backgroundBtnColor,
             ),
           ),
         )
@@ -132,6 +137,8 @@ class SearchingState extends State<Searching> {
                 fontSize: 16.sp,
                 fontFamily: "Spoqa Han Sans Neo",
                 color: textColor2,
+                fontStyle: FontStyle.normal,
+                fontWeight: FontWeight.w400,
               ),)
           ],
         ),
@@ -148,7 +155,7 @@ class SearchingState extends State<Searching> {
     else{
       return Expanded(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(16.w, 24.h, 16.w, 24.h),
+          padding: EdgeInsets.fromLTRB(16, 0, 16, 24),
           child: ListView.builder(
             itemCount: _results!.length,
             itemBuilder: (BuildContext context, int index) {
@@ -168,13 +175,14 @@ class SearchingState extends State<Searching> {
                 },
                 child: ListTile(
                   title: Padding(
-                    padding: EdgeInsets.only(bottom: 10.h),
+                    padding: EdgeInsets.only(bottom: 10),
                     child: Text(
                       result.title!,
                       style: TextStyle(
                         fontFamily: "Spoqa Han Sans Neo",
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16.sp,
+                        fontSize: 16,
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -186,11 +194,13 @@ class SearchingState extends State<Searching> {
                         maxLines: 2,
                         style: TextStyle(
                           fontFamily: "Spoqa Han Sans Neo",
-                          fontSize: 14.sp,
+                          fontSize: 14,
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
                       SizedBox(
-                        height: 24.h,
+                        height: 24,
                       ),
                       Row(
                         children: [
@@ -199,11 +209,13 @@ class SearchingState extends State<Searching> {
                             style: TextStyle(
                               color: textColor2,
                               fontFamily: "Spoqa Han Sans Neo",
-                              fontSize: 12.sp,
+                              fontSize: 12,
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
                           SizedBox(
-                            width: 10.w,
+                            width: 10,
                           ),
                           Text(
                             result.publishDate!.substring(
@@ -211,12 +223,12 @@ class SearchingState extends State<Searching> {
                             style: TextStyle(
                               color: textColor2,
                               fontFamily: "Spoqa Han Sans Neo",
-                              fontSize: 12.sp,
+                              fontSize: 12,
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
-                          SizedBox(
-                            width: 150.w,
-                          ),
+                          Spacer(),
                           Image.asset(
                             "assets/images/community/ChatCircleDots.png",
                             width: 14,
@@ -227,15 +239,23 @@ class SearchingState extends State<Searching> {
                             style: TextStyle(
                               color: textColor2,
                               fontFamily: "Spoqa Han Sans Neo",
-                              fontSize: 12.sp,
+                              fontSize: 12,
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
                           SizedBox(
-                            height: 24.h,
+                            height: 24,
                           ),
                         ],
                       ),
-                      SizedBox(height:24.h),
+                      SizedBox(
+                        height: 24,
+                      ),
+                      Container(
+                        height: 1,
+                        color: backgroundColor,
+                      )
                     ],
                   ),
                 ),

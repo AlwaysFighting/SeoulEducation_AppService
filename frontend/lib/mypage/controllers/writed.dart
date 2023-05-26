@@ -67,22 +67,23 @@ class _writedState extends State<writed>{
   Widget appbar(){
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      height: 56.h,
+      height: 56,
       child: Row(
         children: [
-          SizedBox(width: 16.w,),
+          SizedBox(width: 16,),
           GestureDetector(
             onTap: (){
               Navigator.pop(context);
             },
-            child: Image.asset('assets/images/Const/ArrowLeft.png',width: 24.w,height: 24.w,),
+            child: Image.asset('assets/images/Const/ArrowLeft.png',width: 24,height: 24,),
           ),
           SizedBox(width: 125.w,),
           Text("내가쓴글",
           style: TextStyle(
             fontFamily: 'Spoqa Han Sans Neo',
-            fontSize: 16.sp,
-            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            fontStyle: FontStyle.normal,
           ),
           ),
         ],
@@ -96,9 +97,11 @@ class _writedState extends State<writed>{
         body: Center(
           child: Text('아직 작성한 글이 없어요',
           style: TextStyle(
-            fontSize: 16.sp,
+            fontSize: 16,
             fontFamily: 'Spoqa Han Sans Neo',
             color: textColor2,
+            fontStyle: FontStyle.normal,
+            fontWeight: FontWeight.w400,
           ),),
         ),
       );
@@ -123,8 +126,9 @@ class _writedState extends State<writed>{
                     child: Text(list.title!,
                       style: TextStyle(
                         fontFamily: 'Spoqa Han Sans Neo',
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        fontStyle: FontStyle.normal,
                       ),),
                   ),
                   subtitle: Column(
@@ -134,40 +138,54 @@ class _writedState extends State<writed>{
                         maxLines: 2,
                         style: TextStyle(
                           fontFamily: 'Spoqa Han Sans Neo',
-                          fontSize: 14.sp,
+                          fontSize: 14,
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w400,
                         ),),
-                      SizedBox(height: 24.h,),
+                      SizedBox(height: 24),
                       Row(
                         children: [
                           Text(list.userNickname!,
                           style: TextStyle(
-                            fontSize: 12.sp,
+                            fontSize: 12,
                             fontFamily: 'Spoqa Han Sans Neo',
                             color: textColor2,
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w400,
                           ),),
-                          SizedBox(width: 10.w,),
+                          SizedBox(width: 10,),
                           Text(list.publishDate!.substring(0,list.publishDate!.indexOf('T')),
                           style: TextStyle(
                             color: textColor2,
                             fontFamily: 'Spoqa Han Sans Neo',
-                            fontSize: 12.sp
+                            fontSize: 12,
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w400,
                           ),
                           ),
-                          SizedBox(width: 160.w,),
-                          Image.asset("assets/images/Const/ChatCircleDots.png", width: 14.w, height: 14.h,),
-                          Text(list.commentCount!.toString(),
-                          style: TextStyle(
-                              color: textColor2,
-                              fontFamily: 'Spoqa Han Sans Neo',
-                              fontSize: 12.sp
+                          //SizedBox(width: 160.w,),
+                          Spacer(),
+                          Padding(
+                            padding: EdgeInsets.only(right: 16.0),
+                            child: Row(
+                              children: [
+                                Image.asset("assets/images/Const/ChatCircleDots.png", width: 14.w, height: 14.h,),
+                                Text(list.commentCount!.toString(),
+                                  style: TextStyle(
+                                      color: textColor2,
+                                      fontFamily: 'Spoqa Han Sans Neo',
+                                      fontSize: 12.sp
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                          ),
-                          SizedBox(height: 24.h,),
+                          SizedBox(height: 24,),
                         ],
                       ),
-                      SizedBox(height: 24.h,),
+                      SizedBox(height: 24,),
                       SizedBox(
-                        height: 1.h,
+                        height: 1,
                         child: Container(
                           color: backgroundColor,
                         ),
