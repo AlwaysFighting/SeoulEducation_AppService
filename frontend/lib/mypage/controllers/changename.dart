@@ -9,7 +9,8 @@ import 'package:http/http.dart' as http;
 
 class changename extends StatefulWidget{
   final usernickname;
-  const changename({Key? key, required this.usernickname}):super(key:key);
+  final email;
+  const changename({Key? key, required this.usernickname, this.email}):super(key:key);
   @override
   State<changename> createState() => _changename();
 }
@@ -60,7 +61,7 @@ class _changename extends State<changename> {
           appbar(),
           SizedBox(height: 20.h,),
           content(),
-          SizedBox(height: 563.h,),
+          Spacer(),
           success(),
 
         ],
@@ -83,14 +84,16 @@ class _changename extends State<changename> {
               backDialog();
             },
             child: Image.asset(
-              'assets/images/Const/ArrowLeft.png', width: 24.w, height: 24.w,),
+              'assets/images/Const/ArrowLeft.png', width: 24, height: 24,),
           ),
-          SizedBox(width: 109.w,),
+          SizedBox(width: 123.w,),
           Text("이름 수정",
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: 'Spoqa Han Sans Neo',
               fontSize: 16.sp,
-              fontWeight: FontWeight.bold,
+                fontStyle: FontStyle.normal,
+                fontWeight: FontWeight.w500,
             ),
           ),
         ],
@@ -99,26 +102,24 @@ class _changename extends State<changename> {
   }
   Widget content(){
     return SizedBox(
-        //height: 48.h,
-        width: 358.w,
-        child: Align(
-          alignment: Alignment.centerLeft,
           child:Column(
             children: [
               Row(
                 children: [
-                  SizedBox(width: 12.w,),
+                  SizedBox(width: 16,),
                   Text("이름",
                     style: TextStyle(
-                      fontSize: 14.sp,
+                      fontSize: 14,
                       fontFamily: 'Spoqa Han Sans Neo',
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.w500,
                     ),),
                 ],
               ),
-              SizedBox(height: 10.h,),
-              SizedBox(
-                width: 358.w,
-                height: 48.h,
+              Container(
+                margin: EdgeInsets.fromLTRB(16, 10, 16, 0),
+                width: 358,
+                height: 48,
                 child: TextFormField(
                   controller: _textcontroller,
                   onChanged: (value){
@@ -128,18 +129,21 @@ class _changename extends State<changename> {
                   },
                   style: TextStyle(
                     fontFamily: 'Spoqa Han Sans Neo',
-                    fontSize: 14.sp,
+                    fontSize: 14,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w400,
                   ),
                   decoration: InputDecoration(
                     suffixIcon: Visibility(
                       visible: _showSuffixicon,
                       child:GestureDetector(
                           onTap: (){
-                            //팝업창
+                            _textcontroller.clear();
                           },
-                          child:SizedBox(
-                              width: 24.w,
-                              height: 24.h,
+                          child:Container(
+                            padding: EdgeInsets.fromLTRB(0, 12, 16, 12),
+                              width: 24,
+                              height: 24,
                               child: Image.asset("assets/images/Const/XCircle.png"))
                       ),
                     ),
@@ -149,9 +153,10 @@ class _changename extends State<changename> {
                       fontFamily: 'Spoqa Han Sans Neo',
                       fontSize: ScreenUtil().setSp(14),
                       color: textColor2,
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.w400,
                     ),
-                    contentPadding: EdgeInsets.fromLTRB(16.w, 16.h, 0, 15.h
-                              ),
+                    contentPadding: EdgeInsets.fromLTRB(16, 16, 0, 15 ),
                     enabledBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: mainColor),
                       borderRadius: BorderRadius.all(Radius.circular(24)),
@@ -169,7 +174,6 @@ class _changename extends State<changename> {
             ],
           )
 
-        ),
       );
   }
   Widget success(){
@@ -180,7 +184,7 @@ class _changename extends State<changename> {
         Navigator.push(
         context,
         MaterialPageRoute(
-        builder: (context) => changeprivate(usernickname:  _textcontroller.text,),
+        builder: (context) => changeprivate(usernickname:  _textcontroller.text,email: widget.email),
         ),
         );
         }
@@ -189,14 +193,16 @@ class _changename extends State<changename> {
         }
       },
       child: Container(
-        height: 80.h,
+        height: 80,
         color: mainColor,
         child: Center(
           child: Text("확인",
           style: TextStyle(
             fontFamily: 'Spoqa Han Sans Neo',
-            fontSize: 16.sp,
+            fontSize: 16,
             color: Colors.white,
+            fontStyle: FontStyle.normal,
+            fontWeight: FontWeight.w500,
           ),),
         ),
       ),
@@ -214,7 +220,7 @@ class _changename extends State<changename> {
               children: <Widget>[
                 Text("뒤로가기",
                 style: TextStyle(
-                  fontSize: 17.sp,
+                  fontSize: 17,
                   fontFamily: 'Spoqa Han Sans Neo',
                 ),),
               ],
@@ -226,7 +232,7 @@ class _changename extends State<changename> {
                 Text("변경사항이 저장되지 않습니다.\n그래도 나가시겠습니까?",
                 style: TextStyle(
                   fontFamily: 'Spoqa Han Sans Neo',
-                  fontSize: 13.sp,
+                  fontSize: 13,
                   color: textColor2,
                 ),
 

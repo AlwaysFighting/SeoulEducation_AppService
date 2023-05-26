@@ -79,6 +79,7 @@ flutter:
     - assets/images/Courses/
     - assets/images/community/
     - assets/images/Notice/
+    - assets/images/Const/MagnifyingGlass2.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

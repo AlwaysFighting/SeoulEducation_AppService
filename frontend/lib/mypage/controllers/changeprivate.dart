@@ -8,7 +8,8 @@ import 'package:seoul_education_service/const/navigation.dart';
 
 class changeprivate extends StatefulWidget{
   final usernickname;
-  const changeprivate({Key? key, required this.usernickname}):super(key:key);
+  final email;
+  const changeprivate({Key? key, required this.usernickname, this.email}):super(key:key);
 
   @override
   State<changeprivate> createState() => _privateState();
@@ -29,13 +30,13 @@ class _privateState extends State<changeprivate> {
         children: [
           SizedBox(height: 60.h,),
           appbar(),
-          SizedBox(height: 20.h,),
+          SizedBox(height: 20),
           user(),
           Container(
-            height: 10.h,
+            height: 10,
             color: lightBackgroundColor,
           ),
-          SizedBox(height: 16.h,),
+          SizedBox(height: 16),
           content(),
         ],
       ),
@@ -51,21 +52,22 @@ class _privateState extends State<changeprivate> {
       height: 56.h,
       child: Row(
         children: [
-          SizedBox(width: 16.w,),
+          SizedBox(width: 16),
           GestureDetector(
             onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) =>
               const Navigation(initialIndex: 2,)));
             },
             child: Image.asset(
-              'assets/images/Const/ArrowLeft.png', width: 24.w, height: 24.w,),
+              'assets/images/Const/ArrowLeft.png', width: 24, height: 24,),
           ),
           SizedBox(width: 109.w,),
           Text("기본정보 수정",
             style: TextStyle(
               fontFamily: 'Spoqa Han Sans Neo',
-              fontSize: 16.sp,
-              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
@@ -81,20 +83,24 @@ class _privateState extends State<changeprivate> {
       height: 179.h,
         child: Column(
         children: [
-          Image.asset("assets/images/Const/profile.png",width: 60.w,height: 60.h,),
-          SizedBox(height: 16.h,),
+          Image.asset("assets/images/Const/profile.png",width: 60,height: 60,),
+          SizedBox(height: 16),
           Text("${widget.usernickname}",
           style: TextStyle(
-            fontSize: 16.sp,
-            fontFamily: 'Spoqa Han Sans'
+            fontSize: 16,
+            fontFamily: 'Spoqa Han Sans',
+            fontStyle: FontStyle.normal,
+            fontWeight: FontWeight.w400,
           ),
           ),
-          SizedBox(height: 4.h,),
-          Text("user_email",
+          SizedBox(height: 4),
+          Text("${widget.email}",
             style: TextStyle(
-                fontSize: 14.sp,
+                fontSize: 14,
                 fontFamily: 'Spoqa Han Sans',
                 color: textColor2,
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.w400,
             ),
           ),
         ],
@@ -110,30 +116,34 @@ class _privateState extends State<changeprivate> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => changename(usernickname: widget.usernickname,),
+                builder: (context) => changename(usernickname: widget.usernickname,email:widget.email),
               ),
             );
           },
           child: SizedBox(
-            height: 56.h,
+            height: 56,
             child: Row(
               children: [
-                SizedBox(width: 16.w,),
+                SizedBox(width: 16,),
                 Text("이름",
                 style: TextStyle(
                   fontFamily: 'Spoqa Han Sans Neo',
-                  fontSize: 16.sp,
+                  fontSize: 16,
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.w500,
                 ),
                 ),
-                const Spacer(),
+                Spacer(),
                 Text('${widget.usernickname}',
                   style: TextStyle(
                     fontFamily: 'Spoqa Han Sans Neo',
-                    fontSize: 14.sp,
+                    fontSize: 14,
                     color: textColor2,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
-                Image.asset("assets/images/Const/CaretRight.png",width: 24.w, height: 24.h,),
+                Image.asset("assets/images/Const/CaretRight.png",width: 24, height: 24,),
               ],
             ),
           ),
@@ -149,18 +159,20 @@ class _privateState extends State<changeprivate> {
             );
           },
           child: SizedBox(
-            height: 56.h,
+            height: 56,
             child: Row(
               children: [
-                SizedBox(width: 16.w,),
+                SizedBox(width: 16,),
                 Text("비밀번호",
                   style: TextStyle(
                     fontFamily: 'Spoqa Han Sans Neo',
-                    fontSize: 16.sp,
+                    fontSize: 16,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-                const Spacer(),
-                Image.asset("assets/images/Const/CaretRight.png",width: 24.w, height: 24.h,),
+                Spacer(),
+                Image.asset("assets/images/Const/CaretRight.png",width: 24, height: 24,),
               ],
             ),
           ),

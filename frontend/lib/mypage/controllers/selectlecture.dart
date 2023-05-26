@@ -6,6 +6,8 @@ import 'package:seoul_education_service/mypage/model/lectureModel.dart';
 import 'package:http/http.dart' as http;
 import 'package:seoul_education_service/api/course_api.dart';
 import 'dart:convert';
+import 'package:seoul_education_service/home/offline/controllers/offline_detail_page.dart';
+import 'package:seoul_education_service/home/online/controllers/online_detail_page.dart';
 
 class SelectLecture extends StatefulWidget{
   const SelectLecture({Key? key}) : super(key: key);
@@ -33,7 +35,6 @@ class _SelectState extends State<SelectLecture>{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('accessToken');
   }
-  //return CourseList.fromJson(json.decode(response.body));
   Future<void> _fetchLecture_on() async{
     String? accessToken = await _loadAccessToken();
     final url = Uri.parse('${API_MYPAGE_LIKED}on');
@@ -123,19 +124,20 @@ class _SelectState extends State<SelectLecture>{
   Widget appbar(){
     return Row(
       children: [
-        SizedBox(width: 16.w,),
+        SizedBox(width: 16),
         GestureDetector(
           onTap: (){
             Navigator.pop(context);
           },
-          child: Image.asset("assets/images/Const/ArrowLeft.png",width: 24.w,height: 24.h,),
+          child: Image.asset("assets/images/Const/ArrowLeft.png",width: 24,height: 24,),
         ),
         SizedBox(width: 125.w,),
         Text("찜한 강의",
           style: TextStyle(
             fontFamily: 'Spoqa Han Sans Neo',
-            fontSize: 16.sp,
-            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            fontStyle: FontStyle.normal
           ),
         )
       ],
@@ -152,19 +154,18 @@ class _SelectState extends State<SelectLecture>{
                 indicatorColor: mainColor,
                 labelStyle: TextStyle(
                   fontFamily: 'Spoqa Han Sans Neo',
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  fontStyle: FontStyle.normal,
                 ),
                 labelColor: Colors.black,
                 indicatorWeight: 3,
                 tabs: [
                   Tab(
                     text: '온라인',
-                    //height: 50,
                   ),
                   Tab(
                     text: '오프라인',
-                    //height: ,
                   )
                 ],
               ),
@@ -175,8 +176,10 @@ class _SelectState extends State<SelectLecture>{
                         child: Text("아직 관심 있는 강의가 없어요!",
                         style: TextStyle(
                           fontFamily: 'Spoqa Han Sans Neo',
-                          fontSize: 16.sp,
+                          fontSize: 16,
                           color: textColor2,
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w400,
                         ),),
                       ) :
                           ListView.builder(
@@ -185,7 +188,16 @@ class _SelectState extends State<SelectLecture>{
                             itemBuilder: (BuildContext context, int index){
                               var online = _online![index];
                               return GestureDetector(
-                                onTap: () {},
+                                onTap: () async{
+                                  await Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => OnlineDetailPage(
+                                          courseID:
+                                          online.courseId as int
+                                      ),
+                                    ),
+                                  );
+                                },
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
@@ -194,7 +206,7 @@ class _SelectState extends State<SelectLecture>{
                                        child: Container(
                                          decoration: BoxDecoration(
                                            borderRadius: BorderRadius.circular(10),
-                                           color: lightBackgroundColor,
+                                           color: backgroundBtnColor,
                                          ),
                                            padding: EdgeInsets.all(16),
                                            child: Column(
@@ -202,12 +214,30 @@ class _SelectState extends State<SelectLecture>{
                                              children: [
                                                Row(
                                                  children: [
-                                                   Text("#신청가능  #무료",
+                                                   Text("#신청가능",
                                                        style: TextStyle(
-                                                         fontSize: 14.sp,
+                                                         fontSize: 14,
                                                          fontFamily: 'Spoqa Han Sans Neo',
                                                          color: mainColor,
+                                                         fontWeight: FontWeight.w400,
+                                                         fontStyle: FontStyle.normal,
                                                        )),
+                                                   online.isFree != null && online.isFree == true ?
+                                                       Text("#무료",style: TextStyle(
+                                                         fontSize: 14,
+                                                         fontFamily: 'Spoqa Han Sans Neo',
+                                                         color: mainColor,
+                                                         fontWeight: FontWeight.w500,
+                                                         fontStyle: FontStyle.normal,
+                                                       )
+                                                       ) : Text("#유료",style: TextStyle(
+                                                     fontSize: 14,
+                                                     fontFamily: 'Spoqa Han Sans Neo',
+                                                     color: mainColor,
+                                                     fontWeight: FontWeight.w500,
+                                                     fontStyle: FontStyle.normal,
+                                                   )
+                                                   ),
                                                    Spacer(),
                                                     GestureDetector(
                                                        onTap: ()async{
@@ -223,15 +253,18 @@ class _SelectState extends State<SelectLecture>{
                                                Text("${online.title}",
                                                  style: TextStyle(
                                                    fontFamily: 'Spoqa Han Sans Neo',
-                                                   fontSize: 16.sp,
-                                                   fontWeight: FontWeight.bold,
+                                                   fontSize: 16,
+                                                   fontStyle: FontStyle.normal,
+                                                   fontWeight: FontWeight.w500,
                                                  ),),
                                                SizedBox(height: 14,),
                                                Text("신청기간:${online.applyStartDate}~${online.applyEndDate}",
                                                  style: TextStyle(
                                                    fontFamily: 'Spoqa Han Sans Neo',
-                                                   fontSize: 14.sp,
+                                                   fontSize: 14,
                                                    color: textColor2,
+                                                   fontStyle: FontStyle.normal,
+                                                   fontWeight: FontWeight.w400,
                                                  ),
                                                )
                                              ],
@@ -248,8 +281,10 @@ class _SelectState extends State<SelectLecture>{
                         child: Text("아직 관심 있는 강의가 없어요!",
                           style: TextStyle(
                             fontFamily: 'Spoqa Han Sans Neo',
-                            fontSize: 16.sp,
+                            fontSize: 16,
                             color: textColor2,
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w400,
                           ),),
                       ) :
                       ListView.builder(
@@ -258,7 +293,16 @@ class _SelectState extends State<SelectLecture>{
                           itemBuilder: (BuildContext context, int index){
                             var offline = _offline![index];
                             return GestureDetector(
-                              onTap: () {},
+                              onTap: () async{
+                                await Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => OfflineDetailPage(
+                                        courseID:
+                                        offline.courseId as int
+                                    ),
+                                  ),
+                                );
+                              },
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -267,7 +311,7 @@ class _SelectState extends State<SelectLecture>{
                                     child: Container(
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),
-                                        color: lightBackgroundColor,
+                                        color: backgroundBtnColor,
                                       ),
                                       padding: EdgeInsets.all(16),
                                       child: Column(
@@ -277,9 +321,11 @@ class _SelectState extends State<SelectLecture>{
                                             children: [
                                               Text("#신청가능  #무료",
                                                   style: TextStyle(
-                                                    fontSize: 14.sp,
+                                                    fontSize: 14,
                                                     fontFamily: 'Spoqa Han Sans Neo',
                                                     color: mainColor,
+                                                    fontStyle: FontStyle.normal,
+                                                    fontWeight: FontWeight.w400,
                                                   )),
                                               Spacer(),
                                               GestureDetector(
@@ -296,15 +342,18 @@ class _SelectState extends State<SelectLecture>{
                                           Text("${offline.title}",
                                             style: TextStyle(
                                               fontFamily: 'Spoqa Han Sans Neo',
-                                              fontSize: 16.sp,
-                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                              fontStyle: FontStyle.normal,
+                                              fontWeight: FontWeight.w500,
                                             ),),
                                           SizedBox(height: 14,),
                                           Text("신청기간:${offline.applyStartDate}~${offline.applyEndDate}",
                                             style: TextStyle(
                                               fontFamily: 'Spoqa Han Sans Neo',
-                                              fontSize: 14.sp,
+                                              fontSize: 14,
                                               color: textColor2,
+                                              fontStyle: FontStyle.normal,
+                                              fontWeight: FontWeight.w400,
                                             ),
                                           )
                                         ],

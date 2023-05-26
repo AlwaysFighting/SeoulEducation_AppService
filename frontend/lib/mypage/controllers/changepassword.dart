@@ -82,7 +82,7 @@ class _changepassword extends State<changepassword> {
           appbar(),
           SizedBox(height: 20.h,),
           content(),
-          const Spacer(),
+          Spacer(),
           success(),
         ],
       ),
@@ -95,24 +95,30 @@ class _changepassword extends State<changepassword> {
           .of(context)
           .size
           .width,
-      height: 56.h,
+      height: 56,
       child: Row(
         children: [
-          SizedBox(width: 16.w,),
+          SizedBox(width: 16,),
           GestureDetector(
             onTap: () {
               //알림창
               backDialog();
             },
             child: Image.asset(
-              'assets/images/Const/ArrowLeft.png', width: 24.w, height: 24.w,),
+              'assets/images/Const/ArrowLeft.png', width: 24, height: 24),
           ),
-          SizedBox(width: 109.w,),
-          Text("기본정보 수정",
-            style: TextStyle(
-              fontFamily: 'Spoqa Han Sans Neo',
-              fontSize: 16.sp,
-              fontWeight: FontWeight.bold,
+          SizedBox(width: 109.w),
+          Expanded(
+            child: Container(
+              //alignment: Alignment.center,
+              child: Text("기본정보 수정",
+                style: TextStyle(
+                  fontFamily: 'Spoqa Han Sans Neo',
+                  fontSize: 16,
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
           ),
         ],
@@ -125,18 +131,20 @@ class _changepassword extends State<changepassword> {
       children: [
         Row(
           children: [
-            SizedBox(width: 16.w,),
+            SizedBox(width: 16),
             Text("현재 비밀번호",
             style: TextStyle(
               fontFamily: 'Spoqa Han Sans Neo',
-              fontSize: 14.sp,
+              fontSize: 14,
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.w500,
             ),)
           ],
         ),
-        SizedBox(height: 10.h,),
+        SizedBox(height: 10),
         Row(
           children: [
-            SizedBox(width: 16.w,),
+            SizedBox(width: 16),
             SizedBox(
               width: 358.w,
               height: 48.h,
@@ -150,7 +158,7 @@ class _changepassword extends State<changepassword> {
                 },
                 style: TextStyle(
                   fontFamily: 'Spoqa Han Sans Neo',
-                  fontSize: 14.sp,
+                  fontSize: 14,
                 ),
                 decoration: InputDecoration(
                   suffixIcon: Visibility(
@@ -166,11 +174,12 @@ class _changepassword extends State<changepassword> {
                   hintText: "현재 비밀번호 입력",
                   hintStyle: TextStyle(
                     fontFamily: 'Spoqa Han Sans Neo',
-                    fontSize: ScreenUtil().setSp(14),
+                    fontSize:14,
                     color: textColor2,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w400,
                   ),
-                  contentPadding: EdgeInsets.fromLTRB(16.w, 16.h, 236.w, 15.h
-                  ),
+                  contentPadding: EdgeInsets.fromLTRB(16.w, 16.h, 232.w, 15.h ),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color:_isnotcorrect ? errorColor: mainColor),
                     borderRadius: const BorderRadius.all(Radius.circular(24)),
@@ -193,12 +202,14 @@ class _changepassword extends State<changepassword> {
                 SizedBox(height: 8.h,),
                 Row(
                   children: [
-                    SizedBox(width: 16.w,),
+                    SizedBox(width: 16),
                     Text("비밀번호가 맞지 않습니다. 다시 확인해주세요",
                     style: TextStyle(
-                      fontSize: 12.sp,
+                      fontSize: 12,
                       fontFamily: 'Spoqa Han Sans Neo',
                       color: errorColor,
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.w500,
                     ),),
                   ],
                 ),
@@ -212,14 +223,16 @@ class _changepassword extends State<changepassword> {
             Text("새로운 비밀번호",
               style: TextStyle(
                 fontFamily: 'Spoqa Han Sans Neo',
-                fontSize: 14.sp,
+                fontSize: 14,
+                fontStyle: FontStyle.normal,
+                fontWeight: FontWeight.w500,
               ),)
           ],
         ),
-        SizedBox(height: 10.h,),
+        SizedBox(height: 10),
         Row(
           children: [
-            SizedBox(width: 16.w,),
+            SizedBox(width: 16),
             SizedBox(
               width: 358.w,
               height: 48.h,
@@ -251,6 +264,8 @@ class _changepassword extends State<changepassword> {
                     fontFamily: 'Spoqa Han Sans Neo',
                     fontSize: ScreenUtil().setSp(14),
                     color: textColor2,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w400,
                   ),
                   contentPadding: EdgeInsets.fromLTRB(16.w, 16.h, 236.w, 15.h
                   ),
@@ -278,14 +293,16 @@ class _changepassword extends State<changepassword> {
             Text("새로운 비밀번호 확인",
               style: TextStyle(
                 fontFamily: 'Spoqa Han Sans Neo',
-                fontSize: 14.sp,
+                fontSize: 14,
+                fontStyle: FontStyle.normal,
+                fontWeight: FontWeight.w500,
               ),)
           ],
         ),
-        SizedBox(height: 10.h,),
+        SizedBox(height: 10),
         Row(
           children: [
-            SizedBox(width: 16.w,),
+            SizedBox(width: 16),
             SizedBox(
               width: 358.w,
               height: 48.h,
@@ -315,8 +332,10 @@ class _changepassword extends State<changepassword> {
                   hintText: "새로운 비밀번호를 한번 더 입력해주세요",
                   hintStyle: TextStyle(
                     fontFamily: 'Spoqa Han Sans Neo',
-                    fontSize: ScreenUtil().setSp(14),
+                    fontSize: 14,
                     color: textColor2,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w400,
                   ),
                   contentPadding: EdgeInsets.fromLTRB(16.w, 16.h, 236.w, 15.h
                   ),
@@ -347,8 +366,10 @@ class _changepassword extends State<changepassword> {
                     Text("비밀번호가 맞지 않습니다. 다시 확인해주세요.",
                       style: TextStyle(
                         fontFamily: 'Spoqa Han Sans Neo',
-                        fontSize: 12.sp,
+                        fontSize: 12,
                         color:errorColor,
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
@@ -371,8 +392,10 @@ class _changepassword extends State<changepassword> {
               children: <Widget>[
                 Text("뒤로가기",
                   style: TextStyle(
-                    fontSize: 17.sp,
+                    fontSize: 17,
                     fontFamily: 'Spoqa Han Sans Neo',
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w500,
                   ),),
               ],
             ),
@@ -383,8 +406,10 @@ class _changepassword extends State<changepassword> {
                 Text("변경사항이 저장되지 않습니다.\n그래도 나가시겠습니까?",
                   style: TextStyle(
                     fontFamily: 'Spoqa Han Sans Neo',
-                    fontSize: 13.sp,
+                    fontSize: 13,
                     color: textColor2,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w400,
                   ),
 
                 )
@@ -401,6 +426,8 @@ class _changepassword extends State<changepassword> {
                         style: TextStyle(
                           fontFamily: 'Spoqa Han Sans Neo',
                           color: mainColor,
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w400,
                         ),
                       )),
                   TextButton(onPressed: (){
@@ -415,6 +442,8 @@ class _changepassword extends State<changepassword> {
                         style: TextStyle(
                           fontFamily: 'Spoqa Han Sans Neo',
                           color: mainColor,
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w400,
                         ),
                       )),
                 ],
@@ -456,8 +485,10 @@ class _changepassword extends State<changepassword> {
           child: Text("확인",
             style: TextStyle(
               fontFamily: 'Spoqa Han Sans Neo',
-              fontSize: 16.sp,
+              fontSize: 16,
               color: Colors.white,
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.w500,
             ),),
         ),
       ),

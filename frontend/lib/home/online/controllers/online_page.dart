@@ -11,6 +11,7 @@ import '../../../api/course_api.dart';
 import '../models/category_button.dart';
 import '../../offline/models/course_list_model.dart';
 import 'online_search_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class OnlinePage extends StatefulWidget {
@@ -300,8 +301,8 @@ class _OnlinePageState extends State<OnlinePage> {
                       itemCount: snapshot.data?.data.length,
                       itemBuilder: (BuildContext context, int index) {
                         return GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(
+                          onTap: () async{
+                            await Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (_) => OnlineDetailPage(
                                   courseID:
@@ -309,6 +310,26 @@ class _OnlinePageState extends State<OnlinePage> {
                                 ),
                               ),
                             );
+
+                            //최근본 강좌 구현위해 추가 코드
+                            Map<String, dynamic> lectureInfo = {
+                              'courseID' : snapshot.data?.data[index].id as int,
+                              'title' : snapshot.data?.data[index].title as String,
+                              'isLiked' : snapshot.data?.data[index].isLiked,
+                              'applyStartDate' : snapshot.data?.data[index].applyStartDate,
+                              'applyEndDate' : snapshot.data?.data[index].applyEndDate,
+                              'isFree' : snapshot.data?.data[index].isFree,
+                            };
+                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                            List<String> lectureListJson = prefs.getStringList('lectureList') ?? [];
+                            lectureListJson.add(json.encode(lectureInfo));
+                            await prefs.setStringList('lectureList', lectureListJson);
+                            setState(() {
+                              if(snapshot.data!=null){
+                                snapshot.data!.data[index].isLiked =
+                                    !(snapshot.data!.data[index].isLiked ?? false);
+                              }
+                            });
                           },
                           child: Padding(
                             padding: const EdgeInsets.only(bottom: 16.0),
@@ -499,6 +520,18 @@ class _bodyState extends State<_body> {
                               ),
                             ),
                           );
+                          //최근본 강좌 구현위해 추가 코드
+                          Map<String, dynamic> lectureInfo = {
+                            'courseID' : snapshot.data?.data[index].id as int,
+                            'title' : snapshot.data?.data[index].title as String,
+                            'isLiked' : snapshot.data?.data[index].isLiked,
+                            'applyStartDate' : snapshot.data?.data[index].applyStartDate,
+                            'applyEndDate' : snapshot.data?.data[index].applyEndDate,
+                            'isFree' : snapshot.data?.data[index].isFree,
+                          };
+                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                          List<String> lectureListJson = prefs.getStringList('lectureList') ?? [];
+                          lectureListJson.add(json.encode(lectureInfo));
 
                         },
                         child: Padding(

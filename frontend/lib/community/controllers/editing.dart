@@ -75,25 +75,31 @@ class _editingState extends State<editingScreen>{
                           child: Image.asset('assets/images/community/close.png', width: ScreenUtil().setWidth(24),height: ScreenUtil().setHeight(24),),
                         ),
                         SizedBox(width: ScreenUtil().setWidth(132),),
-                        Text('글쓰기',
+                        Text('편집하기',
                           style: TextStyle(
                               fontFamily: "Spoqa Han Sans Neo",
-                              fontWeight: FontWeight.bold,
-                              fontSize: ScreenUtil().setSp(16)
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              fontStyle: FontStyle.normal,
                           ),),
-                        SizedBox(width: ScreenUtil().setWidth(127),),
+                        Spacer(),
                         GestureDetector(
                           onTap: () async{
                             await _editPostRequest();
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Navigation()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                            const Navigation(initialIndex: 1,)));
                           },
-                          child: Text('완료',
-                            style: TextStyle(
-                                fontFamily: "Spoqa Han Sans Neo",
-                                //추가적으로 글쓰기 완료시 색깔 변하고 버튼 활성화 기능 구현
-
-                                fontSize: ScreenUtil().setSp(16)
-                            ),),
+                          child: Padding(
+                            padding: EdgeInsets.only(right:16.0),
+                            child: Text('완료',
+                              style: TextStyle(
+                                  fontFamily: "Spoqa Han Sans Neo",
+                                  fontSize: 16,
+                                  fontStyle: FontStyle.normal,
+                                  fontWeight: FontWeight.w500,
+                                  color: mainColor,
+                              ),),
+                          ),
                         ),
                       ],
                     ),
@@ -112,7 +118,9 @@ class _editingState extends State<editingScreen>{
                               hintStyle: TextStyle(
                                   color: textColor2,
                                   fontSize: 16,
-                                  fontFamily:"Spoqa Han Sans Neo"
+                                  fontFamily:"Spoqa Han Sans Neo",
+                                  fontStyle: FontStyle.normal,
+                                  fontWeight: FontWeight.w500,
                               )
                           ),
                         )
@@ -131,7 +139,9 @@ class _editingState extends State<editingScreen>{
                                 hintStyle: TextStyle(
                                     color: textColor2,
                                     fontSize: 14,
-                                    fontFamily:"Spoqa Han Sans Neo"
+                                    fontFamily:"Spoqa Han Sans Neo",
+                                  fontStyle: FontStyle.normal,
+                                  fontWeight: FontWeight.w400,
                                 )
                             ),
                           ),
