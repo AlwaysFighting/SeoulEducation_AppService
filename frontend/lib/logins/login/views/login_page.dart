@@ -89,9 +89,11 @@ class _LoginPageState extends State<LoginPage> {
 
     int userId = responseData['data']['userId'];
     final String accessToken = responseData['data']['accessToken'];
+    final String refreshToken = responseData['data']['refreshToken'];
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt('userID', userId);
+    await prefs.setString('refreshToken', refreshToken);
     print('User ID: $userId');
 
     if (response.statusCode == 201) {
@@ -139,15 +141,14 @@ class _LoginPageState extends State<LoginPage> {
 
       final responseJson = json.decode(response.body);
       final String accessToken = responseJson['data']['accessToken'];
+      final String refreshToken = responseJson['data']['refreshToken'];
       final int userID = responseJson['data']['userId'];
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
-      prefs.setString('accessToken', accessToken);
-      prefs.setInt('userID', userID);
-
-      // await prefs.setString('email', key);
-      // await prefs.setString('password', value);
+      await prefs.setString('accessToken', accessToken);
+      await prefs.setInt('userID', userID);
+      await prefs.setString('refreshToken', refreshToken);
 
       Navigator.pushReplacement(
         context,

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:seoul_education_service/home/homepage/controllers/notice_detail_page.dart';
 import 'package:seoul_education_service/home/offline/controllers/offline_page.dart';
 import 'package:seoul_education_service/home/online/controllers/online_page.dart';
@@ -14,6 +15,7 @@ import 'package:http/http.dart' as http;
 
 import '../../../api/course_api.dart';
 import '../../../const/colors.dart';
+import '../../../logins/login/models/token_manager.dart';
 import 'homepage_search_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -51,6 +53,7 @@ class _HomePageState extends State<HomePage> {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? accessToken = prefs.getString('accessToken');
+    String? refreshToken = prefs.getString('refreshToken');
 
     final response = await http.get(
       url,
@@ -58,6 +61,11 @@ class _HomePageState extends State<HomePage> {
         'Authorization': 'Bearer $accessToken',
       },
     );
+
+    // 토큰 인증 만료됐을 경우
+    if(response.statusCode == 401) {
+      CustomTokenManager().callRefreshToken(accessToken!, refreshToken!);
+    }
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);

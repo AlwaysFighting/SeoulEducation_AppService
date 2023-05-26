@@ -46,14 +46,6 @@ class _OfflinePageState extends State<OfflinePage> {
     fontFamily: "Spoqa Han Sans Neo",
   );
 
-  String _selectedItem = '최신순';
-  String _selected2Item = '모두';
-  String _selected3Item = '시험대비';
-
-  final List<String> _dropdown1Items = ['최신순', '관심설정순', "마감임박순"];
-  final List<String> _dropdown2Items = ['모두', '신청예정', '신청중', '신청마감'];
-  final List<String> _dropdown3Items = ['시험대비'];
-
   late Future<CourseList> services;
   String whatOrder = "최신순";
   String whatFilter = "모두";

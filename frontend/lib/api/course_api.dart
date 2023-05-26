@@ -31,7 +31,6 @@ const EMAIL_CODE_REQUEST_API = "$API_AUTH_URL/email";
 const EMAIL_CODE_CONFIRM_API = "$API_AUTH_URL/email/code";
 const REGISTER_API = "$API_AUTH_URL/join";
 
-
 class LoginAPI {
 
   // 카카오 로그인
@@ -43,8 +42,12 @@ class LoginAPI {
   String RegisterLickname(int id) {
     return "$EMAIL_LOGIN_API/kakao/nickname/$id";
   }
-}
 
+  // ACCESSTOKEN 재발급
+  String Reissuance() {
+    return "$API_AUTH_URL/refresh";
+  }
+}
 
 // API_COURSES_URL - 강의 URL
 class CoursesAPI {
