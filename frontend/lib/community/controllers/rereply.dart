@@ -106,16 +106,20 @@ class RereplyState extends State<rereply> {
           SizedBox(width:166.w ,),
           Text('답글쓰기',
             style: TextStyle(
-              fontWeight: FontWeight.bold,
               fontSize: 16.sp,
               fontFamily: 'Spoqa Han Sans Neo',
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.w500,
             ),),
-          SizedBox(width:125.w),
+          Spacer(),
           GestureDetector(
             onTap:(){
               Navigator.pop(context);
             },
-            child: Image.asset('assets/images/community/close.png', width: ScreenUtil().setWidth(24),height: ScreenUtil().setHeight(24),),
+            child: Padding(
+              padding: EdgeInsets.only(right:16.0),
+              child: Image.asset('assets/images/community/close.png', width: 24,height: 24,),
+            ),
           ),
         ],
       ),
@@ -126,51 +130,64 @@ class RereplyState extends State<rereply> {
       children: [
         Row(
           children: [
-            SizedBox(width: 16.w,),
+            SizedBox(width: 16),
             Text("${widget.userNickname}",
             style: TextStyle(
               fontFamily: 'Spoqa Han Sans Neo',
-              fontSize: 12.sp,
-              fontWeight: FontWeight.bold,
+              fontSize: 12,
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.w500,
             ),),
-            SizedBox(width: 280.w,),
+            Spacer(),
             GestureDetector(
               onTap: (){
                 //신고하기 기능
               },
-              child: Image.asset('assets/images/community/DotsThreeVerticalgrey.png',width: 24.w, height: 24.h,),
+              child: Padding(
+                padding: EdgeInsets.only(right: 16.0),
+                child: Image.asset('assets/images/community/DotsThreeVerticalgrey.png',width: 24, height: 24,),
+              ),
             )
           ],
         ),
-        SizedBox(height: 10.h,),
+        SizedBox(height: 10),
         Row(
           children: [
-            SizedBox(width: 16.w,),
+            SizedBox(width: 16),
             Text('${widget.content}',
             style: TextStyle(
               fontFamily: 'Spoqa Han Sans Neo',
-              fontSize: 14.sp,
+              fontSize: 14,
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.w400,
             ),
             ),
           ],
         ),
-        SizedBox(height: 16.h,),
+        SizedBox(height: 16),
         Row(
           children: [
-            SizedBox(width: 16.w,),
+            SizedBox(width: 16),
             Text('답글쓰기',
             style: TextStyle(
               fontFamily: 'Spoqa Han Sans Neo',
-              fontSize: 12.sp,
+              fontSize: 12,
               color: textColor2,
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.w400,
             ),),
-            SizedBox(width: 240.w,),
-            Text("${widget.publishDate}".substring(0,"${widget.publishDate}".indexOf('T')),
-              style: TextStyle(
-                  fontSize: ScreenUtil().setSp(12),
-                  fontFamily: 'Spoqa Han Sans Neo',
-                  color: textColor2
-              ),),
+            Spacer(),
+            Padding(
+              padding: EdgeInsets.only(right:16.0),
+              child: Text("${widget.publishDate}".substring(0,"${widget.publishDate}".indexOf('T')),
+                style: TextStyle(
+                    fontSize: 12,
+                    fontFamily: 'Spoqa Han Sans Neo',
+                    color: textColor2,
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.w400,
+                ),),
+            ),
           ],
         )
       ],
@@ -193,17 +210,17 @@ class RereplyState extends State<rereply> {
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: "댓글을 입력해주세요.",
+                    contentPadding: EdgeInsets.fromLTRB(16, 12, 0, 11),
                     hintStyle: TextStyle(
                       fontFamily: 'Spoqa Han Sans Neo',
-                      fontSize: ScreenUtil().setSp(14),
+                      fontSize: 14,
                       color: textColor2,
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.w400,
                     ),
-                    /*contentPadding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(16), ScreenUtil().setHeight(12), ScreenUtil().setWidth(179), ScreenUtil().setHeight(11)
-                              ),*/
                     enabledBorder: const OutlineInputBorder(
                       borderSide: BorderSide.none,
                       borderRadius: BorderRadius.all(Radius.circular(20)),
-
                     ),
                     focusedBorder: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20)),

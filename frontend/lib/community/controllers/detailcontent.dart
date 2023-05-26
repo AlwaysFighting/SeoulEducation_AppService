@@ -11,6 +11,7 @@ import 'package:seoul_education_service/community/model/replylist.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:seoul_education_service/const/navigation.dart';
 import 'commuinty.dart';
+import 'package:seoul_education_service/mypage/model/memberModel.dart';
 
 import '../../notification/models/alarm.dart';
 
@@ -27,6 +28,7 @@ class DetailState extends State<Detailcontent> {
   List<Data>? _detaillist;
   replylist? _replylist;
   bool cando = false;
+  List<Member>? _infolist;
   CommunityPage communitypage = const CommunityPage();
 
 
@@ -38,11 +40,27 @@ class DetailState extends State<Detailcontent> {
       _fetchDetails();
       _fetchReply();
     _sendReply();
+    _fetchmember();
   }
   //accesstoken 호출
   Future<String?> _loadAccessToken() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('accessToken');
+  }
+
+  Future<void> _fetchmember() async{
+    String? accessToken = await _loadAccessToken();
+    var response= await http.get(
+      Uri.parse(API_MEMBER_INFO),
+      headers:{'Authorization' : 'Bearer $accessToken'},
+    );
+    if(response.statusCode ==200){
+      var jsonResponse = jsonDecode(response.body);
+      var info = memberModel.fromJson(jsonResponse);
+      setState(() {
+        _infolist = info.data != null ? [info.data!] : [];
+      });
+    }
   }
 
   //게시글 조회
@@ -154,6 +172,8 @@ class DetailState extends State<Detailcontent> {
     }
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, designSize: const Size(390, 844));
@@ -173,7 +193,17 @@ class DetailState extends State<Detailcontent> {
               ),
               Positioned(
                   bottom: 0,
-                  child: replybar()
+                  left: 0,
+                  right: 0,
+                  child: Column(
+                    children: [
+                      replybar(),
+                      Container(
+                        height: 30,
+                        color: Colors.white,
+                      )
+                    ],
+                  )
                   ),
 
             ]
@@ -219,13 +249,19 @@ class DetailState extends State<Detailcontent> {
                               ),),
                             ),
                             onTap: ()async{
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) =>
-                                    editingScreen(postid:widget.postid,
-                                      title:data?.title ??'',
-                                      content: data?.content ?? '',)),
-                              );
+                              if(_infolist!.first.nickname == data!.userNickname)
+                                {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) =>
+                                        editingScreen(postid:widget.postid,
+                                          title:data?.title ??'',
+                                          content: data?.content ?? '',)),
+                                  );
+                                }
+                              else {
+                                print("편집 권한이 없습니다.");
+                              }
                             },
                           ),
                           ListTile(
@@ -240,12 +276,7 @@ class DetailState extends State<Detailcontent> {
                                   ),),
                               ),
                             onTap: () async{
-                                await _deleteData();
-                              if(cando){
-                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Navigation()));
-                                //게시글 조회로
-                                //await communitypage._fetchPosts();
-                              }
+                                DeleteDialog();
                             },
                           ),
                         ],
@@ -263,7 +294,6 @@ class DetailState extends State<Detailcontent> {
 
 
 
-
   Widget detail(){
     if(_detaillist==null || _detaillist!.isEmpty){
       return Padding(
@@ -278,18 +308,31 @@ class DetailState extends State<Detailcontent> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(data.title!,
-            style: TextStyle(fontFamily: "Spoqa Han Sans Neo",
-            fontSize: ScreenUtil().setSp(18),
-              fontWeight: FontWeight.bold,
+            style: TextStyle(
+              fontFamily: "Spoqa Han Sans Neo",
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              fontStyle: FontStyle.normal,
             ),
             ),
+            SizedBox(height: 6,),
             Row(
               children: [
-                Text(
+                data.userId != null ? Text(
                   data.userNickname!,
                   style: const TextStyle(fontFamily: "Spoqa Han Sans Neo",
                     fontSize: 12,
                     color: textColor2,
+                    fontWeight: FontWeight.w400,
+                    fontStyle: FontStyle.normal,
+                  ),
+                ) :Text(
+                  '(알 수 없음)',
+                  style: const TextStyle(fontFamily: "Spoqa Han Sans Neo",
+                    fontSize: 12,
+                    color: textColor2,
+                    fontWeight: FontWeight.w400,
+                    fontStyle: FontStyle.normal,
                   ),
                 ),
                 const SizedBox(width: 10,),
@@ -297,19 +340,23 @@ class DetailState extends State<Detailcontent> {
                   style: TextStyle(
                     color: textColor2,
                     fontFamily: "Spoqa Han Sans Neo",
-                    fontSize: ScreenUtil().setSp(12),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    fontStyle: FontStyle.normal,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
             Text(
               data.content!,
               style: TextStyle(fontFamily: "Spoqa Han Sans Neo",
-                fontSize: ScreenUtil().setSp(14),
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+                fontStyle: FontStyle.normal,
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Row(
               children: [
                 Text(
@@ -317,6 +364,8 @@ class DetailState extends State<Detailcontent> {
                   style: TextStyle(fontFamily: "Spoqa Han Sans Neo",
                     fontSize: ScreenUtil().setSp(12),
                     color: textColor2,
+                    fontWeight: FontWeight.w400,
+                    fontStyle: FontStyle.normal,
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -327,6 +376,8 @@ class DetailState extends State<Detailcontent> {
                     color: textColor2,
                     fontFamily: "Spoqa Han Sans Neo",
                     fontSize: ScreenUtil().setSp(12),
+                    fontWeight: FontWeight.w400,
+                    fontStyle: FontStyle.normal,
                   ),
                 ),
                 //댓글수 추가해야함
@@ -355,7 +406,7 @@ class DetailState extends State<Detailcontent> {
         itemCount: _replylist!.data!.length,
         itemBuilder: (BuildContext context, int index){
           var reply = _replylist!.data![index];
-          var userNickname = reply.userNickname ?? '';
+          var userNickname = reply.userNickname ?? '(알 수 없음)';
           var content = reply.content ?? '';
           var publishdate=reply.publishDate ?? '';
               return ListTile(
@@ -364,31 +415,44 @@ class DetailState extends State<Detailcontent> {
                     Text(userNickname,
                       style: TextStyle(
                         fontFamily:'Spoqa Han Sans Neo',
-                        fontSize: ScreenUtil().setSp(12),
-                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        fontStyle: FontStyle.normal,
                       ),
                     ),
-                    SizedBox(width: 270.w,),
-                    Image.asset('assets/images/community/DotsThreeVerticalgrey.png',width: 24.w,height: 24.h,),
-                  ],
+                    Spacer(),
+                    //Image.asset('assets/images/community/DotsThreeVerticalgrey.png',width: 24,height: 24,),
+                  Padding(
+                  padding: EdgeInsets.only(right:16),
+          child: Text(publishdate.substring(0,publishdate.indexOf('T')),
+          style: TextStyle(
+          fontSize: 12,
+          fontFamily: 'Spoqa Han Sans Neo',
+          color: textColor2,
+          fontWeight: FontWeight.w400,
+          fontStyle: FontStyle.normal,
+          )))
+          ],
                 ),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 10.h),
+                    SizedBox(height: 10),
                     Text(content,
                       style: TextStyle(
                         fontFamily: 'Spoqa Han Sans Neo',
-                        fontSize: ScreenUtil().setSp(14),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        fontStyle: FontStyle.normal,
                       ),),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 16),
                     Row(
                       children: [
                         GestureDetector(
                             onTap: ()async{
                               //답글쓰기 창으로
                               await Navigator.push(
-                                context,//reply?.userNickname
+                                context,
                                 MaterialPageRoute(builder: (context) =>
                                     rereply(commentid:reply.commentId ?? '',
                                       content: reply.content ?? '',
@@ -399,90 +463,115 @@ class DetailState extends State<Detailcontent> {
                             },
                             child: Text("답글쓰기",
                               style: TextStyle(
-                                  fontSize: ScreenUtil().setSp(12),
+                                  fontSize: 12,
                                   fontFamily: 'Spoqa Han Sans Neo',
-                                  color: textColor2
+                                  color: textColor2,
+                                fontWeight: FontWeight.w400,
+                                fontStyle: FontStyle.normal,
                               ),)
                         ),
-                        SizedBox(width: 230.w,),
-                        Text(publishdate.substring(0,publishdate.indexOf('T')),
-                          style: TextStyle(
-                              fontSize: ScreenUtil().setSp(12),
-                              fontFamily: 'Spoqa Han Sans Neo',
-                              color: textColor2
-                          ),),
+                        Spacer(),
+                         Padding(
+                            padding: EdgeInsets.only(right:16),
+                            child: Image.asset('assets/images/community/DotsThreeVerticalgrey.png',width: 24,height: 24,)
+                          ),
 
                       ],
                     ),
-                    SizedBox(height: 20.h,),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: reply.reply != null ? reply.reply!.length:0,
-                      itemBuilder: (BuildContext innerContext, int innerIndex){
-                        var rereply = reply.reply != null ? reply.reply![innerIndex]:null;
-                        var usernickname = rereply?.userNickname ?? '';
-                        var content = rereply?.content ?? '';
-                        var publishdate = rereply?.publishDate ?? '';
-                        return ListTile(
-                          title: Row(
-                            children: [
-                              Image.asset("assets/images/community/ArrowElbowDownRight.png", width: 16,height:16),
-                              SizedBox(width: 8.w),
-                              Text(usernickname,
-                                style: const TextStyle(
-                                  fontFamily: 'Spoqa Han Sans Neo',
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
+                    SizedBox(height: 20,),
+                    Container(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: reply.reply != null ? reply.reply!.length:0,
+                        itemBuilder: (BuildContext innerContext, int innerIndex){
+                          var rereply = reply.reply != null ? reply.reply![innerIndex]:null;
+                          var usernickname = rereply?.userNickname ?? '(알 수 없음)';
+                          var content = rereply?.content ?? '';
+                          var publishdate = rereply?.publishDate ?? '';
+                          return ListTile(
+                            title: Row(
+                              children: [
+                                Image.asset("assets/images/community/ArrowElbowDownRight.png", width: 16,height:16),
+                                SizedBox(width: 8),
+                                Text(usernickname,
+                                  style: const TextStyle(
+                                    fontFamily: 'Spoqa Han Sans Neo',
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 12,
+                                    fontStyle: FontStyle.normal
+                                  ),
                                 ),
-                              ),
-                              SizedBox(width: 205.w,),
-                              Image.asset('assets/images/community/DotsThreeVerticalgrey.png',width: 24.w,height: 24.h,),
-                            ],
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(height: 10.h,),
-                              Row(
-                                children: [
-                                  SizedBox(width: 24.w,),
-                                  Text(content,
-                                    style: TextStyle(
-                                      fontFamily: 'Spoqa Han Sans Neo',
-                                      fontSize: 14.sp,
-                                    ),
+                               Spacer(),
+                                /*Expanded(
+                                  child: Padding(
+                                    padding:EdgeInsets.only(right:16.0,left: 20),
+                                    child: Text(publishdate.substring(0,publishdate.indexOf('T')),
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          fontFamily: 'Spoqa Han Sans Neo',
+                                          color: textColor2,
+                                        fontStyle: FontStyle.normal,
+                                        fontWeight: FontWeight.w400,
+                                      ),),
                                   ),
-                                ],
-                              ),
-                              SizedBox(height: 16.h,),
-                              Row(
-                                children: [
-                                  SizedBox(width: 24.w,),
-                                  GestureDetector(
-                                      onTap: (){
-                                        //답글쓰기 창으로
-                                      },
-                                      child: Text("답글쓰기",
-                                        style: TextStyle(
-                                            fontSize: ScreenUtil().setSp(12),
-                                            fontFamily: 'Spoqa Han Sans Neo',
-                                            color: textColor2
-                                        ),)
-                                  ),
-                                  SizedBox(width: 170.w,),
-                                  Text(publishdate.substring(0,publishdate.indexOf('T')),
-                                    style: TextStyle(
-                                        fontSize: ScreenUtil().setSp(12),
+                                ),*/
+                                Expanded(
+                                    child: Text(publishdate.substring(0,publishdate.indexOf('T')),
+                                      textAlign: TextAlign.end,
+                                      style: TextStyle(
+                                        fontSize: 12,
                                         fontFamily: 'Spoqa Han Sans Neo',
-                                        color: textColor2
-                                    ),),
-                                ],
-                              )
-                            ],
-                          ),
-                        );
-                      },
+                                        color: textColor2,
+                                        fontStyle: FontStyle.normal,
+                                        fontWeight: FontWeight.w400,
+                                      ),),
+
+                                ),
+                              ],
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(height: 10.h,),
+                                Row(
+                                  children: [
+                                    SizedBox(width: 24.w,),
+                                    Text(content,
+                                      style: TextStyle(
+                                        fontFamily: 'Spoqa Han Sans Neo',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                        fontStyle: FontStyle.normal,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 16),
+                                Row(
+                                  children: [
+                                    SizedBox(width: 24),
+                                    GestureDetector(
+                                        onTap: (){
+                                          //답글쓰기 창으로
+                                        },
+                                        child: Text("답글쓰기",
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontFamily: 'Spoqa Han Sans Neo',
+                                              color: textColor2,
+                                            fontWeight: FontWeight.w400,
+                                            fontStyle: FontStyle.normal,
+                                          ),)
+                                    ),
+                                    SizedBox(width: 170.w,),
+                                  ],
+                                )
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     )
                   ],
                 ),
@@ -509,13 +598,14 @@ class DetailState extends State<Detailcontent> {
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "댓글을 입력해주세요.",
+                              contentPadding: EdgeInsets.fromLTRB(16, 12, 0, 11),
                               hintStyle: TextStyle(
                                 fontFamily: 'Spoqa Han Sans Neo',
-                                fontSize: ScreenUtil().setSp(14),
+                                fontSize: 14,
                                 color: textColor2,
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.w400,
                               ),
-                              /*contentPadding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(16), ScreenUtil().setHeight(12), ScreenUtil().setWidth(179), ScreenUtil().setHeight(11)
-                              ),*/
                               enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none,
                                 borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -548,5 +638,114 @@ class DetailState extends State<Detailcontent> {
          );
           
     
+  }
+  void DeleteDialog(){
+    showDialog(context: context,
+        //팝업 제외한 다른 화면 터치 안되도록
+        barrierDismissible: false,
+        builder: (BuildContext context){
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            title: Column(
+              children: <Widget>[
+                Text("삭제하기",
+                  style: TextStyle(
+                    fontFamily: "Spoqa Han Sans Neo",
+                    fontSize: 17,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w500,
+                  ),),
+
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Text("정말로 삭제하시겠습니까?",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: "Spoqa Han Sans Neo",
+                    fontSize: 13,
+                    color: textColor2,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w400,
+                  ),),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.only(top: 24),
+                      child: SizedBox(
+                        width: 100,
+                        height: 48,
+                        child: ElevatedButton(
+                          onPressed: (){
+                            Navigator.pop(context);
+                          },
+                          child: Text("아니오", style: (
+                              TextStyle(
+                                fontSize: 16,
+                                fontFamily: 'Spoqa Han Sans Neo',
+                                color: Colors.black,
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.w500,
+                              )
+                          ),),
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(backgroundBtnColor),
+                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(24)
+                                  )
+                              )
+                          ),
+
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 8,),
+                    Container(
+                      padding: EdgeInsets.only(top: 24),
+                      child: SizedBox(
+                        width: 100,
+                        height: 48,
+                        child: ElevatedButton(
+                          onPressed: ()async{
+                            await _deleteData();
+                            if(cando){
+                              Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                              const Navigation(initialIndex: 1,)));
+                            }
+                          },
+                          child: Text("예", style: (
+                              TextStyle(
+                                fontSize: 16,
+                                fontFamily: 'Spoqa Han Sans Neo',
+                                color: Colors.white,
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.w500,
+                              )
+                          ),),
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(mainColor),
+                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(24)
+                                  )
+                              )
+                          ),
+
+                        ),
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+          );
+        });
   }
 }

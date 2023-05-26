@@ -34,7 +34,7 @@ class _CommunityState extends State<CommunityPage>{
           Positioned(
               top: ScreenUtil().setHeight(17),
               child:appbar()),
-          Padding(padding: EdgeInsets.only(top:ScreenUtil().setHeight(120)),
+          Padding(padding: EdgeInsets.only(top:44),
             child: content(),),
           Positioned(
               bottom: ScreenUtil().setHeight(40),
@@ -50,40 +50,43 @@ class _CommunityState extends State<CommunityPage>{
       height: 56.h,
       child: Row(
         children: [
-            SizedBox(width: 16.w,),
+            SizedBox(width: 16),
             Text(
               '질문게시판',
               style: TextStyle(
-                fontSize: ScreenUtil().setSp(18),
-                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
                 fontFamily: "Spoqa Han Sans Neo",
+                fontStyle: FontStyle.normal,
               ),
             ),
+          SizedBox(width: 170,),
+          Row(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(right: 16),
+                child: GestureDetector(
+                    onTap: (){
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Searching()));
+                    },
+                    child:Image.asset("assets/images/Const/MagnifyingGlass.png",width: 24,height: 24,)
+                ),
+              ),
 
-          //padding: EdgeInsets.fromLTRB(ScreenUtil().setHeight(310), ScreenUtil().setHeight(16), ScreenUtil().setHeight(56), ScreenUtil().setHeight(16)),
-          //SizedBox(width: ScreenUtil().setWidth(211),),
-          Padding(
-            padding: EdgeInsets.fromLTRB(211.w, 16.h, 16.w, 16.h),
-            child: GestureDetector(
-              onTap: (){
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Searching()));
-              },
-              child:Image.asset("assets/images/Const/MagnifyingGlass.png",width: 24.w,height: 24.h,)
-            ),
-          ),
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: GestureDetector(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AlarmPage()),
+                        );
+                      },
+                      child: Image.asset("assets/images/Const/Bell.png",width: 24,height: 24,)),
+                ),
 
-          //SizedBox(width: 16.w),
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 16.h, 16.w, 16.h),
-            child: GestureDetector(
-                onTap: (){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AlarmPage()),
-                  );
-                },
-                child: Image.asset("assets/images/Const/Bell.png",width: 24.w,height: 24.h,)),
-          ),
+            ],
+          )
         ],
       ),
     );
@@ -123,6 +126,8 @@ class _CommunityState extends State<CommunityPage>{
               fontSize: 16.sp,
               fontFamily: 'Spoqa Han Sans Neo',
               color: textColor2,
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.w500,
             ),
           )
         ),
@@ -131,7 +136,6 @@ class _CommunityState extends State<CommunityPage>{
     else{
       //게시글이 있다면
       return Container(
-        //padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(16), ScreenUtil().setHeight(24), ScreenUtil().setWidth(16), ScreenUtil().setHeight(24)),
         child: ListView.builder(
             itemCount: _posts!.length,
             itemBuilder: (BuildContext context, int index){
@@ -148,13 +152,14 @@ class _CommunityState extends State<CommunityPage>{
                 child: ListTile(
                   //제목
                   title:Padding(
-                    padding: const EdgeInsets.only(bottom:10),
+                    padding: EdgeInsets.only(top:24,bottom:10),
                     //padding: const EdgeInsets.all(8.0),
                     child: Text(post.title!,
                       style: TextStyle(
                         fontFamily: "Spoqa Han Sans Neo",
-                        fontWeight: FontWeight.bold,
-                        fontSize: ScreenUtil().setSp(16),
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                        fontStyle: FontStyle.normal,
                       ),),
                   ),
 
@@ -166,45 +171,64 @@ class _CommunityState extends State<CommunityPage>{
                         maxLines: 2,
                         style: TextStyle(
                           fontFamily: "Spoqa Han Sans Neo",
-                          fontSize: ScreenUtil().setSp(14),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          fontStyle: FontStyle.normal,
                         ),),
                       const SizedBox(height: 24,),
                       Row(
                         children: [
-                          Text(post.userNickname!,
+                          post.userId != null ? Text(post.userNickname!,
                             style: TextStyle(
                               color: textColor2,
                               fontFamily: "Spoqa Han Sans Neo",
-                              fontSize: ScreenUtil().setSp(12),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              fontStyle: FontStyle.normal,
                             ),
-                          ),
-                          const SizedBox(width: 10),
+                          ):Text("(알 수 없음)",
+                            style: TextStyle(
+                              color: textColor2,
+                              fontFamily: "Spoqa Han Sans Neo",
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              fontStyle: FontStyle.normal,
+                            ), ),
+                            SizedBox(width: 10),
                           Text(post.publishDate!.substring(0,post.publishDate!.indexOf('T')),
                             style: TextStyle(
                               color: textColor2,
                               fontFamily: "Spoqa Han Sans Neo",
-                              fontSize: ScreenUtil().setSp(12),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              fontStyle: FontStyle.normal,
                             ),
                           ),
-                          SizedBox(width: 182.w),
-                          Image.asset("assets/images/Const/ChatCircleDots.png", width: 14.w,height: 14.h,),
-                          SizedBox(width: 4.w),
-                          Text(post.commentCount!.toString(),
-                            style: TextStyle(
-                              color: textColor2,
-                              fontFamily: "Spoqa Han Sans Neo",
-                              fontSize: ScreenUtil().setSp(12),
-                            ),
+                          Spacer(),
+                          Row(
+                            children: [
+                              Image.asset("assets/images/Const/ChatCircleDots.png", width: 14,height: 14),
+                              SizedBox(width: 4),
+                              Text(post.commentCount!.toString(),
+                                style: TextStyle(
+                                  color: textColor2,
+                                  fontFamily: "Spoqa Han Sans Neo",
+                                  fontSize:12,
+                                  fontWeight: FontWeight.w400,
+                                  fontStyle: FontStyle.normal,
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 24,),
+                          //const SizedBox(height: 24,),
 
                         ],
                       ),
-                      SizedBox(height:ScreenUtil().setHeight(24)),
+                      SizedBox(height:24),
                       SizedBox(
-                        height: 1.h,
+                        height: 1,
                         child: Container(
-                          color: backgroundBtnColor,
+                          color: backgroundColor,
                         ),
                       ),
                     ],
@@ -216,4 +240,5 @@ class _CommunityState extends State<CommunityPage>{
 
     }
   }
+
 }
