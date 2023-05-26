@@ -98,55 +98,9 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: false,
-        titleTextStyle: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-          color: textColor1,
-        ),
-        title: const Text("LOGO"),
-        actions: [
-          FutureBuilder<bool>(
-            future: Future.value(alarmCheck),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: CircularProgressIndicator(),
-                );
-              } else if (snapshot.hasData) {
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => AlarmPage()),
-                    );
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: alarmCheck
-                        ? Image.asset(
-                      'assets/images/Const/Bell.png',
-                      width: 24,
-                      height: 24,
-                    )
-                        : Image.asset(
-                      'assets/images/Const/Bell_ON.png',
-                      width: 24,
-                      height: 24,
-                    ),
-                  ),
-                );
-              } else {
-                // 데이터가 없는 경우에 대한 처리
-                return Text('No Data');
-              }
-            },
-          ),
-        ],
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(56),
+        child: _AppBar(alarmCheck: alarmCheck),
       ),
       body: _body(context),
     );
@@ -290,6 +244,67 @@ class _HomePageState extends State<HomePage> {
           index: 2,
           image: 'assets/images/Home/recommendIcon.png',
           title: '추천강좌',
+        ),
+      ],
+    );
+  }
+}
+
+class _AppBar extends StatelessWidget {
+  const _AppBar({
+    required this.alarmCheck,
+  });
+
+  final bool alarmCheck;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      backgroundColor: Colors.white,
+      elevation: 0,
+      centerTitle: false,
+      titleTextStyle: const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.w700,
+        color: textColor1,
+      ),
+      title: const Text("LOGO"),
+      actions: [
+        FutureBuilder<bool>(
+          future: Future.value(alarmCheck),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasData) {
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AlarmPage()),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: alarmCheck
+                      ? Image.asset(
+                    'assets/images/Const/Bell.png',
+                    width: 24,
+                    height: 24,
+                  )
+                      : Image.asset(
+                    'assets/images/Const/Bell_ON.png',
+                    width: 24,
+                    height: 24,
+                  ),
+                ),
+              );
+            } else {
+              return const Text('No Data');
+            }
+          },
         ),
       ],
     );
