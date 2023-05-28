@@ -75,6 +75,31 @@ class _OnlineSearchPageState extends State<OnlineSearchPage> {
     }
   }
 
+  Future<void> postStarCourses(int courseID, bool result) async {
+
+    String endPointUrl = CoursesAPI().starCourses(courseID);
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('accessToken');
+
+    final response = await http.post(
+      Uri.parse(endPointUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: jsonEncode(<String, bool>{
+        'result': result,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print("Success");
+    } else {
+      print(response.body);
+    }
+  }
+
   bool _isLoading = false;
 
   Future<void> _handleSearch() async {
@@ -159,6 +184,7 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
+
   Future<void> postStarCourses(int courseID, bool result) async {
 
     String endPointUrl = CoursesAPI().starCourses(courseID);

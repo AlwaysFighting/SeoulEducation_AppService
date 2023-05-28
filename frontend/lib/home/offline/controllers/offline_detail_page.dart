@@ -114,10 +114,10 @@ class _OfflineDetailPageState extends State<OfflineDetailPage> {
                   padding: const EdgeInsets.only(right: 16.0),
                   child: IconButton(
                     onPressed: () {
-                      bool? isLiked = snapshot.data?.data.isLiked;
-                      postStarCourses(snapshot.data?.data.courseId ?? 0, !isLiked!);
                       setState(() {
                         if (snapshot.data != null) {
+                          bool? isLiked = snapshot.data?.data.isLiked;
+                          postStarCourses(snapshot.data?.data.courseId ?? 0, !isLiked!);
                           snapshot.data!.data.isLiked = !(snapshot.data!.data.isLiked ?? false);
                         }
                       });
