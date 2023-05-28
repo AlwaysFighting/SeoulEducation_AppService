@@ -8,6 +8,7 @@ import 'package:seoul_education_service/home/online/controllers/online_detail_pa
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../api/course_api.dart';
+import '../../../logins/login/models/token_manager.dart';
 import '../models/category_button.dart';
 import '../../offline/models/course_list_model.dart';
 import 'online_search_page.dart';
@@ -42,18 +43,16 @@ class _OnlinePageState extends State<OnlinePage> {
     fontFamily: "Spoqa Han Sans Neo",
   );
 
-  late Future<CourseList> services;
+  final tagListStyle = const TextStyle(
+    color: textColor2,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    fontFamily: "Spoqa Han Sans Neo",
+  );
 
+  late Future<CourseList> services;
   String whatOrder = "최신순";
   String whatFilter = "모두";
-
-  String _selectedItem = '최신순';
-  String _selected2Item = '모두';
-  String _selected3Item = '시험대비';
-
-  final List<String> _dropdown1Items = ['최신순', '관심설정순', "마감임박순"];
-  final List<String> _dropdown2Items = ['모두', '신청예정', '신청중', '신청마감'];
-  final List<String> _dropdown3Items = ['시험대비'];
 
   Future<CourseList> fetchData(String order, String filter) async {
     String endPointUrl =
@@ -198,95 +197,383 @@ class _OnlinePageState extends State<OnlinePage> {
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: [
-                          Container(
-                            height: 37,
-                            width: 130,
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(18.5)),
-                              color: backgroundBtnColor,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: DropdownButton<String>(
-                                value: _selectedItem,
-                                elevation: 0,
-                                underline: const SizedBox(),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    _selectedItem = newValue!;
-                                    whatOrder = _selectedItem;
-                                    _handleSearch();
-                                  });
-                                },
-                                items: _dropdown1Items.map((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Center(child: Text(value)),
-                                  );
-                                }).toList(),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                showModalBottomSheet<void>(
+                                  context: context,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(10.0),
+                                    ),
+                                  ),
+                                  builder: (BuildContext context) {
+                                    return SizedBox(
+                                      height: 240,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(top: 8.0),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            ListTile(
+                                              onTap: () {
+                                                setState(() {
+                                                  whatOrder = "최신순";
+                                                  _handleSearch();
+                                                });
+                                                Navigator.pop(context);
+                                              },
+                                              leading: Text(
+                                                "최신순",
+                                                style: tagListStyle.copyWith(
+                                                  color: whatOrder == "최신순" ? mainColor : null,
+                                                ),
+                                              ),
+                                              trailing: whatOrder == "최신순"
+                                                  ? const Icon(Icons.check_rounded)
+                                                  : null,
+                                            ),
+                                            ListTile(
+                                              onTap: () {
+                                                setState(() {
+                                                  whatOrder = "관심설정순";
+                                                  _handleSearch();
+                                                });
+                                                Navigator.pop(context);
+                                              },
+                                              leading: Text(
+                                                "관심설정순",
+                                                style: tagListStyle.copyWith(
+                                                  color: whatOrder == "관심설정순" ? mainColor : null,
+                                                ),
+                                              ),
+                                              trailing: whatOrder == "관심설정순"
+                                                  ? const Icon(Icons.check_rounded)
+                                                  : null,
+                                            ),
+                                            ListTile(
+                                              onTap: () {
+                                                setState(() {
+                                                  whatOrder = "마감임박순";
+                                                  _handleSearch();
+                                                });
+                                                Navigator.pop(context);
+                                              },
+                                              leading: Text(
+                                                "마감임박순",
+                                                style: tagListStyle.copyWith(
+                                                  color: whatOrder == "마감임박순" ? mainColor : null,
+                                                ),
+                                              ),
+                                              trailing: whatOrder == "마감임박순"
+                                                  ? const Icon(Icons.check_rounded)
+                                                  : null,
+                                            ),
+                                            ListTile(
+                                              onTap: () {
+                                                Navigator.pop(context);
+                                              },
+                                              title: Center(
+                                                child: Text(
+                                                  "닫기",
+                                                  style: TextStyle(
+                                                    color: whatOrder == "닫기" ? textColor2 : null,
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              });
+                            },
+                            child: Container(
+                              height: 37.0,
+                              decoration: BoxDecoration(
+                                color: backgroundBtnColor,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: lineColor,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        whatOrder,
+                                        style: subTitleStyle.copyWith(
+                                          fontWeight: FontWeight.w400,
+                                          color: textColor1,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 2.0),
+                                      Image.asset(
+                                          "assets/images/Courses/CaretDown.png",
+                                          width: 20,
+                                          height: 20)
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                           const SizedBox(width: 10.0),
-                          Container(
-                            height: 37,
-                            width: 131,
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(18.5)),
-                              color: backgroundBtnColor,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: DropdownButton<String>(
-                                underline: const SizedBox(),
-                                value: _selected2Item,
-                                elevation: 0,
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    _selected2Item = newValue!;
-                                    whatFilter = _selected2Item;
-                                    _handleSearch();
-                                  });
-                                },
-                                items: _dropdown2Items.map((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Center(child: Text(value)),
-                                  );
-                                }).toList(),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                showModalBottomSheet<void>(
+                                  context: context,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(10.0),
+                                    ),
+                                  ),
+                                  builder: (BuildContext context) {
+                                    return SizedBox(
+                                      height: 288,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(top: 8.0),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            ListTile(
+                                              onTap: () {
+                                                setState(() {
+                                                  whatFilter = "모두";
+                                                  _handleSearch();
+                                                });
+                                                Navigator.pop(context);
+                                              },
+                                              leading: Text(
+                                                "모두",
+                                                style: tagListStyle.copyWith(
+                                                  color: whatFilter == "모두" ? mainColor : null,
+                                                ),
+                                              ),
+                                              trailing: whatFilter == "모두"
+                                                  ? const Icon(Icons.check_rounded)
+                                                  : null,
+                                            ),
+                                            ListTile(
+                                              onTap: () {
+                                                setState(() {
+                                                  whatFilter = "신청예정";
+                                                  _handleSearch();
+                                                });
+                                                Navigator.pop(context);
+                                              },
+                                              leading: Text(
+                                                "신청예정",
+                                                style: tagListStyle.copyWith(
+                                                  color: whatFilter == "신청예정" ? mainColor : null,
+                                                ),
+                                              ),
+                                              trailing: whatFilter == "신청예정"
+                                                  ? const Icon(Icons.check_rounded)
+                                                  : null,
+                                            ),
+                                            ListTile(
+                                              onTap: () {
+                                                setState(() {
+                                                  whatFilter = "신청중";
+                                                  _handleSearch();
+                                                });
+                                                Navigator.pop(context);
+                                              },
+                                              leading: Text(
+                                                "신청중",
+                                                style: tagListStyle.copyWith(
+                                                  color: whatFilter == "신청중" ? mainColor : null,
+                                                ),
+                                              ),
+                                              trailing: whatFilter == "신청중"
+                                                  ? const Icon(Icons.check_rounded)
+                                                  : null,
+                                            ),
+                                            ListTile(
+                                              onTap: () {
+                                                setState(() {
+                                                  whatFilter = "신청마감";
+                                                  _handleSearch();
+                                                });
+                                                Navigator.pop(context);
+                                              },
+                                              leading: Text(
+                                                "신청마감",
+                                                style: tagListStyle.copyWith(
+                                                  color: whatFilter == "신청마감" ? mainColor : null,
+                                                ),
+                                              ),
+                                              trailing: whatFilter == "신청마감"
+                                                  ? const Icon(Icons.check_rounded)
+                                                  : null,
+                                            ),
+                                            ListTile(
+                                              onTap: () {
+                                                Navigator.pop(context);
+                                              },
+                                              title: Center(
+                                                child: Text(
+                                                  "닫기",
+                                                  style: TextStyle(
+                                                    color: whatOrder == "닫기" ? textColor2 : null,
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              });
+                            },
+                            child: Container(
+                              height: 37.0,
+                              decoration: BoxDecoration(
+                                color: backgroundBtnColor,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: lineColor,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        whatFilter,
+                                        style: subTitleStyle.copyWith(
+                                          fontWeight: FontWeight.w400,
+                                          color: textColor1,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 2.0),
+                                      Image.asset(
+                                          "assets/images/Courses/CaretDown.png",
+                                          width: 20,
+                                          height: 20)
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                           const SizedBox(width: 10.0),
-                          Container(
-                            height: 37,
-                            width: 131,
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(18.5)),
-                              color: backgroundBtnColor,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: DropdownButton<String>(
-                                value: _selected3Item,
-                                elevation: 0,
-                                underline: const SizedBox(),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    _selected3Item = newValue!;
-                                  });
-                                },
-                                items: _dropdown3Items.map((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Center(child: Text(value)),
-                                  );
-                                }).toList(),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                showModalBottomSheet<void>(
+                                  context: context,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(10.0),
+                                    ),
+                                  ),
+                                  builder: (BuildContext context) {
+                                    return SizedBox(
+                                      height: 120,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(top: 8.0),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            ListTile(
+                                                leading: Text(
+                                                  "시험대비",
+                                                  style: tagListStyle.copyWith(
+                                                      color: mainColor
+                                                  ),
+                                                ),
+                                                trailing: const Icon(Icons.check_rounded)
+                                            ),
+                                            ListTile(
+                                              onTap: () {
+                                                Navigator.pop(context);
+                                              },
+                                              title: Center(
+                                                child: Text(
+                                                  "닫기",
+                                                  style: TextStyle(
+                                                    color: whatOrder == "닫기" ? textColor2 : null,
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              });
+                            },
+                            child: Container(
+                              height: 37.0,
+                              decoration: BoxDecoration(
+                                color: backgroundBtnColor,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: lineColor,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "시험대비",
+                                        style: subTitleStyle.copyWith(
+                                          fontWeight: FontWeight.w400,
+                                          color: textColor1,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 2.0),
+                                      Image.asset(
+                                          "assets/images/Courses/CaretDown.png",
+                                          width: 20,
+                                          height: 20)
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                           ),

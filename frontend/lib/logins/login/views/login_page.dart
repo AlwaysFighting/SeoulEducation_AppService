@@ -11,6 +11,8 @@ import '../models/divider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'kakao_page_nickname.dart';
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -40,31 +42,75 @@ class _LoginPageState extends State<LoginPage> {
 
   void _kakaoLoginState() async {
     if (await isKakaoTalkInstalled()) {
-
       try {
-        await UserApi.instance.loginWithKakaoTalk();
-        print('카카오톡으로 로그인 성공');
+        OAuthToken token = await UserApi.instance.loginWithKakaoTalk();
+        kakaoLogin(token.accessToken);
       } catch (error) {
         print('카카오톡으로 로그인 실패 $error');
-
         if (error is PlatformException && error.code == 'CANCELED') {
           return;
         }
-
         try {
-          await UserApi.instance.loginWithKakaoAccount();
-          print('카카오계정으로 로그인 성공');
+          OAuthToken token = await UserApi.instance.loginWithKakaoTalk();
+          kakaoLogin(token.accessToken);
         } catch (error) {
           print('카카오계정으로 로그인 실패 $error');
         }
       }
     } else {
       try {
-        await UserApi.instance.loginWithKakaoAccount();
-        print('카카오계정으로 로그인 성공');
+        OAuthToken token = await UserApi.instance.loginWithKakaoAccount();
+        print("카카오계정3");
+        kakaoLogin(token.accessToken);
       } catch (error) {
         print('카카오계정으로 로그인 실패 $error');
       }
+    }
+  }
+
+  // kakao 로그인 구현
+  Future<void> kakaoLogin(String authCode) async {
+
+    String endPointUrl = LoginAPI().kakaoLogin(authCode);
+    final Uri url = Uri.parse(endPointUrl);
+
+    final response = await http.post(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String> {
+        'kakaoToken': authCode,
+      }),
+    );
+
+    String responseBody = response.body;
+    Map<String, dynamic> responseData = jsonDecode(responseBody);
+
+    int userId = responseData['data']['userId'];
+    final String accessToken = responseData['data']['accessToken'];
+    final String refreshToken = responseData['data']['refreshToken'];
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('userID', userId);
+    await prefs.setString('refreshToken', refreshToken);
+    print('User ID: $userId');
+
+    if (response.statusCode == 201) {
+      print("NEED KAKAO LICKNAME");
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => KakaoLickname(id: userId,)),
+      );
+    } else if (response.statusCode == 200){
+      await prefs.setString('accessToken', accessToken);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Navigation()),
+      );
+    } else {
+      print("ERROR");
+      print(response.body);
     }
   }
 
@@ -95,15 +141,14 @@ class _LoginPageState extends State<LoginPage> {
 
       final responseJson = json.decode(response.body);
       final String accessToken = responseJson['data']['accessToken'];
+      final String refreshToken = responseJson['data']['refreshToken'];
       final int userID = responseJson['data']['userId'];
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
-      prefs.setString('accessToken', accessToken);
-      prefs.setInt('userID', userID);
-
-      // await prefs.setString('email', key);
-      // await prefs.setString('password', value);
+      await prefs.setString('accessToken', accessToken);
+      await prefs.setInt('userID', userID);
+      await prefs.setString('refreshToken', refreshToken);
 
       Navigator.pushReplacement(
         context,
@@ -146,33 +191,26 @@ class _LoginPageState extends State<LoginPage> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(top: 120),
+            padding: const EdgeInsets.only(top: 10),
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () {
                 FocusScope.of(context).requestFocus(FocusNode());
               },
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Column(
-                    children: const [
-                      Text("LOGO",
-                          style: TextStyle(
-                              fontSize: 24.0,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: "Spoqa Han Sans Neo",
-                              color: Color(0xFF737373))),
-                      // Image.asset(
-                      //   "assets/images/logo.png",
-                      //   // 이미지 꽉차게 적용하기
-                      //   fit: BoxFit.fill,
-                      //   height: 70,
-                      //   width: 100,
-                      // ),
+                    children: [
+                      Image.asset(
+                        "assets/images/Login/Logo.png",
+                        // 이미지 꽉차게 적용하기
+                        fit: BoxFit.fill,
+                        height: 200,
+                        width: 200,
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 105),
+                  const SizedBox(height: 37),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Column(

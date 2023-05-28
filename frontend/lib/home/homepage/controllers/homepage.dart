@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:seoul_education_service/home/homepage/controllers/notice_detail_page.dart';
 import 'package:seoul_education_service/home/offline/controllers/offline_page.dart';
 import 'package:seoul_education_service/home/online/controllers/online_page.dart';
@@ -14,6 +15,7 @@ import 'package:http/http.dart' as http;
 
 import '../../../api/course_api.dart';
 import '../../../const/colors.dart';
+import '../../../logins/login/models/token_manager.dart';
 import 'homepage_search_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -51,6 +53,7 @@ class _HomePageState extends State<HomePage> {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? accessToken = prefs.getString('accessToken');
+    String? refreshToken = prefs.getString('refreshToken');
 
     final response = await http.get(
       url,
@@ -58,6 +61,11 @@ class _HomePageState extends State<HomePage> {
         'Authorization': 'Bearer $accessToken',
       },
     );
+
+    // 토큰 인증 만료됐을 경우
+    if(response.statusCode == 401) {
+      CustomTokenManager().callRefreshToken(accessToken!, refreshToken!);
+    }
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
@@ -98,55 +106,9 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: false,
-        titleTextStyle: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-          color: textColor1,
-        ),
-        title: const Text("LOGO"),
-        actions: [
-          FutureBuilder<bool>(
-            future: Future.value(alarmCheck),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: CircularProgressIndicator(),
-                );
-              } else if (snapshot.hasData) {
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => AlarmPage()),
-                    );
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: alarmCheck
-                        ? Image.asset(
-                      'assets/images/Const/Bell.png',
-                      width: 24,
-                      height: 24,
-                    )
-                        : Image.asset(
-                      'assets/images/Const/Bell_ON.png',
-                      width: 24,
-                      height: 24,
-                    ),
-                  ),
-                );
-              } else {
-                // 데이터가 없는 경우에 대한 처리
-                return Text('No Data');
-              }
-            },
-          ),
-        ],
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(56),
+        child: _AppBar(alarmCheck: alarmCheck),
       ),
       body: _body(context),
     );
@@ -290,6 +252,84 @@ class _HomePageState extends State<HomePage> {
           index: 2,
           image: 'assets/images/Home/recommendIcon.png',
           title: '추천강좌',
+        ),
+      ],
+    );
+  }
+}
+
+class _AppBar extends StatelessWidget {
+  const _AppBar({
+    required this.alarmCheck,
+  });
+
+  final bool alarmCheck;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      backgroundColor: Colors.white,
+      elevation: 0,
+      centerTitle: false,
+      titleTextStyle: const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.w700,
+        color: textColor1,
+      ),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: const [
+
+          Text("에듀", style: TextStyle(
+            fontFamily: 'KOHINanum',
+            fontWeight: FontWeight.w900,
+            color: textColor1,
+            fontSize: 20,
+          ),),
+          Text("서울", style: TextStyle(
+            fontFamily: 'KOHINanum',
+            fontWeight: FontWeight.w900,
+            color: mainColor,
+            fontSize: 20,
+          )),
+        ],
+      ),
+      actions: [
+        FutureBuilder<bool>(
+          future: Future.value(alarmCheck),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasData) {
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AlarmPage()),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: alarmCheck
+                      ? Image.asset(
+                    'assets/images/Const/Bell.png',
+                    width: 24,
+                    height: 24,
+                  )
+                      : Image.asset(
+                    'assets/images/Const/Bell_ON.png',
+                    width: 24,
+                    height: 24,
+                  ),
+                ),
+              );
+            } else {
+              return const Text('No Data');
+            }
+          },
         ),
       ],
     );

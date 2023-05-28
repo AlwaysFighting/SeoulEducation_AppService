@@ -470,7 +470,6 @@ class _RegisterPageState extends State<RegisterPage> {
         const SizedBox(width: 10.0),
         Expanded(
           child: SizedBox(
-            width: 84,
             height: 48,
             child: ElevatedButton(
               autofocus: false,
@@ -482,7 +481,7 @@ class _RegisterPageState extends State<RegisterPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: _isAuthButtonEnabled ? mainColor : textColor2,
                 textStyle: mainTextStyle.copyWith(
-                  fontSize: 16.0,
+                  fontSize: 15.0,
                   color: Colors.white,
                 ),
                 shape: RoundedRectangleBorder(
@@ -552,7 +551,6 @@ class _RegisterPageState extends State<RegisterPage> {
         const SizedBox(width: 10.0),
         Expanded(
           child: SizedBox(
-            width: 84,
             height: 48,
             child: ElevatedButton(
               autofocus: false,
@@ -566,7 +564,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 backgroundColor:
                     _isAuthConfirmButtonEnabled ? mainColor : textColor2,
                 textStyle: mainTextStyle.copyWith(
-                  fontSize: 16.0,
+                  fontSize: 15.0,
                   color: Colors.white,
                 ),
                 shape: RoundedRectangleBorder(

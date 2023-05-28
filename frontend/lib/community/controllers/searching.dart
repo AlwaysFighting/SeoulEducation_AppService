@@ -146,8 +146,8 @@ class SearchingState extends State<Searching> {
     }
     //검색어 자체를 입력하지 않았을때
     else if(_searchingController.text.isEmpty){
-      return const Column(
-        children: [
+      return Column(
+        children: const [
           Text(""),
         ],
       );
