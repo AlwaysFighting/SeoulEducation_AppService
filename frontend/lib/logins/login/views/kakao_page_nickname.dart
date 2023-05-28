@@ -68,13 +68,11 @@ class _KakaoLicknameState extends State<KakaoLickname> {
 
     String responseBody = response.body;
     Map<String, dynamic> responseData = jsonDecode(responseBody);
-    final String accessToken = responseData['data']['accessToken'];
-    final String refreshToken = responseData['data']['refreshToken'];
 
     if (response.statusCode == 200) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String accessToken = responseData['data']['accessToken'];
       await prefs.setString('accessToken', accessToken);
-      await prefs.setString('refreshToken', refreshToken);
 
       Navigator.of(context).push(
           MaterialPageRoute(builder: (BuildContext context) {

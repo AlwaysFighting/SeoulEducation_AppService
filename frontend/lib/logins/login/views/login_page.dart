@@ -87,22 +87,24 @@ class _LoginPageState extends State<LoginPage> {
     String responseBody = response.body;
     Map<String, dynamic> responseData = jsonDecode(responseBody);
 
-    int userId = responseData['data']['userId'];
-    final String accessToken = responseData['data']['accessToken'];
-    final String refreshToken = responseData['data']['refreshToken'];
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    int userId = responseData['data']['userId'];
     await prefs.setInt('userID', userId);
-    await prefs.setString('refreshToken', refreshToken);
-    print('User ID: $userId');
 
     if (response.statusCode == 201) {
-      print("NEED KAKAO LICKNAME");
+      print("${response.statusCode}");
+      print('User ID: $userId');
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => KakaoLickname(id: userId,)),
       );
     } else if (response.statusCode == 200){
+      int userId = responseData['data']['userId'];
+      await prefs.setInt('userID', userId);
+      print("${response.statusCode}");
+      print('User ID: $userId');
+      print("${response.statusCode}");
+      final String accessToken = responseData['data']['accessToken'];
       await prefs.setString('accessToken', accessToken);
       Navigator.pushReplacement(
         context,
