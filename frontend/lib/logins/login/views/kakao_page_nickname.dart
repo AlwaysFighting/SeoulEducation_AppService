@@ -26,10 +26,8 @@ class _KakaoLicknameState extends State<KakaoLickname> {
 
   // 등록하기 버튼 활성화 유무
   bool _isRegisterButtonEnabled = false;
-
   // 이름
   bool _isUserButtonEnabled = false;
-
   // 확인 눌렀을 때 null 인 경우
   bool checkNull = false;
 
@@ -68,13 +66,11 @@ class _KakaoLicknameState extends State<KakaoLickname> {
 
     String responseBody = response.body;
     Map<String, dynamic> responseData = jsonDecode(responseBody);
-    final String accessToken = responseData['data']['accessToken'];
-    final String refreshToken = responseData['data']['refreshToken'];
 
     if (response.statusCode == 200) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String accessToken = responseData['data']['accessToken'];
       await prefs.setString('accessToken', accessToken);
-      await prefs.setString('refreshToken', refreshToken);
 
       Navigator.of(context).push(
           MaterialPageRoute(builder: (BuildContext context) {
