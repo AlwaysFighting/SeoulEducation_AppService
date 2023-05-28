@@ -601,12 +601,6 @@ class _OfflinePageState extends State<OfflinePage> {
                                 List<String> offlectureListJson = prefs.getStringList('lectureList') ?? [];
                                 offlectureListJson.add(json.encode(offlectureInfo));
                                 await prefs.setStringList('lectureList', offlectureListJson);
-                                setState(() {
-                                  if(snapshot.data!=null){
-                                    snapshot.data!.data[index].isLiked =
-                                    !(snapshot.data!.data[index].isLiked ?? false);
-                                  }
-                                });
                               },
                               child: Container(
                                 decoration: BoxDecoration(
@@ -651,12 +645,14 @@ class _OfflinePageState extends State<OfflinePage> {
                                         ),
                                         IconButton(
                                           onPressed: () {
-                                            bool? isLiked = snapshot.data?.data[index].isLiked;
-                                            postStarCourses(snapshot.data?.data[index].id as int, !isLiked!);
                                             setState(() {
+                                              bool? isLiked = snapshot.data?.data[index].isLiked;
                                               if (snapshot.data != null) {
-                                                snapshot.data!.data[index].isLiked = !(snapshot.data!.data[index].isLiked ?? false);
+                                                setState(() {
+                                                  snapshot.data!.data[index].isLiked = !(snapshot.data!.data[index].isLiked ?? false);
+                                                });
                                               }
+                                              postStarCourses(snapshot.data?.data[index].id as int, !isLiked!);
                                             });
                                           },
                                           icon: snapshot.data?.data[index].isLiked == false

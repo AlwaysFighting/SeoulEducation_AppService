@@ -32,7 +32,6 @@ class _CommunityState extends State<CommunityPage>{
       body: Stack(
         children: [
           Positioned(
-              top: ScreenUtil().setHeight(17),
               child:appbar()),
           Padding(padding: EdgeInsets.only(top:44),
             child: content(),),
@@ -60,7 +59,7 @@ class _CommunityState extends State<CommunityPage>{
                 fontStyle: FontStyle.normal,
               ),
             ),
-          SizedBox(width: 170,),
+          SizedBox(width: 210,),
           Row(
             children: [
               Padding(
@@ -72,9 +71,8 @@ class _CommunityState extends State<CommunityPage>{
                     child:Image.asset("assets/images/Const/MagnifyingGlass.png",width: 24,height: 24,)
                 ),
               ),
-
                 Padding(
-                  padding: EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(0),
                   child: GestureDetector(
                       onTap: (){
                         Navigator.push(
