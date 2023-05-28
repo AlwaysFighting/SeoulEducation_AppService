@@ -150,7 +150,7 @@ class _AlarmPageState extends State<AlarmPage> {
             return const Center(child: Text("Error"));
           }
           if (!snapshot.hasData || snapshot.data == null) {
-            return Center(child: Text("아직 알림이 없어요! ${snapshot.data}"));
+            return const Center(child: Text("아직 알림이 없어요!"));
           }
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
