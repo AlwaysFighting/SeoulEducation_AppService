@@ -12,6 +12,7 @@ import '../../../logins/login/models/token_manager.dart';
 import '../models/category_button.dart';
 import '../../offline/models/course_list_model.dart';
 import 'online_search_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class OnlinePage extends StatefulWidget {
@@ -702,6 +703,208 @@ class _OnlinePageState extends State<OnlinePage> {
           );
         },
       ),
+    );
+  }
+}
+
+class _body extends StatefulWidget {
+  const _body({
+    super.key,
+    required this.services,
+    required this.today,
+    required this.subTitleStyle,
+  });
+
+  final Future<CourseList> services;
+  final DateTime today;
+  final TextStyle subTitleStyle;
+
+  @override
+  State<_body> createState() => _bodyState();
+}
+
+class _bodyState extends State<_body> {
+
+  Future<void> postStarCourses(int courseID, bool result) async {
+
+    String endPointUrl = CoursesAPI().starCourses(courseID);
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('accessToken');
+
+    final response = await http.post(
+      Uri.parse(endPointUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: jsonEncode(<String, bool>{
+        'result': result,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+    } else {
+      print(response.body);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    const String imageURL = "assets/images";
+
+    return FutureBuilder<CourseList>(
+      future: widget.services,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          print("snapshot : $snapshot");
+          return Text("${snapshot.error}");
+        }
+        if (!snapshot.hasData) {
+          return const Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(
+                mainColor,
+              ),
+            ),
+          );
+        }
+        // 데이터가 있을 때 출력할 위젯
+        return Padding(
+          padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 20.0),
+          child: Scrollbar(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                children: [
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        // CategorySelection1(),
+                        // SizedBox(width: 10.0),
+                        // CategorySelection2(),
+                        // SizedBox(width: 10.0),
+                        // CategorySelection3(),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20.0),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    cacheExtent: 20,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: snapshot.data?.data.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return GestureDetector(
+                        onTap: () async{
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => OnlineDetailPage(
+                                courseID:
+                                snapshot.data?.data[index].id as int,
+                              ),
+                            ),
+                          );
+                          //최근본 강좌 구현위해 추가 코드
+                          Map<String, dynamic> lectureInfo = {
+                            'courseID' : snapshot.data?.data[index].id as int,
+                            'title' : snapshot.data?.data[index].title as String,
+                            'isLiked' : snapshot.data?.data[index].isLiked,
+                            'applyStartDate' : snapshot.data?.data[index].applyStartDate,
+                            'applyEndDate' : snapshot.data?.data[index].applyEndDate,
+                            'isFree' : snapshot.data?.data[index].isFree,
+                          };
+                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                          List<String> lectureListJson = prefs.getStringList('lectureList') ?? [];
+                          lectureListJson.add(json.encode(lectureInfo));
+
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: lightBackgroundColor,
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 16.0, bottom: 16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text(
+                                            DateTime.parse(snapshot.data?.data[index].applyStartDate as String).isBefore(widget.today) && DateTime.parse(snapshot.data?.data[index].applyEndDate as String).isAfter(widget.today) ? "#신청가능" : "#신청불가능",
+                                            style: widget.subTitleStyle,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Text( snapshot.data?.data[index].isFree == true ? "#무료" : "#유료" , style: widget.subTitleStyle),
+                                          const SizedBox(width: 10),
+                                          Text("#직업상담사", style: widget.subTitleStyle),
+                                        ],
+                                      ),
+                                      IconButton(
+                                        onPressed: () {
+                                          bool? isLiked = snapshot.data?.data[index].isLiked;
+                                          postStarCourses(snapshot.data?.data[index].id ?? 0, !isLiked!);
+                                          setState(() {
+                                            if (snapshot.data != null) {
+                                              snapshot.data!.data[index].isLiked = !(snapshot.data!.data[index].isLiked ?? false);
+                                            }
+                                          });
+                                        },
+                                        icon: snapshot.data?.data[index].isLiked == false
+                                            ? Image.asset(
+                                          '$imageURL/Const/star_stroke.png',
+                                          width: 22,
+                                          height: 22,
+                                        )
+                                            : Image.asset(
+                                          '$imageURL/Const/star_fill.png',
+                                          width: 22,
+                                          height: 22,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    width: 302,
+                                    child: Text(
+                                      '${snapshot.data?.data[index].title}',
+                                      style: widget.subTitleStyle.copyWith(
+                                          color: textColor1, fontSize: 16.0),
+                                      softWrap: true,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 14.0),
+                                  Text(
+                                    "신청기간: ${snapshot.data?.data[index].applyStartDate}~${snapshot.data?.data[index].applyEndDate}",
+                                    style: widget.subTitleStyle.copyWith(
+                                      color: textColor2,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
