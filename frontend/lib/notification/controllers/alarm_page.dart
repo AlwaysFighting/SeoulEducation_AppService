@@ -37,9 +37,6 @@ class _AlarmPageState extends State<AlarmPage> {
 
   late Stream<Alarm?> services;
 
-  final StreamController<Alarm?> _servicesController = StreamController<Alarm?>.broadcast();
-
-  Stream<Alarm?> get servicesStream => _servicesController.stream;
 
   Future<Alarm?> fetchData() async {
     String endPointUrl = AlarmAPI().alarmList();
@@ -72,7 +69,6 @@ class _AlarmPageState extends State<AlarmPage> {
   @override
   void dispose() {
     super.dispose();
-    _servicesController.close();
   }
 
   void updateData(int index) async {
@@ -123,7 +119,6 @@ class _AlarmPageState extends State<AlarmPage> {
   @override
   void initState() {
     super.initState();
-    ConnectSocket().subscribeAlarm(userid);
     ConnectSocket().lastAlarm();
     services = fetchData().asStream();
     _refreshData();
@@ -179,8 +174,8 @@ class _AlarmPageState extends State<AlarmPage> {
                 onTap: () {
                   setState(() {
                     isCheckedList[index].value = true;
-                    _refreshData();
                   });
+                  _refreshData();
                   updateData(snapshot.data?.data[index].notifyId ?? 0);
                   if (snapshot.data?.data[index].category == "last") {
                     snapshot.data?.data?[index].type ==

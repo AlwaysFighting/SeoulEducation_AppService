@@ -191,33 +191,26 @@ class _LoginPageState extends State<LoginPage> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(top: 120),
+            padding: const EdgeInsets.only(top: 10),
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () {
                 FocusScope.of(context).requestFocus(FocusNode());
               },
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Column(
-                    children: const [
-                      Text("LOGO",
-                          style: TextStyle(
-                              fontSize: 24.0,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: "Spoqa Han Sans Neo",
-                              color: Color(0xFF737373))),
-                      // Image.asset(
-                      //   "assets/images/logo.png",
-                      //   // 이미지 꽉차게 적용하기
-                      //   fit: BoxFit.fill,
-                      //   height: 70,
-                      //   width: 100,
-                      // ),
+                    children: [
+                      Image.asset(
+                        "assets/images/Login/Logo.png",
+                        // 이미지 꽉차게 적용하기
+                        fit: BoxFit.fill,
+                        height: 200,
+                        width: 200,
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 105),
+                  const SizedBox(height: 37),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Column(

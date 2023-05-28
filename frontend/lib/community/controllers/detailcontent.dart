@@ -10,8 +10,10 @@ import 'package:seoul_education_service/api/course_api.dart';
 import 'package:seoul_education_service/community/model/replylist.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:seoul_education_service/const/navigation.dart';
+import 'package:socket_io_client/socket_io_client.dart';
 import 'commuinty.dart';
 import 'package:seoul_education_service/mypage/model/memberModel.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import '../../notification/models/alarm.dart';
 
@@ -137,6 +139,26 @@ class DetailState extends State<Detailcontent> {
     });
   }
 
+  commentAlarm(int post) async {
+    IO.Socket socket = IO.io('http://localhost:8080',
+        OptionBuilder()
+            .setTransports(['websocket']).build());
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int user = prefs.getInt('userID') ?? 0;
+
+    socket.onDisconnect((_) => print('disconnect'));
+
+    socket.onConnect((_) {
+      print('comment connect');
+      socket.emit('comment', {
+        user,
+        post,
+      });
+    });
+    socket.on('comment', (data) => print(data));
+  }
+
   //댓글 작성
   Future<void> _sendReply() async{
     String? accessToken = await _loadAccessToken();
@@ -164,7 +186,7 @@ class DetailState extends State<Detailcontent> {
     final response = await http.post(url,headers:headers, body:body);
 
     if(response.statusCode == 200){
-      await ConnectSocket().commentAlarm(widget.postid);
+      commentAlarm(widget.postid);
       print("Successfully Saved");
     }
     else{

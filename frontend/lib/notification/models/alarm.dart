@@ -23,6 +23,7 @@ class ConnectSocket {
 
   // Subscribe
   Future<void> subscribeAlarm(int user) async {
+    print("subscribeAlarm 실행!");
     IO.Socket socket = IO.io('http://localhost:8080',
         OptionBuilder()
             .setTransports(['websocket']).build());
@@ -48,12 +49,12 @@ class ConnectSocket {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int user = prefs.getInt('userID') ?? 0;
 
+    ConnectSocket().subscribeAlarm(user);
     socket.onConnect((_) {
       print('last connect');
-      socket.emit(
-        'last',
+      socket.emit('last', {
         user,
-      );
+      },);
     });
     socket.on('last', (data) => streamSocket.addResponse);
   }
@@ -67,20 +68,16 @@ class ConnectSocket {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int user = prefs.getInt('userID') ?? 0;
 
+    socket.onDisconnect((_) => print('disconnect'));
+
     socket.onConnect((_) {
       print('comment connect');
-      socket.emitWithAck('comment', {
-        "userId": user,
-        "postId": post,
-      }, ack: (data) {
-        print('ack $data');
-        if (data != null) {
-          print('from server $data');
-        } else {
-          print("Null");
-        }
+      socket.emit('comment', {
+        user,
+        post,
       });
     });
+    socket.on('comment', (data) => print(data));
   }
 
   // Reply
@@ -91,18 +88,13 @@ class ConnectSocket {
 
     socket.onConnect((_) {
       print('reply connect');
-      socket.emitWithAck('reply', {
-        "userId": user,
-        "commentId": comment
-      }, ack: (data) {
-        print('ack $data');
-        if (data != null) {
-          print('from server $data');
-        } else {
-          print("Null");
-        }
+      socket.emit('reply', {
+        user,
+        comment
       });
     });
+    socket.on('reply', (data) => streamSocket.addResponse);
   }
+
 }
 

@@ -276,7 +276,24 @@ class _AppBar extends StatelessWidget {
         fontWeight: FontWeight.w700,
         color: textColor1,
       ),
-      title: const Text("LOGO"),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: const [
+
+          Text("에듀", style: TextStyle(
+            fontFamily: 'KOHINanum',
+            fontWeight: FontWeight.w900,
+            color: textColor1,
+            fontSize: 20,
+          ),),
+          Text("서울", style: TextStyle(
+            fontFamily: 'KOHINanum',
+            fontWeight: FontWeight.w900,
+            color: mainColor,
+            fontSize: 20,
+          )),
+        ],
+      ),
       actions: [
         FutureBuilder<bool>(
           future: Future.value(alarmCheck),

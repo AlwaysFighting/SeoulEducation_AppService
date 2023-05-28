@@ -79,6 +79,7 @@ flutter:
     - assets/images/Courses/
     - assets/images/community/
     - assets/images/Notice/
+    - assets/images/Login/
     - assets/images/Const/MagnifyingGlass2.png
 
   # To add assets to your application, add an assets section, like this:
@@ -105,6 +106,11 @@ flutter:
           weight: 400
         - asset: assets/fonts/Spoqa Han Sans Neo Thin.otf
           weight: 300
+
+    - family: KOHINanum
+      fonts:
+        - asset: assets/fonts/KOHINanum/KOHINanum_Bold.ttf
+
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
