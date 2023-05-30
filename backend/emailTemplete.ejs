@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EduSeoulMailTemplete</title>
+    <link
+      href="https://spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+  </head>
+  <body style="display: flex; width: 100%">
+    <table border="0" style="margin: 70px auto; width: 651px">
+      <tr>
+        <td style="text-align: center">
+          <img
+            style="margin-bottom: 39px; height: 160px; width: 160px"
+            alt="EduSeoul Logo Image"
+            src="data:image/png;base64,<%= base64Image %>"
+          />
+        </td>
+      </tr>
+      <tr>
+        <td style="text-align: center">
+          <span
+            style="
+              font-family: 'Spoqa Han Sans Neo', sans-serif;
+              font-size: 16px;
+              font-weight: 500;
+              color: black;
+            "
+          >
+            하단의 6자리 인증코드를 회원가입 창에 입력하여 회원가입을
+            완료해주세요
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td style="text-align: center">
+          <div
+            style="
+              background: #f6f6f6;
+              margin: 20px auto;
+              display: inline-block;
+              text-align: center;
+              padding: 16px 40px;
+            "
+          >
+            <span
+              style="
+                font-family: 'Spoqa Han Sans Neo', sans-serif;
+                font-weight: 500;
+                font-size: 20px;
+                text-align: center;
+                margin-right: 10px;
+              "
+            >
+              인증코드
+            </span>
+            <span
+              style="
+                font-family: 'Spoqa Han Sans Neo', sans-serif;
+                font-weight: 700;
+                font-size: 20px;
+                color: #18a4ea;
+                text-align: center;
+                margin-left: 10px;
+              "
+            >
+              <%= code %>
+            </span>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p
+            style="
+              font-family: 'Spoqa Han Sans Neo', sans-serif;
+              text-align: center;
+              font-weight: 400;
+              font-size: 14px;
+              color: #191919;
+              line-height: 22px;
+            "
+          >
+            해당 코드는 5분동안 유효합니다.
+          </p>
+          <p
+            style="
+              font-family: 'Spoqa Han Sans Neo', sans-serif;
+              text-align: center;
+              font-weight: 400;
+              font-size: 14px;
+              color: #191919;
+              line-height: 22px;
+            "
+          >
+            문제가 발생한 경우 고객센터로 문의바랍니다.
+          </p>
+          <p
+            style="
+              font-family: 'Spoqa Han Sans Neo', sans-serif;
+              text-align: center;
+              font-weight: 400;
+              font-size: 14px;
+              color: #191919;
+              line-height: 22px;
+            "
+          >
+            감사합니다.
+          </p>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
