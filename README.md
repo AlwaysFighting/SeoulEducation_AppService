@@ -20,7 +20,9 @@
 
 
 ## 피그마 디자인 링크
+<img width="1000" src=""/>
 
+[![Video Label](https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/87655596/7b26a45c-746a-483d-b67b-ea799e800f84)](https://www.figma.com/file/Nncev6ZyYveAEih4HQxcVd/%EC%97%B4%EB%A6%B0%EB%8D%B0%EC%9D%B4%ED%84%B0-%EA%B3%B5%EB%AA%A8%EC%A0%84?type=design&node-id=1-2)
 
 
 ## 프로젝트 구조도
