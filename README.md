@@ -29,13 +29,18 @@
 
 
 ## 피그마 디자인 링크
-<img width="1000" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/87655596/f75dbabb-9c06-49dd-990c-fb883266f4fc"/>
 
 https://www.figma.com/file/Nncev6ZyYveAEih4HQxcVd/%EC%97%B4%EB%A6%B0%EB%8D%B0%EC%9D%B4%ED%84%B0-%EA%B3%B5%EB%AA%A8%EC%A0%84?type=design&node-id=1-2 
 
 
+## IA
+<img width="800" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/87655596/7163e924-af66-4e8a-bfad-c726ca1aae89"/>
+
+
+
 ## 프로젝트 구조도
 <img width="800" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/87655596/43cef5a5-3ce9-4aaf-aec6-3898dd06324c"/>
+
 
 
 ## 프로젝트 설치 및 실행 방법
