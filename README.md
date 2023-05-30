@@ -153,6 +153,7 @@ node app
 <img width="300" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/6bc0d245-44a3-4173-bb72-9b1430d07f2a"/>
 
 
+
 로그인을 완료한 회원은 홈화면으로 가게됩니다. 홈화면에서는 온라인, 오프라인, 추천강좌 항목들을 통해 평생교육 강좌들을 조회할 수 있습니다. 찾고 싶은 특정 강좌가 있을 경우 검색기능을 사용하여 강좌를 찾을 수 있습니다. 평생교육 관련 공지사항들도 홈화면에서 확인할 수 있습니다.
 사용자가 스크랩한 강좌의 수강 신청기간이 임박했을 때 알람을 통해 해당 사실을 안내 받을 수 있습니다. 알람은 홈화면과 마이페이지에서도 조회할 수 있습니다. 
 
@@ -160,6 +161,7 @@ node app
 ### 4.강좌조회
 
 <img width="200" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/ecae6286-0b1f-43f6-94f7-3db1555b21ee"/><img width="200" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/0d6ccc8e-8422-4ce9-a93c-8cb185613806"/><img width="200" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/838d957c-c673-460c-8d7f-9ce06ce945dc"/><img width="200" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/deafe15f-d163-46be-aec7-2c9d73b19ad0"/>
+
 
 
 사용자는 온라인, 오프라인, 추천강좌 탭에서 다양한 강좌를 조회할 수 있습니다. 마감임박순과 관심설정순으로 강좌를 정렬할 수 있습니다. 또한 사용자는 자신이 원하는 강좌를 스크랩해서 마이페이지에서 볼 수 있습니다.
@@ -171,6 +173,7 @@ node app
 <img width="200" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/81bbbd67-076a-4fbc-b207-b7ae5c4b55b3"/><img width="200" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/f97133ba-0c3a-43f8-a2a7-22ad6a94c4db"/><img width="200" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/57044283-3473-41da-96f4-a09ae07b8a4e"/><img width="200" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/6e6114a6-3c4b-43a3-9bcb-2cc3e8ff5cda"/>
 
 
+
 사용자들 사이의 의견교환과 정보공유를 위한 게시판 기능입니다. 
 게시판에서는 사용자들끼리 궁금한 것이나 자신의 의견, 유용한 정보를 나눌 수 있습니다. 게시판에 글을 작성하고 댓글과 대댓글을 달 수 있으며 사용자가 보고 싶은 게시글이 있다면 검색기능을 통해 찾을 수 있습니다.
 
@@ -179,6 +182,7 @@ node app
 
 
 <img width="300" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/620c0066-69b6-4d60-8dbb-a566caa6a6ea"/><img width="300" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/a0e3f1a2-c77f-4262-9441-56b51f88255f"/><img width="300" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/bd295b85-0d44-4102-9679-c1e4215933a4"/>
+
 
 
 사용자가 개인정보를 편리하게 관리하도록 하게하기 위해서 마이페이지입니다.
