@@ -132,14 +132,16 @@ node app
 사용자는 이메일 인증을 통해 회원가입을 진행할 수 있습니다.
 
 2.로그인
-<img width="500" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/91ea476d-5cd5-43e3-9a40-fe6bc9eb7030"/>
-<img width="500" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/a280b54d-4f38-40ca-92fa-8ebc41a9a840"/>
+
+<img width="250" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/91ea476d-5cd5-43e3-9a40-fe6bc9eb7030"/><img width="250" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/a280b54d-4f38-40ca-92fa-8ebc41a9a840"/>
+
 회원가입시 인증받았던 이메일로 로그인이 가능하며 카카오 소셜계정을 통해서도 로그인이 가능합니다.
 
 3.홈화면
 <img width="300" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/7e00cf5f-0a66-4726-8cee-b5f703a9a20a"/>
 <img width="300" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/2b498bee-95d4-4f49-a84f-1c56f30353b6"/>
 <img width="300" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/6bc0d245-44a3-4173-bb72-9b1430d07f2a"/>
+
 로그인을 완료한 회원은 홈화면으로 가게됩니다. 홈화면에서는 온라인, 오프라인, 추천강좌 항목들을 통해 평생교육 강좌들을 조회할 수 있습니다. 찾고 싶은 특정 강좌가 있을 경우 검색기능을 사용하여 강좌를 찾을 수 있습니다. 평생교육 관련 공지사항들도 홈화면에서 확인할 수 있습니다.
 사용자가 스크랩한 강좌의 수강 신청기간이 임박했을 때 알람을 통해 해당 사실을 안내 받을 수 있습니다. 알람은 홈화면과 마이페이지에서도 조회할 수 있습니다. 
 
