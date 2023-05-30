@@ -13,6 +13,7 @@ import 'dart:convert';
 import 'settings.dart';
 import 'package:seoul_education_service/logins/login/views/login_page.dart';
 import 'package:seoul_education_service/notification/controllers/alarm_page.dart';
+import 'package:seoul_education_service/home/homepage/controllers/notice_detail_page.dart';
 
 class MyPage extends StatefulWidget {
   //final bool? islogin;
@@ -301,8 +302,10 @@ class  _MypageState extends State<MyPage>{
         ),
         GestureDetector(
           onTap: (){
-            //공지사항으로
-
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (BuildContext context) {
+                  return const NoticeDetailPage(title: '공지사항',);
+                }));
           },
           child: SizedBox(
             width: MediaQuery.of(context).size.width,
