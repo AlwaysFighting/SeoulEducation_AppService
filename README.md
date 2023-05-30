@@ -126,8 +126,9 @@ node app
 
 ## 프로젝트 사용 방법
 1.회원가입
-<img width="500" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/f3c3969a-87d1-4424-a2b1-680680c6e3d5"/>
-<img width="500" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/a5495af4-2e19-411c-b8e4-b631f21bb8cf"/>
+
+<img width="500" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/f3c3969a-87d1-4424-a2b1-680680c6e3d5"/><img width="500" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/a5495af4-2e19-411c-b8e4-b631f21bb8cf"/>
+
 사용자는 이메일 인증을 통해 회원가입을 진행할 수 있습니다.
 
 2.로그인
