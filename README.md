@@ -148,9 +148,9 @@ node app
 ### 3.홈화면
 
 
-<img width="300" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/7e00cf5f-0a66-4726-8cee-b5f703a9a20a"/>
-<img width="300" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/2b498bee-95d4-4f49-a84f-1c56f30353b6"/>
-<img width="300" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/6bc0d245-44a3-4173-bb72-9b1430d07f2a"/>
+<img width="250" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/7e00cf5f-0a66-4726-8cee-b5f703a9a20a"/>
+<img width="250" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/2b498bee-95d4-4f49-a84f-1c56f30353b6"/>
+<img width="250" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/6bc0d245-44a3-4173-bb72-9b1430d07f2a"/>
 
 
 
@@ -181,7 +181,7 @@ node app
 ### 6.마이페이지
 
 
-<img width="300" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/620c0066-69b6-4d60-8dbb-a566caa6a6ea"/><img width="300" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/a0e3f1a2-c77f-4262-9441-56b51f88255f"/><img width="300" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/bd295b85-0d44-4102-9679-c1e4215933a4"/>
+<img width="250" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/620c0066-69b6-4d60-8dbb-a566caa6a6ea"/><img width="250" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/a0e3f1a2-c77f-4262-9441-56b51f88255f"/><img width="250" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/80136506/bd295b85-0d44-4102-9679-c1e4215933a4"/>
 
 
 
