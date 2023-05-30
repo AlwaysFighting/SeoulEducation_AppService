@@ -35,8 +35,7 @@ https://www.figma.com/file/Nncev6ZyYveAEih4HQxcVd/%EC%97%B4%EB%A6%B0%EB%8D%B0%EC
 
 
 ## 프로젝트 구조도
-<img width="800" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/87655596/6b77f23c-8001-4a73-9818-985c7c7ef21a"/>
-
+<img width="800" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/87655596/43cef5a5-3ce9-4aaf-aec6-3898dd06324c"/>
 
 
 ## 프로젝트 설치 및 실행 방법
