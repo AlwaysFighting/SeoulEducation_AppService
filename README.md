@@ -1,4 +1,4 @@
-# 에듀서울 
+# 에듀서울 📚
 
 ## 목차
 [1. 프로젝트 소개](#프로젝트-소개)
@@ -20,18 +20,19 @@
 
 
 ## 피그마 디자인 링크
-<img width="1000" src=""/>
+<img width="1000" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/87655596/f75dbabb-9c06-49dd-990c-fb883266f4fc"/>
 
-[![Video Label](https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/87655596/7b26a45c-746a-483d-b67b-ea799e800f84)](https://www.figma.com/file/Nncev6ZyYveAEih4HQxcVd/%EC%97%B4%EB%A6%B0%EB%8D%B0%EC%9D%B4%ED%84%B0-%EA%B3%B5%EB%AA%A8%EC%A0%84?type=design&node-id=1-2)
+https://www.figma.com/file/Nncev6ZyYveAEih4HQxcVd/%EC%97%B4%EB%A6%B0%EB%8D%B0%EC%9D%B4%ED%84%B0-%EA%B3%B5%EB%AA%A8%EC%A0%84?type=design&node-id=1-2 
 
 
 ## 프로젝트 구조도
+<img width="500" src="https://github.com/AlwaysFighting/SeoulEducation_AppService/assets/87655596/6b77f23c-8001-4a73-9818-985c7c7ef21a"/>
 
 
 
 ## 프로젝트 설치 및 실행 방법
 
-[Server]
+### 1) Server
 
 ### 1. MySQL, Redis 프로그램 설치
 데이터베이스 구축을 위해 MySQL, Redis 프로그램을 미리 설치합니다.
